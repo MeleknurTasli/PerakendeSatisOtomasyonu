@@ -1,0 +1,1016 @@
+﻿<Window x:Class="WpfApp2.Satıs_Islemleri"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        mc:Ignorable="d"
+        Title="Satış İşlemleri" Height="800" Width="1150">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush >
+                <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                <GradientStop Color="#ff156F90" Offset="1"/>
+                <!--#FF132043 ile siyah güzel ama iç karartıcı...   #FF0E454B bu yeşil güzel    #FF21384B eski textbox rengi-->
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/><!--4 idi eskiden bura-->
+            <!--2 3 4 ve 5 7 9-->
+            <RowDefinition Height="7*"/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="10" Grid.RowSpan="10">
+            <Grid.Background>
+                <ImageBrush ImageSource="/icons/pngeggddd.png" Stretch="UniformToFill" Opacity="0.15" />
+            </Grid.Background>
+        </Grid>
+
+        <Button x:Name="Geri"  Margin="10,2,0,0" Background="Transparent" BorderThickness="0" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Dictionary3}" Click="Geri_Click">
+            <Image Source="icons\back-arrow@2x.png" ></Image>
+        </Button>
+
+        <ToggleButton x:Name="_switch" Grid.Column="8" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="Transparent" Width="100" Height="40" Margin="5" Style="{StaticResource Dictionary6}" >
+            <ToggleButton.Background>
+                <ImageBrush x:Name="switchimage" ImageSource="\icons\acıkswitch.png"  Stretch="Uniform"></ImageBrush>
+            </ToggleButton.Background>
+        </ToggleButton>
+
+        <Grid Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Kaydet" Margin="5" Height="40"  Background="#44296CA5" Grid.Column="0"  VerticalAlignment="Top" Style="{StaticResource Dictionary5}" Click="Kaydet_Click" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="30" Height="30" Margin="0,0,10,0" Source="icons/kaydet.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="14" FontWeight="SemiBold">Kaydet</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Yazdir" Margin="5" Background="#44296CA5" Height="40" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource Dictionary5}">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="30" Height="30" Margin="0,0,10,0" Source="\icons\yazdir.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="14" FontWeight="SemiBold">Yazdır</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Goruntule" Margin="5" Height="40" Background="#66296CA5" Grid.Column="2"  VerticalAlignment="Top" Style="{StaticResource Dictionary5}" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="30" Height="30" Margin="5,0,10,0" Source="\icons\goz.png"  ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="13" FontWeight="SemiBold">Görüntüle</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Sil" Margin="5" Height="40" Background="#66296CA5" Grid.Column="3" VerticalAlignment="Top" Style="{StaticResource Dictionary5}" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="30" Height="25" Margin="0,0,10,0" Source="\icons\sil.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="14" FontWeight="SemiBold">Sil</TextBlock>
+                </StackPanel>
+            </Button>
+        </Grid>
+        
+        <Image x:Name="urunresmi" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" Margin="33,70,33,30" Stretch="Uniform" Source="icons/cpm-logo-yazili-beyaz_c@2x.png"></Image>
+
+        <Grid Name="mainGrid"  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" Margin="33,70,33,30" >
+            <Viewport3D Name="mainViewport"/>
+        </Grid>
+
+        <Border Margin="3" Grid.Row="0" Grid.ColumnSpan="9" BorderThickness="1" BorderBrush="White" CornerRadius="15" Padding="5">
+            <Grid x:Name="gridevrakbaslik" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition x:Name="r1"></RowDefinition>
+                    <RowDefinition x:Name="r2"></RowDefinition>
+                    <RowDefinition x:Name="r3"></RowDefinition>
+                    <RowDefinition x:Name="r4"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" HorizontalAlignment="Stretch" Background="#66156F90" HorizontalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="5" FontSize="15" FontWeight="Bold" Foreground="White">Evrak Başlık Bilgileri</Label>
+
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="1" Grid.Column="0" Margin="2,0,0,0" FontSize="16">Unvan:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="2" Grid.Column="0" Margin="2,0,0,0" FontSize="16">Cari Kodu:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="3" Grid.Column="0" Margin="2,0,0,0" FontSize="16">Vergi No:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="4" Grid.Column="0" Margin="2,0,0,0" FontSize="16">Sipariş No:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="1" Grid.Column="2" Margin="2,0,0,0" FontSize="16" >Evrak Tipi:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="2" Grid.Column="2" Margin="2,0,0,0" FontSize="16" >Evrak No:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="3" Grid.Column="2" Margin="2,0,0,0" FontSize="16" >Evrak Tarihi:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="4" Grid.Column="2" Margin="2,0,0,0" FontSize="16" >Vade Tarihi:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="1" Grid.Column="4" Margin="2,0,0,0" FontSize="16" >Döviz Cinsi:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="2" Grid.Column="4" Margin="2,0,0,0" FontSize="16" >Kasa Tanımı:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="3" Grid.Column="4" Margin="2,0,0,0" FontSize="16" >Kasa No:</TextBlock>
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" Grid.Row="4" Grid.Column="4" Margin="2,0,0,0" FontSize="16" >Kasiyer:</TextBlock>
+
+                <TextBox x:Name="txt1" FontWeight="Bold" Margin="3,2,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="1" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" KeyDown="txt1_KeyDown" ></TextBox>
+                <TextBox x:Name="txt2" FontWeight="Bold" Margin="3,2,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="2" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" KeyDown="txt2_KeyDown" ></TextBox>
+                <TextBox x:Name="txt3" FontWeight="Bold" Margin="3,2,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="3" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" KeyDown="txt3_KeyDown" ></TextBox>
+                <TextBox x:Name="txt4" FontWeight="Bold" Margin="3,2,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="4" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt5" FontWeight="Bold" Margin="3,2,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt6" FontWeight="Bold" Margin="3,2,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="2" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt7" FontWeight="Bold" Margin="3,2,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="3" Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox  x:Name="txt8"  FontWeight="Bold" Margin="3,2,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="3" Grid.Row="4" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" GotFocus="txt8_GotFocus" LostFocus="txt8_LostFocus" KeyDown="txt8_KeyDown" ></TextBox>
+                <ComboBox x:Name="cbdate" Grid.Column="3" Margin="3,2,3,0" Visibility="Hidden" Grid.Row="4" BorderThickness="0" Foreground="White" VerticalAlignment="Bottom" StaysOpenOnEdit="True" Height="1" Style="{StaticResource Dictionary2}">
+                    <ComboBoxItem Visibility="Visible" >
+                        <DatePicker x:Name="dp" BorderThickness="0" Background="Transparent" Opacity="0.7" SelectedDateChanged="selected_date_changed"></DatePicker>
+                    </ComboBoxItem>
+                </ComboBox>
+                <TextBox x:Name="txt9" FontWeight="Bold" Margin="3,2,50,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="5" Grid.ColumnSpan="2" Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt10" FontWeight="Bold" Margin="3,2,50,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="5" Grid.ColumnSpan="2" Grid.Row="2" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt11" FontWeight="Bold" Margin="3,2,50,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="5" Grid.ColumnSpan="2" Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+                <TextBox x:Name="txt12" FontWeight="Bold" Margin="3,2,50,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Column="5" Grid.ColumnSpan="2" Grid.Row="4" BorderThickness="0.5" BorderBrush="Transparent" FontSize="18"  Background="Transparent" IsEnabled="False" Foreground="White" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Left" ></TextBox>
+
+                <Button x:Name="evrakara" Grid.Column="5" Width="30" Height="25" HorizontalAlignment="Right" BorderBrush="Transparent" Margin="3" Style="{StaticResource Dictionary5}" Click="evrakara_Click"  >
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons/ara.png" ></ImageBrush>
+                    </Button.Background>
+                </Button>
+                <TextBox x:Name="txtevrakkod" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="4" Grid.ColumnSpan="2"  Margin="0,0,40,0" BorderThickness="0.5" BorderBrush="White" FontSize="20"  Background="#88427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+            </Grid>
+        </Border>
+
+        <UniformGrid  x:Name="grid_ef" Columns="2" Grid.ColumnSpan="8" Margin="20,40,0,20" HorizontalAlignment="Left" Width="0" VerticalAlignment="Center" >
+            <!--<CheckBox Content="e-Fatura" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Grid.Row="1" Width="150" FontSize="16">PK Adresi:</TextBlock>
+                <TextBox x:Name="txtPK" FontWeight="Bold" Margin="15,5,0,5"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="White" Width="240" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" ></TextBox>
+            </StackPanel>
+            <CheckBox Content="e-İrsaliye" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Grid.Row="1" Width="150" FontSize="16">e-İrsaliye PK Adresi:</TextBlock>
+                <TextBox x:Name="txtIrsPK" FontWeight="Bold" Margin="15,5,0,5"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="White" Width="240" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" ></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" Grid.Row="1" Width="150"  FontSize="16">e-İrsaliye PK Adresi:</TextBlock>
+                <TextBox x:Name="txtGBadres" FontWeight="Bold" Margin="15,5,0,5"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="White" Width="240" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" ></TextBox>
+            </StackPanel>-->
+        </UniformGrid>
+        <UniformGrid  x:Name="grid_ea" Columns="2" Grid.ColumnSpan="8" Margin="20,40,0,20" HorizontalAlignment="Left" Width="0" VerticalAlignment="Center" ></UniformGrid>
+        <UniformGrid  x:Name="grid_ei" Columns="2" Grid.ColumnSpan="8" Margin="20,40,0,20" HorizontalAlignment="Left" Width="0" VerticalAlignment="Center" ></UniformGrid>
+
+        <StackPanel Orientation="Vertical" Grid.Column="8" Grid.Row="0" Margin="0,45,3,0" HorizontalAlignment="Right">
+            <ToggleButton x:Name="efat"  Width="50" Height="47" BorderBrush="Transparent" Margin="0,0,0,0" Checked="efat_Checked" Unchecked="efat_Unchecked"  >
+                <ToggleButton.Background>
+                    <ImageBrush ImageSource="\icons\e-fatura-icon2.png" Stretch="Uniform"></ImageBrush>
+                </ToggleButton.Background>
+                <ToggleButton.Resources>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="OverridesDefaultStyle" Value="True"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Resources>
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Hide1">
+                                <DoubleAnimation    
+                                                Storyboard.TargetName="grid_ef"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Show1">
+                                <DoubleAnimation
+                                                Storyboard.TargetName="grid_ef"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+            <ToggleButton x:Name="eirs"  Width="50" Height="47" BorderBrush="Transparent" Margin="0,0,0,0" Checked="eirs_Checked" Unchecked="eirs_Unchecked"  >
+                <ToggleButton.Background>
+                    <ImageBrush ImageSource="\icons\e-irsaliye-icon2.png" Stretch="Uniform"></ImageBrush>
+                </ToggleButton.Background>
+                <ToggleButton.Resources>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="OverridesDefaultStyle" Value="True"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Resources>
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Hide2">
+                                <DoubleAnimation    
+                                                Storyboard.TargetName="grid_ei"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Show2">
+                                <DoubleAnimation
+                                                Storyboard.TargetName="grid_ei"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+            <ToggleButton x:Name="ears"  Width="50" Height="47" BorderBrush="Transparent" Margin="0,0,0,0" Checked="ears_Checked" Unchecked="ears_Unchecked"  >
+                <ToggleButton.Background>
+                    <ImageBrush ImageSource="\icons\e-arsiv-icon2.png" Stretch="Uniform"></ImageBrush>
+                </ToggleButton.Background>
+                <ToggleButton.Resources>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="OverridesDefaultStyle" Value="True"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Resources>
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Hide4">
+                                <DoubleAnimation    
+                                                Storyboard.TargetName="grid_ea"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Show4">
+                                <DoubleAnimation
+                                                Storyboard.TargetName="grid_ea"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding ElementName=gridevrakbaslik, Path=ActualWidth}"
+                                                Duration="0:0:0.2">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+        </StackPanel>
+
+        <Border Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="White" CornerRadius="15" Padding="5" Margin="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label HorizontalAlignment="Stretch" Margin="5,0,5,0" Background="#66156F90" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Foreground="White">Versiyon ve Depo Bilgileri</Label>
+
+                <DataGrid x:Name="depo_dataGrid"  SelectionMode="Single" Grid.Row="1" Margin="3" VerticalAlignment="Top" HorizontalAlignment="Center" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="False" CanUserReorderColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="0.5" IsReadOnly="True" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}, Path=ActualWidth}">
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
+                    </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="#bb0593AE" />
+                            <Setter Property="BorderThickness" Value="0.5" />
+                            <Setter Property="BorderBrush" Value="White" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontSize" Value="15" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="#882793B6" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="IsHitTestVisible" Value="False"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="Height" Value="40"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+
+                
+                <UniformGrid Columns="3" x:Name="grid_vd" Grid.Row="1" Margin="0,3,0,3" Width="0" HorizontalAlignment="Left" >
+                    <CheckBox IsChecked="True" Content="Ürün Kodu" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Ürün Adı" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Depo Kodu" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}"  FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Depo Adı" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}"  FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Versiyon No" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Seri No" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Stok Giriş" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Stok Çıkış" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Bakiye" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                </UniformGrid> <!--Width="10" HorizontalAlignment="Left"-->
+
+                <ToggleButton x:Name="duzenle1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Height="30" BorderBrush="Transparent" Margin="3,0,0,0" Checked="duzenle1_Checked" Unchecked="duzenle1_Unchecked" >
+                    <ToggleButton.Background>
+                        <ImageBrush x:Name="duzenle1resim" ImageSource="\icons\duzenle.png" Stretch="Uniform"></ImageBrush>
+                    </ToggleButton.Background>
+                <ToggleButton.Resources>
+                    <Style TargetType="ToggleButton">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Resources>
+                    <ToggleButton.Triggers>
+                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Hide">
+                                    <DoubleAnimation    
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Show">
+                                    <DoubleAnimation
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ToggleButton.Triggers>
+                </ToggleButton>
+            </Grid>
+        </Border >
+
+        <Border Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="White" CornerRadius="15" Padding="5" Margin="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label HorizontalAlignment="Stretch" Grid.Row="0" Margin="5,0,5,0" Background="#9f156F90" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Foreground="White">Evrak Toplam Bilgileri</Label>
+
+                <Button x:Name="calculator_button" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="45" Height="40" Margin="0,-5,0,0" BorderBrush="Transparent"  Style="{StaticResource Dictionary3}" Click="calculator_button_Click">
+                    <Image x:Name="i1" Source="/icons/hesapmakinesibeyaz.png" Stretch="Uniform" />
+                </Button>
+
+                <TabControl x:Name="Calc" Grid.Row="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderThickness="0"></TabControl>
+
+                <ScrollViewer x:Name="sv" Grid.Row="1" Margin="0,5,0,5" Padding="5" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="75"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <!--<RowDefinition Height="*"></RowDefinition>-->
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Foreground="White" Grid.Column="0" FontSize="13" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" TextWrapping="Wrap">Ara Toplam:</TextBlock>
+                        <TextBox Grid.Column="1" IsEnabled="False" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,0" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="0" FontSize="12" Grid.Row="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Kalem İskonto Tutar:</TextBlock>
+                        <TextBox Grid.Column="1"  Margin="3,3,3,0"  Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="0" FontSize="14" Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Net Tutar:</TextBlock>
+                        <TextBox Grid.Column="1" IsEnabled="False" Margin="3,3,3,0"  Grid.Row="2" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="0"  Grid.Row="3" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="14" >KDV:</TextBlock>
+                        <TextBox Grid.Column="1" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock FontSize="14" Foreground="White" Grid.Column="2" Margin="5,0,0,0"  Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Markaya İskonto:</TextBlock>
+                        <TextBox Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="0" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="TextBox_KeyDown" PreviewTextInput="txtmiktar_PreviewTextInput">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="2" FontSize="14" Grid.Row="1" Margin="5,0,0,0"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel Toplam:</TextBlock>
+                        <TextBox Grid.Column="3" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="2" FontSize="11"  Grid.Row="2" Margin="5,0,0,0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel İskonto Tutar:</TextBlock>
+                        <TextBox Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <TextBlock Foreground="White" Grid.Column="2"  Grid.Row="3" FontSize="14" Margin="5,0,0,0"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel Net Tutar:</TextBlock>
+                        <TextBox HorizontalAlignment="Stretch" IsEnabled="False" VerticalAlignment="Stretch" Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                        <!--<Button Content="SİL" FontSize="18" FontWeight="Bold" FontFamily="Century Gothic" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.Row="6" Margin="3,10,3,0" Style="{StaticResource Dictionary5}">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="15"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <LinearGradientBrush >
+                                    <GradientStop Color="#FF24405A"  />
+                                    <GradientStop Color="#88298CA5" Offset="1.8" />
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>-->
+                        <!--<Button Content="DÜZENLE" FontSize="18" FontWeight="Bold" FontFamily="Century Gothic" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="2" Margin="3,10,3,0" Style="{StaticResource Dictionary5}">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="15"/>
+                                </Style>
+                            </Button.Resources>
+                            <Button.Background>
+                                <LinearGradientBrush >
+                                    <GradientStop Color="#FF24405A" Offset="1.2"  />
+                                    <GradientStop Color="#88298CA5" Offset="-1" />
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>-->
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border >
+
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="6" BorderThickness="1" BorderBrush="White" CornerRadius="15" Padding="5" Margin="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Margin="5,0,5,3" Background="#af156F90" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Foreground="White">Stok Bilgileri</Label>
+
+                <Button x:Name="stkYeni" Content="YENİ" FontSize="18" FontWeight="Bold" FontFamily="Century Gothic" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.Row="6" Margin="3,10,3,0" Style="{StaticResource Dictionary5}" Click="stkYeni_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Background>
+                        <LinearGradientBrush >
+                            <GradientStop Color="#FF24405A"  />
+                            <GradientStop Color="#88298CA5" Offset="1.8" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="StkDuzenle" Style="{StaticResource Dictionary5}" Content="DÜZENLE" FontSize="18" FontWeight="Bold" FontFamily="Century Gothic" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="2" Margin="3,10,3,0" Click="StkDuzenle_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Background>
+                        <LinearGradientBrush >
+                            <GradientStop Color="#FF24405A"  />
+                            <GradientStop Color="#88298CA5" Offset="1.8" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <ToggleButton x:Name="btnDuzenle" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Center" Width="40" Height="30" BorderBrush="Transparent" Margin="0,0,3,0" Unchecked="btnDuzenle_Unchecked" Checked="btnDuzenle_Checked" >
+                    <ToggleButton.Background>
+                        <ImageBrush x:Name="duzenle1resim1" ImageSource="\icons\duzenle.png" Stretch="Uniform"></ImageBrush>
+                    </ToggleButton.Background>
+                    <ToggleButton.Resources>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Name="border" 
+                        BorderThickness="1"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ToggleButton.Resources>
+                    <ToggleButton.Triggers>
+                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Hide3">
+                                    <DoubleAnimation    
+                                                Storyboard.TargetName="grid_duzenle"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Show3">
+                                    <DoubleAnimation
+                                                Storyboard.TargetName="grid_duzenle"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ToggleButton.Triggers>
+                </ToggleButton>
+
+
+                <!--<ScrollViewer x:Name="sv_stokyeni" Grid.Row="1" Grid.RowSpan="4" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" BorderThickness="0">
+                    --><!--<TextBlock Foreground="White" FontSize="16"  Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom">duzen</TextBlock>
+                        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20" Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" > </TextBox>--><!--
+                    <UniformGrid x:Name="eklencekyer" Columns="2" Grid.Row="0" Grid.RowSpan="5" Grid.ColumnSpan="3"></UniformGrid>
+                </ScrollViewer>-->
+
+                <ScrollViewer x:Name="sv_stok" Grid.Row="1" Grid.RowSpan="4" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
+                    <Grid>
+                        <UniformGrid x:Name="eklenecekyer" Columns="2" Grid.Row="0" Grid.RowSpan="5" Grid.ColumnSpan="3" Margin="0,3,3,3" MaxWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}, Path=ActualWidth}" ></UniformGrid>
+                    
+                    <UniformGrid Columns="2" x:Name="grid_stok">
+                        <!--<Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>-->
+
+                        <TextBlock Foreground="White" FontSize="18"  Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Stok Kodu:</TextBlock>
+                        <TextBox HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+
+                        <TextBlock Foreground="White" FontSize="18"  Grid.Row="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Stok Adı:</TextBlock>
+                        <TextBox HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+
+                        <TextBlock Foreground="White" FontSize="18"  Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Birim:</TextBlock>
+                        <TextBox HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+
+                        <TextBlock Foreground="White" FontSize="18"  Grid.Row="3" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Stok Kontrolü:</TextBlock>
+                        <Grid  HorizontalAlignment="Stretch" Grid.Row="3" VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="30"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBox HorizontalAlignment="Stretch" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Margin="0,0,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                            <!--<Button Grid.Column="1" Content="..." VerticalContentAlignment="Center" FontSize="15" Foreground="White" VerticalAlignment="Stretch"  Background="#cc4F7497" BorderThickness="0" Style="{StaticResource Dictionary5}">
+                                <Button.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>-->
+                        </Grid>
+
+                    </UniformGrid>
+                    </Grid>
+                </ScrollViewer>
+                <UniformGrid x:Name="grid_duzenle"  Grid.Row="1" Grid.RowSpan="4" Grid.ColumnSpan="3" Width="0" HorizontalAlignment="Right">
+                    <CheckBox IsChecked="True" Content="Stok Kodu" Foreground="White" IsEnabled="False" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Stok Adı" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Birim" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}"  FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="True" Content="Stok Kontrolü" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}"  FontFamily="Century Gothic" FontSize="16" ></CheckBox>
+                    <CheckBox IsChecked="False" Content="Marka Adı" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="False" Content="Grup Kodu" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                    <CheckBox IsChecked="False" Content="Satış Muhasebe Kodu" Foreground="White" VerticalAlignment="Center" Style="{StaticResource CheckboxStyle}" FontFamily="Century Gothic" FontSize="16"  ></CheckBox>
+                </UniformGrid>
+            </Grid>
+        </Border >
+
+        <Border Grid.Row="2" Grid.ColumnSpan="6" BorderThickness="1" BorderBrush="White" CornerRadius="20" Padding="5" Margin="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="75"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Foreground="White" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,3,3,3">Miktar:</TextBlock>
+                <TextBox x:Name="txtmiktar" Grid.Column="1" Margin="0,3,3,3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="35" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput" >
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <TextBlock Grid.Column="2" Foreground="White" FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,3,3,3">Stok Arama:</TextBlock>
+                <TextBox x:Name="txtBrkd" Grid.Column="3" Margin="0,3,3,3" CaretBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="35" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="txtBrkd_KeyDown" TextChanged="txtBrkd_TextChanged" >
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <Button x:Name="ara" Grid.Column="4" Width="50" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource Dictionary3}" Margin="3" Click="ara_Click">
+                    <Image Source="/icons/ara.png"  Width="45" Height="30"></Image>
+                </Button>
+
+                <Label HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="5"  Margin="10,5,10,5" Background="#9f156F90" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Foreground="White">Satış Hareketleri</Label>
+
+                <DataGrid x:Name="stok_dataGrid" SelectionMode="Single" Grid.Row="2" Grid.ColumnSpan="5" Margin="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="0.5"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="True" >
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
+                    </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="#66ADD8E6" />
+                            <Setter Property="BorderThickness" Value="0.5" />
+                            <Setter Property="BorderBrush" Value="White" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontSize" Value="20" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="#66ADD8E6" />
+                            <Setter Property="Foreground" Value="White" />
+                            <!--<Setter Property="IsHitTestVisible" Value="False"/>-->
+                            <Setter Property="FontSize" Value="16"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+
+                <Grid Grid.Row="3" Grid.ColumnSpan="5" Background="#9f156F90" Margin="10,3,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Column="0">
+                        <TextBlock FontSize="13" Foreground="White" VerticalAlignment="Bottom" Margin="0,0,5,0" >Miktar:</TextBlock>
+                        <TextBox FontSize="13" FontWeight="Bold" Background="Transparent" BorderBrush="Transparent" IsEnabled="False" Foreground="White" ></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                        <TextBlock FontSize="13"  Foreground="White" VerticalAlignment="Bottom" Margin="0,0,5,0" >İskonto:</TextBlock>
+                        <TextBox FontSize="13" Background="Transparent" BorderBrush="Transparent" IsEnabled="False" Foreground="#ffffffff" ></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="2">
+                        <TextBlock FontSize="13"  Foreground="White" VerticalAlignment="Bottom" Margin="0,0,5,0"   >Toplam Kapora:</TextBlock>
+                        <TextBox FontSize="13" Background="Transparent" BorderBrush="Transparent" IsEnabled="False" Foreground="#ffffffff" ></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Column="3" HorizontalAlignment="Right">
+                        <TextBlock FontSize="13"  Foreground="White" VerticalAlignment="Bottom" Margin="0,0,5,0"   >Toplam Tutar:</TextBlock>
+                        <TextBox FontSize="13" Background="Transparent" BorderBrush="Transparent" IsEnabled="False" HorizontalContentAlignment="Right" Foreground="#ffffffff" ></TextBox>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!--<Border Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="3" BorderThickness="0" Padding="3" Margin="5,5,3,3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" Grid.Column="0"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="1" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="1" Grid.Column="0"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="4" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="2" Grid.Column="0"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="7" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="3" Grid.Column="0"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="#" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="0" Grid.Column="1"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="2" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="1" Grid.Column="1"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="5" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="2" Grid.Column="1"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="8" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="3" Grid.Column="1"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="0" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="0" Grid.Column="2"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="3" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="1" Grid.Column="2"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="6" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="2" Grid.Column="2"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="9" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="3" Grid.Column="2"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="*" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="0" Grid.Column="3"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="←" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="1" Grid.Column="3"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="C" FontSize="40" Foreground="White"></Button>
+                <Button Grid.Row="2" Grid.Column="3"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="CE" FontSize="35" Foreground="White"></Button>
+                <Button Grid.Row="3" Grid.Column="3"  Style="{StaticResource Dictionary5}"  Margin="3" Background="#AA184774" Content="." FontSize="40" Foreground="White"></Button>
+
+            </Grid>
+        </Border>-->
+
+        
+
+        <Popup x:Name="Popup" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Grid Width="400" Height="300" Background="#FF5ccdff" >
+                <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                <ListBox  x:Name="lbMalad" TextSearch.TextPath="MALAD" IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False" MouseDoubleClick="lbMalad_MouseDoubleClick" KeyDown="lbMalad_KeyDown" >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True" >
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                                <!-- Background of selected item when focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightCyan"/>
+                                <!-- Background of selected item when not focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGray" />
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Popup>
+
+        <Popup x:Name="PopupUnvan" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Grid Width="400" Height="300" Background="#FF3493CD" >
+                <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                <ListBox  x:Name="lbUnvan" TextSearch.TextPath="UNVAN" IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False" MouseDoubleClick="lbUnvan_MouseDoubleClick" KeyDown="lbUnvan_KeyDown" >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True" >
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                                <!-- Background of selected item when focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightCyan"/>
+                                <!-- Background of selected item when not focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGray" />
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Popup>
+
+        <Popup x:Name="PopupCarKod" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Grid Width="400" Height="300" Background="#FF3493CD" >
+                <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                <ListBox  x:Name="lbCarKod" TextSearch.TextPath="UNVAN" IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False" >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True" >
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                                <!-- Background of selected item when focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightCyan"/>
+                                <!-- Background of selected item when not focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGray" />
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Popup>
+
+        <Popup x:Name="PopupVergiNo" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Grid Width="400" Height="300" Background="#FF3493CD" >
+                <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                <ListBox  x:Name="lbVergiNo" TextSearch.TextPath="UNVAN" IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True" >
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                                <!-- Background of selected item when focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightCyan"/>
+                                <!-- Background of selected item when not focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGray" />
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Popup>
+    </Grid>
+</Window>

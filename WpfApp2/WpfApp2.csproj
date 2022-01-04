@@ -1,0 +1,175 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="64x64.png" />
+    <None Remove="acıkswitch.png" />
+    <None Remove="aktar %282%29.png" />
+    <None Remove="ara.png" />
+    <None Remove="ara2.png" />
+    <None Remove="ayarlargorsel.png" />
+    <None Remove="back-arrow%402x.png" />
+    <None Remove="barcode beyaz.png" />
+    <None Remove="beyaz ok diger yon.png" />
+    <None Remove="beyaz ok.png" />
+    <None Remove="cari.png" />
+    <None Remove="cpm-logo-yazili-beyaz_c%402x.png" />
+    <None Remove="duzenle.png" />
+    <None Remove="e-arsiv-icon2.png" />
+    <None Remove="e-fatura-icon2.png" />
+    <None Remove="e-irsaliye-icon2.png" />
+    <None Remove="fatura.png" />
+    <None Remove="goz.png" />
+    <None Remove="hesapmakinesibeyaz.png" />
+    <None Remove="kapalıswitch.png" />
+    <None Remove="kasa.png" />
+    <None Remove="kaydet.png" />
+    <None Remove="kullanici cikar beyaz.png" />
+    <None Remove="kullanici.png" />
+    <None Remove="kullnicieklebeyaz.png" />
+    <None Remove="logout.png" />
+    <None Remove="MENU BEYAZ.png" />
+    <None Remove="output-onlinepngtools %282%29.png" />
+    <None Remove="output-onlinepngtools %283%29.png" />
+    <None Remove="output-onlinepngtools.png" />
+    <None Remove="pngegg %2810%29.png" />
+    <None Remove="pngegg %285%29.png" />
+    <None Remove="pngeggddd.png" />
+    <None Remove="rapor beyaz %281%29.png" />
+    <None Remove="sat.png" />
+    <None Remove="secili.png" />
+    <None Remove="secilidegil.png" />
+    <None Remove="sil.png" />
+    <None Remove="siparis.png" />
+    <None Remove="stok.png" />
+    <None Remove="yazdir.png" />
+    <None Remove="çarpı beyaz.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Core.System.Configuration.Install" Version="1.1.0" />
+    <PackageReference Include="DevExpress.Data" Version="21.2.4" />
+    <PackageReference Include="devexpress.win.design" Version="21.2.4" />
+    <PackageReference Include="DevExpress.Wpf.Core" Version="21.2.4" />
+    <PackageReference Include="DevExpress.Xpo" Version="21.2.4" />
+    <PackageReference Include="DevExpressMvvm" Version="21.1.5" />
+    <PackageReference Include="FluentWPF" Version="0.10.2" />
+    <PackageReference Include="IKVM" Version="8.1.5717" />
+    <PackageReference Include="MaterialDesignColors" Version="2.0.4" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
+    <PackageReference Include="MediaFoundation" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BespokeFusion">
+      <HintPath>..\..\..\..\Desktop\dlls\BespokeFusion.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.Desktop.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Data.Desktop.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Data.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v21.2.resources">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\de\DevExpress.Data.v21.2.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Mvvm.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Mvvm.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v21.2.Core">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Pdf.v21.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v21.2.Core.resources">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\de\DevExpress.Pdf.v21.2.Core.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v21.2.Drawing">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Pdf.v21.2.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v21.2.Core">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Printing.v21.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v21.2.Core.resources">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\de\DevExpress.Printing.v21.2.Core.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Core.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Xpf.Core.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Core.v21.2.resources">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\de\DevExpress.Xpf.Core.v21.2.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Grid.v21.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.2\Components\Bin\Framework\DevExpress.Xpf.Grid.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.LayoutControl.v21.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.2\Components\Bin\NetCore\DevExpress.Xpf.LayoutControl.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Xpf.PropertyGrid.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v21.2.resources">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\de\DevExpress.Xpf.PropertyGrid.v21.2.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Office2019Colorful.v21.2">
+      <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Xpf.Themes.Office2019Colorful.v21.2.dll</HintPath>
+    </Reference>
+    <Reference Include="IniDosyaIslemleri">
+      <HintPath>..\..\IniDosyaIslemleri\IniDosyaIslemleri\bin\Debug\net5.0\IniDosyaIslemleri.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\ayarlargorsel.png" />
+    <Resource Include="icons\e-arsiv-icon2.png" />
+    <Resource Include="icons\e-fatura-icon2.png" />
+    <Resource Include="icons\e-irsaliye-icon2.png" />
+    <Resource Include="icons\beyaz ok diger yon.png" />
+    <Resource Include="icons\beyaz ok.png" />
+    <Resource Include="icons\duzenle.png" />
+    <Resource Include="icons\64x64.png" />
+    <Resource Include="icons\acıkswitch.png" />
+    <Resource Include="icons\goz.png" />
+    <Resource Include="icons\hesapmakinesibeyaz.png" />
+    <Resource Include="icons\ara.png" />
+    <Resource Include="icons\ara2.png" />
+    <Resource Include="icons\barcode beyaz.png" />
+    <Resource Include="icons\fatura.png" />
+    <Resource Include="icons\cari.png" />
+    <Resource Include="icons\cpm-logo-yazili-beyaz_c%402x.png" />
+    <Resource Include="icons\aktar %282%29.png" />
+    <Resource Include="icons\back-arrow%402x.png" />
+    <Resource Include="icons\MENU BEYAZ.png" />
+    <Resource Include="icons\pngegg %2810%29.png" />
+    <Resource Include="icons\output-onlinepngtools %283%29.png" />
+    <Resource Include="icons\output-onlinepngtools.png" />
+    <Resource Include="icons\output-onlinepngtools %282%29.png" />
+    <Resource Include="icons\pngeggddd.png" />
+    <Resource Include="icons\kullanici.png" />
+    <Resource Include="icons\sat.png" />
+    <Resource Include="icons\kasa.png" />
+    <Resource Include="icons\kullanici cikar beyaz.png" />
+    <Resource Include="icons\siparis.png" />
+    <Resource Include="icons\logout.png" />
+    <Resource Include="icons\rapor beyaz %281%29.png" />
+    <Resource Include="icons\kullnicieklebeyaz.png" />
+    <Resource Include="icons\stok.png" />
+    <Resource Include="icons\çarpı beyaz.png" />
+    <Resource Include="icons\kaydet.png" />
+    <Resource Include="icons\kapalıswitch.png" />
+    <Resource Include="icons\yazdir.png" />
+    <Resource Include="icons\sil.png" />
+    <Resource Include="icons\secili.png" />
+    <Resource Include="icons\secilidegil.png" />
+    <Resource Include="icons\pngegg %285%29.png" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,146 @@
+﻿<UserControl x:Class="WpfApp2.Kasa"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfApp2"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="850" Loaded="UserControl_Loaded">
+    <Grid x:Name="grid1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <RadioButton x:Name="rbmanuel" Grid.Column="0" Grid.Row="1" Content="MANUEL" Foreground="White" VerticalAlignment="Bottom" FontFamily="Century Gothic" FontSize="20" Checked="rbmanuel_Checked" ToolTip="Şube adını klavye ile yazınız."  ></RadioButton>
+
+        <RadioButton x:Name="rbcpm" Grid.Column="1" Grid.Row="1"  Content="ŞUBE SEÇ" Foreground="White" VerticalAlignment="Bottom" FontFamily="Century Gothic" FontSize="20" Checked="rbcpm_Checked" ToolTip="CPM'den şube adlarını getirir." ></RadioButton>
+
+        <TextBlock Foreground="White" FontSize="20" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Kasa Kodu (Kasa No):</TextBlock>
+        <TextBox x:Name="tb1" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="1"  VerticalAlignment="Stretch"  Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="25"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="#FF3974AD" PreviewTextInput="tb1_PreviewTextInput" KeyDown="tb1_KeyDown" >
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <!--<ComboBox x:Name="cb1" Grid.Row="1" Visibility="Hidden" Grid.Column="1" HorizontalAlignment="Stretch" Margin="3,3,3,0" Foreground="White" FontSize="18" Style="{StaticResource Dictionary2}"  VerticalAlignment="Stretch"  >
+            
+        </ComboBox>-->
+
+
+
+        <TextBlock Foreground="White" FontSize="20" Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Kasa Tanımı:</TextBlock>
+        <TextBox x:Name="tb2"  HorizontalAlignment="Stretch" Grid.Row="2" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="1" Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="25"  Background="#FF3974AD" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  >
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <ComboBox x:Name="cb2" Grid.Row="2" Visibility="Hidden" Grid.Column="1"  HorizontalAlignment="Stretch" Margin="3,3,3,0" Foreground="White" FontSize="18" Style="{StaticResource Dictionary2}"  VerticalAlignment="Stretch" >
+
+        </ComboBox>
+
+        <TextBlock Foreground="White" FontSize="20" Grid.Row="3"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Kasa Hesap Kodu:</TextBlock>
+        <Grid HorizontalAlignment="Stretch" Grid.Row="3"  VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="tb3" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Grid.Column="0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="25"  Background="#FF3974AD" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            <ComboBox x:Name="cb3" Visibility="Hidden" HorizontalAlignment="Stretch"  Foreground="White" FontSize="18" Style="{StaticResource Dictionary2}"  VerticalAlignment="Stretch" SelectionChanged="cb3_SelectionChanged"  >
+
+            </ComboBox>
+            <Button x:Name="hesaptip" Content="..." HorizontalAlignment="Right" Width="40" FontSize="18" FontWeight="Bold" FontFamily="Century Gothic" Foreground="White" VerticalAlignment="Stretch" Grid.ColumnSpan="1" Grid.Row="3" Grid.Column="1" Margin="2,0,0,0" Style="{StaticResource Dictionary5}" Click="hesaptip_Click">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </Button.Resources>
+                <Button.Background>
+                    <LinearGradientBrush >
+                        <GradientStop Color="#FF24405A"  />
+                        <GradientStop Color="#88298CA5" Offset="1.8" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+        </Grid>
+        
+        <TextBlock Foreground="White" FontSize="20" Grid.Row="4"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Evrak Ön Takısı:</TextBlock>
+        <TextBox x:Name="tb4" HorizontalAlignment="Stretch" Grid.Row="4"  VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="25"  Background="#FF3974AD" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <!--<ComboBox x:Name="cb4" Grid.Row="4" Visibility="Hidden" Grid.Column="1" HorizontalAlignment="Stretch" Margin="3,3,3,0" Foreground="White" FontSize="18" Style="{StaticResource Dictionary2}"  VerticalAlignment="Stretch"  >
+
+        </ComboBox>-->
+
+        <TextBlock Foreground="White" FontSize="20" Grid.Row="5"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" ToolTip="Evrak ilk no">Evrak No:</TextBlock>
+        <TextBox x:Name="tb5" HorizontalAlignment="Stretch" Grid.Row="5"  VerticalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"  Margin="3,3,3,0" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#FF3974AD" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="tb5_PreviewTextInput"  >
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <!--<ComboBox x:Name="cb5" Grid.Row="5" Visibility="Hidden" Grid.Column="1" HorizontalAlignment="Stretch" Margin="3,3,3,0" Foreground="White" FontSize="18" Style="{StaticResource Dictionary2}"  VerticalAlignment="Stretch"  >
+
+        </ComboBox>-->
+
+        <TextBlock Foreground="White" FontSize="20" Grid.Row="6" Grid.RowSpan="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" ToolTip="Bu kasayı kullanacak kasiyerleri (kullanıcıları) seçiniz." >Kullanıcı Yetkilendirme</TextBlock>
+        <DataGrid x:Name="KUL_dataGrid"  Grid.Row="6" Grid.ColumnSpan="1" Grid.Column="1" Grid.RowSpan="3" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserReorderColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="0.5" >
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/> <!--#FF1B8BA0-->
+            </DataGrid.Resources>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#bb0593AE" />
+                    <Setter Property="BorderThickness" Value="0.5" />
+                    <Setter Property="BorderBrush" Value="White" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="15" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="#882793B6" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="14"/>
+                    <!--<Setter Property="Height" Value="40"/>-->
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+
+        <Button x:Name="tamamkasa" Grid.Row="9" Margin="2,10,0,0" Foreground="White" Grid.ColumnSpan="2" Content="KAYDET" FontFamily="CENTURY GOTHIC" FontSize="20" Background="#FF296CA5"  Style="{StaticResource Dictionary5}" Click="tamamkasa_Click" >
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="13"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+    </Grid>
+</UserControl>

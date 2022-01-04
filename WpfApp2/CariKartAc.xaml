@@ -1,0 +1,381 @@
+﻿<dx:ThemedWindow 
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+    xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"   
+    x:Class="WpfApp2.CariKartAc"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2;assembly=WpfApp2" 
+        mc:Ignorable="d"
+        Title="CariKartAc" Height="800" Width="1320" ActiveGlowColor="White">
+    
+    
+    <Grid Loaded="Grid_Loaded">
+        <Grid.Background>
+            <LinearGradientBrush >
+                <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                <GradientStop Color="#ff156F90" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.RowSpan="6" Grid.ColumnSpan="3">
+            <Grid.Background>
+                <ImageBrush ImageSource="\icons\pngegg (5).png" Stretch="Uniform" Opacity="0.2"/>
+            </Grid.Background>
+
+        </Grid>
+
+        <Button x:Name="Geri"  Margin="10,2,0,0" Background="Transparent" BorderThickness="0" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Dictionary3}" Click="Geri_Click">
+            <Image Source="icons\back-arrow@2x.png" ></Image>
+        </Button>
+
+        <Border Margin="10,10,10,10" Padding="5,5,3,5" BorderBrush="White" CornerRadius="15" BorderThickness="1" Grid.Row="1" Grid.RowSpan="4" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Stretch" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Margin="5" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Stretch" Background="#66156F90" HorizontalContentAlignment="Center" VerticalAlignment="Top" Grid.ColumnSpan="3">Cari Kart</Label>
+
+                <ToggleButton x:Name="duzenle1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Height="35" BorderBrush="Transparent" Margin="3,0,0,0" Checked="duzenle1_Checked" Unchecked="duzenle1_Unchecked" >
+                    <ToggleButton.Background>
+                        <ImageBrush x:Name="duzenle1resim" ImageSource="\icons\duzenle.png" Stretch="Uniform"></ImageBrush>
+                    </ToggleButton.Background>
+                    <ToggleButton.Resources>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ToggleButton.Resources>
+                    <ToggleButton.Triggers>
+                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Hide">
+                                    <DoubleAnimation    
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Show">
+                                    <DoubleAnimation
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ToggleButton.Triggers>
+                </ToggleButton>
+
+                <Grid x:Name="grid_vd" Grid.Row="1" Grid.ColumnSpan="3" Margin="10" Width="0" HorizontalAlignment="Left" Background="Transparent">
+                    
+                </Grid>
+                
+                <!--<dxlc:LayoutGroup Orientation="Vertical" Header="Layout Group"  Background="Transparent" Grid.Row="1" Grid.RowSpan="1" Margin="0,5,0,5"
+                Width="150" IsCollapsible="True"  View="Tabs">
+                    <dxlc:LayoutItem Label="Item 1">
+                        <TextBox   Text=""/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Item 2">
+                        <TextBox   Text=""/>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>-->
+
+                
+                <dxlc:LayoutGroup x:Name="layoutgroup1" Orientation="Vertical"  Background="Transparent" View="GroupBox" Grid.Row="1" Margin="5,5,5,5" ><!--Header="Kart Bilgileri"-->
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Kart Bilgileri</dxlc:TileGroupHeader>
+                        <dxlc:LayoutItem Label="Kayıt Durumu:" Foreground="White" FontSize="15">
+                        <StackPanel Width="250" HorizontalAlignment="Right">
+                            <TextBox   Text="1" Width="250" HorizontalAlignment="Right" x:Name="txt1" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            <ComboBox x:Name="cb1" Visibility="Hidden" BorderThickness="0" Foreground="White" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}">
+                            </ComboBox>
+                        </StackPanel>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Hesap Tipi:" Foreground="White" FontSize="15">
+                        <StackPanel Width="250" HorizontalAlignment="Right">
+                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt2" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" PreviewMouseLeftButtonDown="txt2_PreviewMouseLeftButtonDown" />
+                            <ComboBox x:Name="cb2" Visibility="Hidden" BorderThickness="0" Foreground="White" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" SelectionChanged="cb2_SelectionChanged">
+                            </ComboBox>
+                        </StackPanel>
+                       </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Hesap Kodu:" Foreground="White" FontSize="15" >
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt3" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Unvan:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt4" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Unvan2:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt5" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="İskonto Oranı:" Foreground="White" FontSize="15">
+                        <TextBox  MaxLength="2" Text="0" Width="250" HorizontalAlignment="Right" x:Name="txt6" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" PreviewTextInput="txt11_PreviewTextInput"/>
+                    </dxlc:LayoutItem>
+                    <!--<dxlc:LayoutItem Label="Versiyon Bilgisi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt8" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Program Bilgisi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt9" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        </dxlc:LayoutItem>-->
+                    <!--<dxlc:LayoutItem Label="Opsiyon Tipi:" Foreground="White" FontSize="15">
+                        <StackPanel Width="250" HorizontalAlignment="Right">
+                            <TextBox   Text="0" Width="250" HorizontalAlignment="Right" x:Name="txt10" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            <ComboBox x:Name="cb3" Visibility="Hidden" BorderThickness="0" Foreground="White" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}">
+                            </ComboBox>
+                        </StackPanel>
+                            </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Opsiyon:" Foreground="White" FontSize="15">
+                        <TextBox   Text="0" Width="250" HorizontalAlignment="Right" x:Name="txt11" FontWeight="Bold" MaxLength="4" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" PreviewTextInput="txt11_PreviewTextInput"/>
+                        </dxlc:LayoutItem>-->
+                    <dxlc:LayoutItem Label="Döviz Cinsi:" Foreground="White" FontSize="15">
+                        <StackPanel Width="250" HorizontalAlignment="Right">
+                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt12" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  PreviewMouseLeftButtonDown="txt12_PreviewMouseLeftButtonDown"/>
+                            <ComboBox x:Name="cb4" Visibility="Hidden" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" SelectionChanged="cb4_SelectionChanged" Foreground="White"  >
+                            </ComboBox>
+                        </StackPanel>
+                         </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="layoutgroup2" Orientation="Vertical" View="GroupBox" Background="Transparent" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5">
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Adres Bilgileri</dxlc:TileGroupHeader>
+                    <dxlc:LayoutItem Label="e-Fatura Durumu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt13" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-İrsaliye Durumu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt36" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-Arşiv Durumu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt37" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-Fatura Senaryo:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt14" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-Fatura PK Etiketi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt15" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-İrsaliye PK Etiketi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt35" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura Adresi 1:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt16" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura Adresi 2:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt17" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura Bina No:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt18" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura Bina Adı:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt19" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura Daire No:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt20" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura İli:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt22" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Fatura İlçesi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt23" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup x:Name="layoutgroup3" Orientation="Vertical"  View="GroupBox" Background="Transparent" Grid.Row="1" Grid.Column="2" Margin="5,5,5,5">
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Muhasebe Bilgileri</dxlc:TileGroupHeader>
+                    <dxlc:LayoutItem Label="Vergi Hesap No:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt24" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" KeyDown="txt24_KeyDown"  PreviewTextInput="txt11_PreviewTextInput"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="e-Posta 1:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt25" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Vergi Dairesi:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt26" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Kişilik:" Foreground="White" FontSize="15">
+                        <StackPanel  Width="250" HorizontalAlignment="Right" >
+                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt27" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            <ComboBox x:Name="cb5" Visibility="Hidden" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" SelectionChanged="cb4_SelectionChanged" Foreground="White"  >
+                            </ComboBox>
+                        </StackPanel>
+                        </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Ödeme IBAN:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt28" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Ödeme Gün:" Foreground="White" FontSize="15">
+                        <StackPanel  Width="250" HorizontalAlignment="Right" >
+                            <TextBox MaxLength="4" Text="" Width="250" HorizontalAlignment="Right" x:Name="txt29" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" PreviewTextInput="txt11_PreviewTextInput"/>
+                            <!--<ComboBox x:Name="cbdate"  Width="250" HorizontalAlignment="Right" Visibility="Hidden" BorderThickness="0" Foreground="White" VerticalAlignment="Bottom" StaysOpenOnEdit="True" Height="0" Style="{StaticResource Dictionary2}">
+                                <ComboBoxItem Visibility="Visible" >
+                                    <DatePicker x:Name="dp" BorderThickness="0" Background="Transparent" Opacity="0.7" SelectedDateChanged="selected_date_changed"></DatePicker>
+                                </ComboBoxItem>
+                            </ComboBox>-->
+                        </StackPanel>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Kredi Limiti:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt30" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <!--<dxlc:LayoutItem Label="Muhasebe Kodu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt31" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>-->
+                    <!--<dxlc:LayoutItem Label="Muhasebe Kodu 2:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt32" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>-->
+                    <dxlc:LayoutItem Label="Ödeme Banka Kodu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt33" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Gerçek Kişi Ad:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" IsEnabled="False" x:Name="txt34" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Gerçek Kişi Soyad:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" IsEnabled="False" x:Name="txt38" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+
+            </Grid>
+        </Border>
+
+        <Button x:Name="Kaydet" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource Dictionary5}" Click="Kaydet_Click" >
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="20"/>
+                </Style>
+            </Button.Resources>
+            <StackPanel Orientation="Horizontal">
+                <Image Width="55" Height="55" Margin="5,0,10,0" Source="icons/kaydet.png" ></Image>
+                <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="24" FontWeight="SemiBold" Margin="0,0,5,0" Text="Kaydet   "></TextBlock>
+            </StackPanel>
+        </Button>
+
+        <Grid x:Name="gridcarikartara" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Foreground="White" VerticalAlignment="Top" Margin="10,5,0,10" FontFamily="Malgun Gothic" FontSize="20" Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontWeight="Heavy" Background="#66156F90">Cari Kart Ara</Label>
+           <TextBlock Foreground="White" VerticalAlignment="Center" Margin="10,5,0,0" FontFamily="Book Antiqua" FontSize="24">Vergi No:</TextBlock>
+            <TextBox x:Name="txtcariara" Grid.Column="1" Margin="10,10,10,0" CaretBrush="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="60" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="30"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  >
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            <Button x:Name="ara" Grid.Column="2" Width="50" VerticalAlignment="Center" Background="Transparent" Style="{StaticResource Dictionary3}" Margin="3" >
+                <Image Source="/icons/ara.png"  Width="50" Height="45"></Image>
+            </Button>
+        </Grid>
+       
+
+    </Grid>
+
+    </dx:ThemedWindow>
+<!--xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"        
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxmvvmb="clr-namespace:DevExpress.Xpf.DXBinding;assembly=DevExpress.Mvvm.UI"
+        xmlns:local="clr-namespace:WpfApp2"-->
+
+
+
+
+
+<!--<FlowDocumentReader Grid.Row="1" UseLayoutRounding="True" SnapsToDevicePixels="True" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+    <FlowDocumentReader.Resources>
+        <Style TargetType="TableCell">
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+    </FlowDocumentReader.Resources>
+    <FlowDocument>
+
+    </FlowDocument>
+</FlowDocumentReader>-->
+
+
+
+<!--<ScrollViewer Name="c_dataGridScrollViewer"
+              Loaded="c_dataGridScrollViewer_Loaded"
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Auto">
+                <Grid>
+                    <Label Margin="5" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Stretch" Background="#66156F90" HorizontalContentAlignment="Center" VerticalAlignment="Top">Cari Kart</Label>
+                <DataGrid x:Name="c_dataGrid" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Background="Transparent" Foreground="Black" BorderBrush="White" BorderThickness="0.5" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=GroupBox}, Path=Height}" AutoGeneratedColumns="c_dataGrid_AutoGeneratedColumns"  Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=GroupBox}, Path=Width}" >
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="#33ADD8E6" />
+                            <Setter Property="BorderThickness" Value="0.5" />
+                            <Setter Property="BorderBrush" Value="Black" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="LayoutTransform">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90"/>
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="#66ADD8E6" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.LayoutTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="-90"/>
+                        </TransformGroup>
+                    </DataGrid.LayoutTransform>
+                </DataGrid>
+                </Grid>
+            </ScrollViewer>-->
