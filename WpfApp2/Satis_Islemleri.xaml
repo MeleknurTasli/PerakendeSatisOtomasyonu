@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="Satış İşlemleri" Height="800" Width="1150">
+        Title="Satış İşlemleri" Height="800" Width="1150" Closing="Window_Closing" >
     <Grid>
         <Grid.Background>
             <LinearGradientBrush >
@@ -496,7 +496,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Foreground="White" Grid.Column="0" FontSize="13" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Left" TextWrapping="Wrap">Ara Toplam:</TextBlock>
-                        <TextBox Grid.Column="1" IsEnabled="False" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,0" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                        <TextBox x:Name="txt_aratoplam" Grid.Column="1" IsEnabled="False" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,0" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -504,31 +504,31 @@
                             </TextBox.Resources>
                         </TextBox>
                         <TextBlock Foreground="White" Grid.Column="0" FontSize="12" Grid.Row="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Kalem İskonto Tutar:</TextBlock>
-                        <TextBox Grid.Column="1"  Margin="3,3,3,0"  Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput" >
+                        <TextBox x:Name="txt_kalemiskonto" Grid.Column="1" IsEnabled="False"  Margin="3,3,3,0"  Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
                                 </Style>
                             </TextBox.Resources>
                         </TextBox>
-                        <TextBlock Foreground="White" Grid.Column="0" FontSize="14" Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Net Tutar:</TextBlock>
-                        <TextBox Grid.Column="1" IsEnabled="False" Margin="3,3,3,0"  Grid.Row="2" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                        <TextBlock Foreground="White" Grid.Column="0" FontSize="14" Grid.Row="3" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Net Tutar:</TextBlock>
+                        <TextBox x:Name="txt_nettutar" Grid.Column="1" IsEnabled="False" Margin="3,3,3,0"  Grid.Row="3" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
                                 </Style>
                             </TextBox.Resources>
                         </TextBox>
-                        <TextBlock Foreground="White" Grid.Column="0"  Grid.Row="3" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="14" >KDV:</TextBlock>
-                        <TextBox Grid.Column="1" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                        <TextBlock Foreground="White" Grid.Column="2"  Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="14" >KDV:</TextBlock>
+                        <TextBox x:Name="txt_kdv"  Grid.Column="3" Grid.Row="0" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
                                 </Style>
                             </TextBox.Resources>
                         </TextBox>
-                        <TextBlock FontSize="14" Foreground="White" Grid.Column="2" Margin="5,0,0,0"  Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Markaya İskonto:</TextBlock>
-                        <TextBox Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="0" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="TextBox_KeyDown" PreviewTextInput="txtmiktar_PreviewTextInput">
+                        <TextBlock FontSize="14" Foreground="White" Grid.Column="0" Margin="5,0,0,0"  Grid.Row="2" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Markaya İskonto Tutar:</TextBlock>
+                        <TextBox x:Name="markaiskonto" Grid.Column="1"  Margin="3,3,3,0"  Grid.Row="2" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="markaiskonto_KeyDown" PreviewTextInput="txtmiktar_PreviewTextInput">
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -536,7 +536,7 @@
                             </TextBox.Resources>
                         </TextBox>
                         <TextBlock Foreground="White" Grid.Column="2" FontSize="14" Grid.Row="1" Margin="5,0,0,0"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel Toplam:</TextBlock>
-                        <TextBox Grid.Column="3" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                        <TextBox x:Name="txt_geneltoplam" Grid.Column="3" IsEnabled="False" Margin="3,3,3,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -544,7 +544,7 @@
                             </TextBox.Resources>
                         </TextBox>
                         <TextBlock Foreground="White" Grid.Column="2" FontSize="11"  Grid.Row="2" Margin="5,0,0,0" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel İskonto Tutar:</TextBlock>
-                        <TextBox Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="txtmiktar_PreviewTextInput">
+                        <TextBox x:Name="txt_geneliskontotutar" Grid.Column="3" Text="0"  Margin="3,3,3,0"  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  TextChanged="txt_geneliskontotutar_TextChanged" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -552,7 +552,7 @@
                             </TextBox.Resources>
                         </TextBox>
                         <TextBlock Foreground="White" Grid.Column="2"  Grid.Row="3" FontSize="14" Margin="5,0,0,0"  HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Bottom" >Genel Net Tutar:</TextBlock>
-                        <TextBox HorizontalAlignment="Stretch" IsEnabled="False" VerticalAlignment="Stretch" Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                        <TextBox x:Name="txt_genelnettutar" HorizontalAlignment="Stretch" IsEnabled="False" VerticalAlignment="Stretch" Grid.Column="3"  Margin="3,3,3,0"  Grid.Row="3" BorderThickness="0.5" BorderBrush="Transparent" FontSize="20"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -817,6 +817,13 @@
 
                 <Label HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="5"  Margin="10,5,10,5" Background="#9f156F90" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Foreground="White">Satış Hareketleri</Label>
 
+                <Button x:Name="refresh"  Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Height="35" Width="50" VerticalAlignment="Stretch" BorderBrush="Transparent" Style="{StaticResource Dictionary3}" Click="refresh_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/resfresh beyaz.png"> </ImageBrush>
+                    </Button.Background>
+                </Button>
+                
+                
                 <DataGrid x:Name="stok_dataGrid" SelectionMode="Single" Grid.Row="2" Grid.ColumnSpan="5" Margin="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="0.5"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="True" >
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
@@ -991,6 +998,33 @@
             <Grid Width="400" Height="300" Background="#FF3493CD" >
                 <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
                 <ListBox  x:Name="lbVergiNo" TextSearch.TextPath="UNVAN" IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True" >
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                                <!-- Background of selected item when focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightCyan"/>
+                                <!-- Background of selected item when not focussed -->
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGray" />
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Popup>
+
+        <Popup x:Name="PopupSatısHarMarkalar" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Grid Width="400" Height="300" Background="#FF3493CD" >
+                <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                <ListBox  x:Name="lbSatısHarMarkalar"  IsTextSearchEnabled="True" Background="#FF5ccdff" FontFamily="Arial" FontSize="13" IsSynchronizedWithCurrentItem="False" MouseDoubleClick="lbSatısHarMarkalar_MouseDoubleClick" KeyDown="lbSatısHarMarkalar_KeyDown" >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Style.Triggers>

@@ -256,6 +256,7 @@ namespace WpfApp2
         }
         private void lbMalad_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            txtBrkd.Clear();
             txtBrkd.Text = lbMalad.Items[lbMalad.SelectedIndex].ToString();
             Popup.IsOpen = false;
             lbMalad.Items.Clear();
@@ -484,48 +485,108 @@ namespace WpfApp2
             s.Open();
             sl = new SqlConnection(Carried.girisBaglantiLocal);
             sl.Open();
-            //c1 = new SqlCommand("delete", s);
             string s1 = new SqlCommand("select MALKOD FROM " + tabloadi + value, s).ExecuteScalar().ToString();
             string s2 = new SqlCommand("select MALAD FROM " + tabloadi + value, s).ExecuteScalar().ToString();
             string s3 = new SqlCommand("select BIRIM FROM " + tabloadi + value, s).ExecuteScalar().ToString();
             decimal s4 = (decimal)new SqlCommand("select SATISFIYAT1 FROM " + tabloadi + value, s).ExecuteScalar();
             Single s5 = (Single)new SqlCommand("select KDVORAN FROM " + tabloadi + value, s).ExecuteScalar();
             string s6 = new SqlCommand("select DOVIZCINS FROM " + tabloadi + value, s).ExecuteScalar().ToString();
+            string s7 = new SqlCommand("select MARKAAD FROM " + tabloadi + value, s).ExecuteScalar().ToString();
+            Single s8 = (Single)new SqlCommand("select ISKONTOORAN FROM " + tabloadi + value, s).ExecuteScalar();
             c1 = new SqlCommand(); 
-            c1.CommandText = @"INSERT INTO SATISHAR([MALKOD],[MALAD],[BIRIM],[SATISFIYAT1],[KDVORAN],[DOVIZCINS]) values(@MALKOD, @MALAD, @BIRIM,@SATISFIYAT1,@KDVORAN,@DOVIZCINS)";
+            c1.CommandText = @"INSERT INTO SATISHAR(SECIM, MIKTAR, ISKONTOTUTAR, TOPLAMTUTAR, [MALKOD],[MALAD],[BIRIM],[SATISFIYAT1],[KDVORAN], MARKAAD, [DOVIZCINS]) values(@SECIM, @MIKTAR, @ISKONTOTUTAR, @TOPLAMTUTAR, @MALKOD, @MALAD, @BIRIM,@SATISFIYAT1,@KDVORAN, @MARKAAD, @DOVIZCINS)";
             c1.Connection = sl;
+            c1.Parameters.AddWithValue("@SECIM", 1);
+            int mikt;
+            mikt = String.IsNullOrWhiteSpace(txtmiktar.Text) ?  1 :  Convert.ToInt32(txtmiktar.Text);
+            c1.Parameters.AddWithValue("@MIKTAR", mikt);
+            c1.Parameters.AddWithValue("@ISKONTOTUTAR", /* Convert.ToDecimal(mikt) * */ Convert.ToDecimal(s8)*s4/100);
+            c1.Parameters.AddWithValue("@TOPLAMTUTAR", (double)mikt * (double)(s4 - Convert.ToDecimal(s8) * s4 / 100));
             c1.Parameters.Add(new SqlParameter("@MALKOD", s1));
             c1.Parameters.Add(new SqlParameter("@MALAD", s2));
             c1.Parameters.Add(new SqlParameter("@BIRIM", s3));
             c1.Parameters.AddWithValue("@SATISFIYAT1", s4);
             c1.Parameters.AddWithValue("@KDVORAN", s5);
             c1.Parameters.Add(new SqlParameter("@DOVIZCINS", s6));
+            c1.Parameters.Add(new SqlParameter("@MARKAAD", s7));
             c1.ExecuteNonQuery();
             populate();
+            Hesap();
         }
         private void populate()
         {
-            //string constr = Carried.girisBaglantiLocal;
-            //s = new SqlConnection(constr);
-            //s.Open();
             DataTable table = new DataTable();
-            table.Columns.Add(new DataColumn("Seçim", typeof(bool)));
-            table.Columns.Add(new DataColumn("Miktar", typeof(string)));
-            table.Columns.Add(new DataColumn("İskonto Tutar", typeof(string)));
-            table.Columns.Add(new DataColumn("Toplam Tutar", typeof(string)));
-            SqlDataAdapter a = new SqlDataAdapter("select MALKOD as 'Malzeme Kodu', MALAD as 'Malzeme Tanımı', BIRIM as Birim, SATISFIYAT1 as 'Birim Fiyatı', KDVORAN as KDV, DOVIZCINS as 'Döviz Cins' FROM SATISHAR", sl);
+            //////////table.Columns.Add(new DataColumn("Seçim", typeof(bool)));
+            //table.Columns.Add(new DataColumn("Miktar", typeof(string)));
+            //table.Columns.Add(new DataColumn("İskonto Tutar", typeof(string)));
+            //table.Columns.Add(new DataColumn("Toplam Tutar", typeof(string)));
+            SqlDataAdapter a = new SqlDataAdapter("select SECIM as 'Seçim' , MIKTAR as 'Miktar', MALKOD as 'Malzeme Kodu', MALAD as 'Malzeme Tanımı', SATISFIYAT1 as 'Birim Fiyatı', ISKONTOTUTAR as 'İskonto Tutar', TOPLAMTUTAR as 'Toplam Tutar' , BIRIM as Birim, KDVORAN as KDV, MARKAAD as 'Marka Adı', DOVIZCINS as 'Döviz Cins' FROM SATISHAR", sl);
             a.Fill(table);
             this.stok_dataGrid.ItemsSource = table.DefaultView;
             int x = 0;
             foreach (DataGridColumn column in stok_dataGrid.Columns)
             {
-                if (x == 0) { column.DisplayIndex = 0; x++; column.IsReadOnly = false; }
-                else if (x == 1) { column.DisplayIndex = 2; x++; column.IsReadOnly = false; }
-                else if (x == 2) { column.DisplayIndex = 5; x++; column.IsReadOnly = false; }
-                else if (x == 3) { column.DisplayIndex = 7; x++; column.IsReadOnly = true; }
+                //////////if (x == 0) { column.DisplayIndex = 0; x++; column.IsReadOnly = false; }
+                //if (x == 0) { column.DisplayIndex = 1; x++; column.IsReadOnly = false; }
+                //else if (x == 1) { column.DisplayIndex = 4; x++; column.IsReadOnly = false; }
+                //else if (x == 2) { column.DisplayIndex = 6; x++; column.IsReadOnly = true; }
+                //else if (x == 3) { column.DisplayIndex = 0; x++; column.IsReadOnly = false; }
+                //else column.IsReadOnly = true;
+                if (x == 0 || x == 1 /*|| x == 5*/) { column.IsReadOnly = false; }
                 else column.IsReadOnly = true;
+                x++;
             }
+            txtmiktar.Clear();
         }
+        private void refresh_Click(object sender, RoutedEventArgs e)
+        {
+            string constr = Carried.girisBaglantiLocal;
+            s = new SqlConnection(constr);
+            s.Open();
+            c1 = new SqlCommand("delete from SATISHAR", s);
+            c1.ExecuteNonQuery();
+            populate();
+        }
+        private void Hesap()
+        {
+            decimal aratoplam = 0, nettutar = 0, kdv = 0, geneltoplam = 0, toplamkalemiskontotutar=0, genelnettutar = 0, toplamtoplamtutar=0;
+
+            for (int i = 0; i < stok_dataGrid.Items.Count; i++)
+            {
+               DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
+               if(rowView[0].ToString() == "True")
+               {
+                    aratoplam += Convert.ToDecimal(rowView[1])*Convert.ToDecimal(rowView[4]);//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan
+                    toplamkalemiskontotutar += Convert.ToDecimal(rowView[5]) * Convert.ToDecimal(rowView[1]);//hepsinin satış fiyatıyla iskonto oranları çarpımı toplamı
+                    kdv += (Convert.ToDecimal(rowView[8])/ Convert.ToDecimal(100)) * (Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[5]))); //her bir satırın kdv'si toplamı yani (kdv)*miktar*(satıs fiyatı-iskonto)
+                    rowView.BeginEdit();
+                    rowView[6] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[5])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                    rowView.EndEdit();
+                    stok_dataGrid.Items.Refresh();
+                    toplamtoplamtutar += Convert.ToDecimal(rowView[6]);
+                }
+            }
+            txt_aratoplam.Text = aratoplam.ToString();
+            txt_kalemiskonto.Text = toplamkalemiskontotutar.ToString();
+            nettutar = aratoplam - toplamkalemiskontotutar;
+            txt_nettutar.Text = nettutar.ToString();  //MessageBox.Show(toplamtoplamtutar.ToString());
+            txt_kdv.Text = kdv.ToString();
+            geneltoplam = nettutar + kdv;
+            txt_geneltoplam.Text = geneltoplam.ToString();
+        }
+        //private void txtmiktar_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    int mikt;
+        //    mikt = String.IsNullOrWhiteSpace(txtmiktar.Text) ? 1 : Convert.ToInt32(txtmiktar.Text);
+        //    if(stok_dataGrid.Items.Count != 0)
+        //    {
+        //        DataRowView rowView = (stok_dataGrid.Items[0] as DataRowView); //Get RowView
+        //        rowView.BeginEdit();
+        //        rowView[1] = mikt;
+        //        rowView.EndEdit();
+        //        stok_dataGrid.Items.Refresh();
+        //    }
+        //}
 
 
         private void stkYeni_Click(object sender, RoutedEventArgs e)
@@ -624,6 +685,7 @@ namespace WpfApp2
         }
 
 
+        #region ÜST KISIM
         private void txt1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -1202,8 +1264,9 @@ namespace WpfApp2
                 else Carried.showMessage(ex.Message);
             }
         }
+        #endregion
 
-
+        #region TOGGLEBUTTONLAR
         private void duzenle1_Checked(object sender, RoutedEventArgs e)
         {
             depo_dataGrid.Visibility = Visibility.Hidden;
@@ -1270,13 +1333,121 @@ namespace WpfApp2
             r3.Height = new GridLength(1, GridUnitType.Star);
             r4.Height = new GridLength(1, GridUnitType.Star);
         }
+        #endregion
 
-        
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+
+        private void markaiskonto_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
+                lbSatısHarMarkalar.Items.Clear();
+                if (!string.IsNullOrWhiteSpace(markaiskonto.Text))
+                {
+                    try
+                    {
+                        for (int i = 0; i < stok_dataGrid.Items.Count; i++)
+                        {
+                            DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
+                            if(!lbSatısHarMarkalar.Items.Contains(rowView[9].ToString()) && !String.IsNullOrWhiteSpace(rowView[9].ToString()))
+                                lbSatısHarMarkalar.Items.Add(rowView[9].ToString());
+                        }
+                        PopupSatısHarMarkalar.IsOpen = true;
+                    }
 
+                    catch (Exception ex)
+                    {
+                        Carried.showMessage(ex.Message);
+                    }
+                }
+            }
+        }
+        string markaadi;
+        private void lbSatısHarMarkalar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            markaadi = lbSatısHarMarkalar.Items[lbSatısHarMarkalar.SelectedIndex].ToString();
+            lbSatısHarMarkalar.Items.Clear();
+            PopupSatısHarMarkalar.IsOpen = false;
+            if (!String.IsNullOrWhiteSpace(markaiskonto.Text))
+            {
+                try
+                {
+                    for (int i = 0; i < stok_dataGrid.Items.Count; i++)
+                    {
+                        DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
+                        if (rowView[9].ToString() == markaadi)
+                        {
+                            rowView.BeginEdit();
+                            decimal d = Convert.ToDecimal(rowView[5]) + Convert.ToDecimal(markaiskonto.Text);//iskonto oranı+girilen
+                            rowView[5] = d;
+                            //d = Convert.ToDecimal(rowView[6]) - Convert.ToDecimal(markaiskonto.Text);
+                            //rowView[6] = d;
+                            rowView.EndEdit();
+                            stok_dataGrid.Items.Refresh();
+                        }
+                    }
+                    Hesap();
+                }
+                catch (Exception ex)
+                {
+                    Carried.showMessage(ex.Message);
+                }
+            }
+        }
+        private void lbSatısHarMarkalar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(Key.Enter == e.Key)
+            {
+                markaadi = lbSatısHarMarkalar.Items[lbSatısHarMarkalar.SelectedIndex].ToString();
+                lbSatısHarMarkalar.Items.Clear();
+                PopupSatısHarMarkalar.IsOpen = false;
+                if (!String.IsNullOrWhiteSpace(markaiskonto.Text))
+                {
+                    try
+                    {
+                        for (int i = 0; i < stok_dataGrid.Items.Count; i++)
+                        {
+                            DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
+                            if (rowView[9].ToString() == markaadi)
+                            {
+                                rowView.BeginEdit();
+                                decimal d = Convert.ToDecimal(rowView[5]) + Convert.ToDecimal(markaiskonto.Text);//iskonto oranı+girilen
+                                rowView[5] = d;
+                                //d = Convert.ToDecimal(rowView[6]) - Convert.ToDecimal(markaiskonto.Text);
+                                //rowView[6] = d;
+                                rowView.EndEdit();
+                                stok_dataGrid.Items.Refresh();
+                            }
+                        }
+                        Hesap();
+                    }
+                    catch (Exception ex)
+                    {
+                        Carried.showMessage(ex.Message);
+                    }
+                }
+            }
+        }
+        private void txt_geneliskontotutar_TextChanged(object sender, TextChangedEventArgs e)//ya da enter basınca olsun burası??
+        {
+            if (!String.IsNullOrWhiteSpace(txt_geneliskontotutar.Text) && !String.IsNullOrWhiteSpace(txt_geneltoplam.Text))
+            {
+                if (txt_geneliskontotutar.Text.StartsWith("%"))
+                {
+                    string stringNumber = txt_geneliskontotutar.Text.Remove(0, 1);
+                    int numericValue;
+                    bool isNumber = int.TryParse(stringNumber, out numericValue); 
+                    if (isNumber == true) //%den sonrası int ise
+                    {
+                        txt_genelnettutar.Text = (Convert.ToDecimal(txt_geneltoplam.Text) - Convert.ToDecimal(stringNumber)).ToString();
+                    }
+                }
+                else
+                {
+                    int numericValue;
+                    bool isNumber = int.TryParse(txt_geneliskontotutar.Text, out numericValue);
+                    if (isNumber == true)
+                        txt_genelnettutar.Text = (Convert.ToDecimal(txt_geneltoplam.Text) - Convert.ToDecimal(txt_geneliskontotutar.Text)).ToString();
+                }
             }
         }
 
@@ -1300,8 +1471,14 @@ namespace WpfApp2
         }
 
 
-
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string constr = Carried.girisBaglantiLocal;
+            s = new SqlConnection(constr);
+            s.Open();
+            c1 = new SqlCommand("delete from SATISHAR", s);
+            c1.ExecuteNonQuery();
+        }
         private void txtmiktar_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -1355,7 +1532,6 @@ namespace WpfApp2
             //style.Triggers.Add(IsMouseOverTrigger);
             return template;
         }
-
         #region 3D
         // The camera.
         private PerspectiveCamera TheCamera = null;

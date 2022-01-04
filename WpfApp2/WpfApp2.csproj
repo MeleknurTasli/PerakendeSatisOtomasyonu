@@ -41,6 +41,7 @@
     <None Remove="pngegg %285%29.png" />
     <None Remove="pngeggddd.png" />
     <None Remove="rapor beyaz %281%29.png" />
+    <None Remove="resfresh beyaz.png" />
     <None Remove="sat.png" />
     <None Remove="secili.png" />
     <None Remove="secilidegil.png" />
@@ -170,6 +171,7 @@
     <Resource Include="icons\secili.png" />
     <Resource Include="icons\secilidegil.png" />
     <Resource Include="icons\pngegg %285%29.png" />
+    <Resource Include="resfresh beyaz.png" />
   </ItemGroup>
 
 </Project>
