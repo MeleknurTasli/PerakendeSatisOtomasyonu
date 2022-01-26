@@ -265,11 +265,11 @@ namespace WpfApp2
         }
 
         public static void CreateSMRTAPPDEPO()
-        {
+        { 
             SqlCommand commandSourceData = new SqlCommand("DELETE FROM SMRTAPPDEPO", destinationConnection);
             commandSourceData.ExecuteNonQuery();
 
-            commandSourceData = new SqlCommand("select VW_STKDRM.MALKOD, STKKRT.MALAD, VW_STKDRM.VERSIYONNO, SERINO, VW_STKDRM.DEPOKOD, DEPKRT.DEPOAD, STOKGIRIS, STOKCIKIS, STOKGIRIS-STOKCIKIS AS BAKIYE FROM VW_STKDRM inner join stkkrt on stkkrt.malkod=VW_STKDRM.malkod inner join DEPKRT on VW_STKDRM.DEPOKOD = DEPKRT.DEPOKOD order by MALKOD", sourceConnection);
+            commandSourceData = new SqlCommand("select VW_STKDRM.MALKOD, STKKRT.MALAD, STKKRT.BARKOD1, VW_STKDRM.VERSIYONNO, SERINO, VW_STKDRM.DEPOKOD, DEPKRT.DEPOAD, STOKGIRIS, STOKCIKIS, STOKGIRIS-STOKCIKIS AS BAKIYE FROM VW_STKDRM inner join stkkrt on stkkrt.malkod=VW_STKDRM.malkod inner join DEPKRT on VW_STKDRM.DEPOKOD = DEPKRT.DEPOKOD order by MALKOD", sourceConnection);
             SqlDataReader reader = commandSourceData.ExecuteReader();
 
             SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection);
@@ -392,6 +392,49 @@ namespace WpfApp2
                 reader.Close();
             }
         }
+
+        public static void CreateSRKKRT()
+        {
+            SqlCommand commandSourceData = new SqlCommand("DELETE FROM SRKKRT", destinationConnection);
+            commandSourceData.ExecuteNonQuery();
+
+            commandSourceData = new SqlCommand("select * FROM SRKKRT", sourceConnection);
+            SqlDataReader reader = commandSourceData.ExecuteReader();
+
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection);
+            bulkCopy.DestinationTableName = "SRKKRT";
+            try
+            {
+                bulkCopy.WriteToServer(reader);
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Message.Contains("Received an invalid column length from the bcp client for colid"))
+                {
+                    string pattern = @"\d+";
+                    Match match = Regex.Match(ex.Message.ToString(), pattern);
+                    var index = Convert.ToInt32(match.Value) - 1;
+
+                    FieldInfo fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var sortedColumns = fi.GetValue(bulkCopy);
+                    var items = (Object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sortedColumns);
+
+                    FieldInfo itemdata = items[index].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var metadata = itemdata.GetValue(items[index]);
+
+                    var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                    var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                    var v = new DataFormatException(String.Format("Column: {0} contains data with a length greater than: {1}", column, length));
+                    Carried.showMessage(v.toString());
+                }
+                //    throw;
+            }
+            finally
+            {
+                reader.Close();
+            }
+        }
+
 
         //public static void CreateSMRTAPPSHAR()
         //{

@@ -66,7 +66,7 @@ namespace WpfApp2
                 GrantAccess(System.AppDomain.CurrentDomain.BaseDirectory + "\\Baglanti.ini");
             }
         }
-        private static void GrantAccess(string fullPath)
+        public static void GrantAccess(string fullPath)
         {
             DirectoryInfo dInfo = new DirectoryInfo(fullPath);
             DirectorySecurity dSecurity = dInfo.GetAccessControl();
@@ -96,6 +96,7 @@ namespace WpfApp2
                 BtnOk = { Visibility = Visibility.Hidden }
             };
             msg.Show();
+            //i1.Source = new BitmapImage(new Uri(@"/icons/hesapmakinesibeyaz.png", UriKind.Relative));
         }
 
         public static bool CheckForInternetConnection()
@@ -112,6 +113,23 @@ namespace WpfApp2
             }
         }
 
+        //private const string urlPattern = "http://rate-exchange-1.appspot.com/currency?from={0}&to={0}";
+        private const string urlPattern = "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/{0}/{1}.json";
+        //usd, try gibi küçük harflerle yazılmalı
+        public static decimal CurrencyConversion(decimal amount, string fromCurrency, string toCurrency)
+        {
+            string url = string.Format(urlPattern, fromCurrency, toCurrency);
+
+            using (var wc = new WebClient())
+            {
+                var json = wc.DownloadString(url);
+
+                Newtonsoft.Json.Linq.JToken token = Newtonsoft.Json.Linq.JObject.Parse(json);
+                decimal exchangeRate = (decimal)token.SelectToken(toCurrency);
+
+                return (amount * exchangeRate)/*.ToString()*/;
+            }
+        }
     }
 
 

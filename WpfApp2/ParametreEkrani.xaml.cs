@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,6 +45,7 @@ namespace WpfApp2
         }
         private void Kaydet_Click(object sender, RoutedEventArgs e)
         {
+            int[] newArr = new int[3];
             if (string.IsNullOrWhiteSpace(txt1.Text) &&
             string.IsNullOrWhiteSpace(txt2.Text) &&
             string.IsNullOrWhiteSpace(txt3.Text) &&
@@ -83,6 +86,88 @@ namespace WpfApp2
             e.Handled = regex.IsMatch(e.Text);
         }
 
-        
+
+
+        //public static List<string> columnnames;
+        //public static List<List<string>> rowstr;
+        //private void Diger_Click(object sender, RoutedEventArgs e)
+        //{
+        //    grid2.Visibility = Visibility.Visible;
+        //}
+
+        //private void Kaydet_diger_Click(object sender, RoutedEventArgs e)
+        //{
+
+        //}
+
+        //private void Geri1_diger_Click(object sender, RoutedEventArgs e)
+        //{
+        //    grid2.Visibility = Visibility.Hidden;
+        //}
+
+
+        private void fatduz_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\DXApplication3.exe");
+        }
+
+        //private void earsivduz_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\DXApplication3.exe");
+        //}
+
+        private void fatura_Checked(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt"))
+            {
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", String.Empty);
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "EFATURA");
+            }
+            else
+            {
+                File.Create(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt").Dispose();
+                Carried.GrantAccess(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt");
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "EFATURA");
+            }
+        }
+        private void earsiv_Checked(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt"))
+            {
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", String.Empty);
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "EARSIV");
+            }
+            else
+            {
+                File.Create(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt").Dispose();
+                Carried.GrantAccess(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt");
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "EARSIV");
+            }
+        }
+        private void fis_Checked(object sender, RoutedEventArgs e)
+        {
+
+            if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt"))
+            {
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", String.Empty);
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "FIS");
+            }
+            else
+            {
+                File.Create(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt").Dispose();
+                Carried.GrantAccess(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt");
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "FIS");
+            }
+        }
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt"))
+            {
+                string t1 = File.ReadAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt");
+                if (t1 == "EFATURA") fatura.IsChecked = true; 
+                else if (t1 == "EARSIV") earsiv.IsChecked = true;
+                else if (t1 == "FIS") fis.IsChecked = true;
+            }
+        }
     }
 }

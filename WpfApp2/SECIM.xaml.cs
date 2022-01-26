@@ -47,11 +47,11 @@ namespace WpfApp2
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            Satıs_Islemleri w = new Satıs_Islemleri();
+            Secim_Satis w = new Secim_Satis();
             w.Show();
             this.Close();
-            //w.Width = this.ActualWidth;
-            //w.Height = this.ActualHeight;
+            w.Width = this.ActualWidth;
+            w.Height = this.ActualHeight;
             w.WindowState = this.WindowState;
             w.VerticalAlignment = this.VerticalAlignment;
             w.HorizontalAlignment = this.HorizontalAlignment;

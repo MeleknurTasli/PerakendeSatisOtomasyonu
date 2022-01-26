@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
-    <Grid>
+    <Grid x:Name="MainGrid" Loaded="MainGrid_Loaded">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1">
                 <GradientStop Color="Black"/>

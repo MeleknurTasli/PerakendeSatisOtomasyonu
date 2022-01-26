@@ -31,7 +31,8 @@ namespace WpfApp2
         string ilAdi, ilceAdi, mahalleSemt, koy, caddeSokak, disKapiNo, icKapiNo, beldeBucak, ad, soyad;
         SqlConnection s, sl;
         SqlCommand c;
-        public CariKartAc()
+        string path;
+        public CariKartAc(string path)
         {
             InitializeComponent();
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
@@ -39,6 +40,7 @@ namespace WpfApp2
             s = new SqlConnection(Carried.girisBaglantiCPM);
             sl = new SqlConnection(Carried.girisBaglantiLocal);
             txt24.IsEnabled = true;
+            this.path = path;
         }
         public CariKartAc(string vkn, string hesapno)
         {
@@ -62,7 +64,19 @@ namespace WpfApp2
                 if (vkn.Length == 10) txt27.Text = "2";
                 else if (vkn.Length == 11)  txt27.Text = "1";
                 efaBilgileriGetir(vkn);
-                await GetVKNinfo();
+                if(Carried.CheckForInternetConnection()==true) await GetVKNinfo();
+                else
+                {
+                    txt34.IsEnabled = true;
+                    txt38.IsEnabled = true;
+                    txt4.IsEnabled = true;
+                    txt22.IsEnabled = true;
+                    txt23.IsEnabled = true;
+                    txt18.IsEnabled = true;
+                    txt20.IsEnabled = true;
+                    txt16.IsEnabled = true;
+                    txt26.IsEnabled = true;
+                }
             }
         }
         private async Task GetVKNinfo()
@@ -178,8 +192,10 @@ namespace WpfApp2
         {
             txt15.IsEnabled = false;
             txt35.IsEnabled = false;
-            s.Open();
-            int etip = (int) new SqlCommand("select COUNT(ETIKETTIP) from efakul WHERE VERGIHESAPNO='"+vkn+"'", s).ExecuteScalar();
+            SqlConnection s1 = Carried.IsCPMconnected == true && Carried.CheckForInternetConnection() == true ?  s : sl;
+            s1.Open();
+            tabloadi = Carried.IsCPMconnected == true && Carried.CheckForInternetConnection() == true ? "efakul" : "SMRTAPPETIKET";
+            int etip = (int) new SqlCommand("select COUNT(ETIKETTIP) from "+tabloadi+" WHERE VERGIHESAPNO='"+vkn+"'", s1).ExecuteScalar();
             if (etip == 0) 
             { 
                 txt13.Text = "0"; txt36.Text = "0"; txt37.Text = "1"; 
@@ -188,14 +204,14 @@ namespace WpfApp2
             else if (etip == 1) 
             {
                 txt13.Text = "1"; txt36.Text = "0"; txt37.Text = "0";
-                object etiket = new SqlCommand("select ETIKET from efakul WHERE ETIKETTIP=0 AND VERGIHESAPNO='" + vkn + "'", s).ExecuteScalar();
+                object etiket = new SqlCommand("select ETIKET from  " + tabloadi + "  WHERE ETIKETTIP=0 AND VERGIHESAPNO='" + vkn + "'", s1).ExecuteScalar();
                 if(etiket != null) txt15.Text = etiket.ToString();
             }
             else if (etip == 2) 
             { 
                 txt13.Text = "1"; txt36.Text = "1"; txt37.Text = "0";
-                object etiket1 = new SqlCommand("select ETIKET from efakul WHERE ETIKETTIP=0 AND VERGIHESAPNO='" + vkn + "'", s).ExecuteScalar();
-                object etiket2 = new SqlCommand("select ETIKET from efakul WHERE ETIKETTIP=1 AND VERGIHESAPNO='" + vkn + "'", s).ExecuteScalar();
+                object etiket1 = new SqlCommand("select ETIKET from  " + tabloadi + "  WHERE ETIKETTIP=0 AND VERGIHESAPNO='" + vkn + "'", s1).ExecuteScalar();
+                object etiket2 = new SqlCommand("select ETIKET from  " + tabloadi + "  WHERE ETIKETTIP=1 AND VERGIHESAPNO='" + vkn + "'", s1).ExecuteScalar();
                 if (etiket1 != null) txt15.Text = etiket1.ToString();
                 else txt15.IsEnabled = true;
                 if (etiket2 != null) txt35.Text = etiket2.ToString();
@@ -206,7 +222,9 @@ namespace WpfApp2
 
         private void Geri_Click(object sender, RoutedEventArgs e)
         {
-            Satıs_Islemleri w = new Satıs_Islemleri();
+            Window w;
+            if (!String.IsNullOrEmpty(path)) w = new Secim();
+            else w = new Satıs_Islemleri("SATIS");
             w.Show();
             this.Close();
             //w.Width = this.ActualWidth;
@@ -232,7 +250,8 @@ namespace WpfApp2
 
                 //string komut = @"if not exists (select * from SMRTAPPBAS where EVRAKNO = '" + s2 + "') begin insert into SMRTAPPBAS (ID, EVRAKNO, HESAPTIP, HESAPKOD, UNVAN, EFATURADURUM, EARSIVDURUM, PKETIKET, DOVIZCINS, EVRAKDOVIZCINS, EVRAKTARIH, ACIKLAMA, KARSIHESAPKOD, MIKTAR, EVRAKDURUM, KAYITDURUM) values(@ID, @EVRAKNO, @HESAPTIP, @HESAPKOD, @UNVAN, @EFATURADURUM, @EARSIVDURUM, @PKETIKET, @DOVIZCINS, @EVRAKDOVIZCINS, @EVRAKTARIH, @ACIKLAMA, @KARSIHESAPKOD, @MIKTAR, @EVRAKDURUM, @KAYITDURUM) end "; /**/   //KARSIUNVAN, REFNO yok
                 //commandDestinationData.Parameters.Add(new SqlParameter("EVRAKNO", s2));
-                List<string> list = new List<string>() { "CARKRT", "SMRTAPPCKRT" };
+                List<string> list = new List<string>() { "SMRTAPPCKRT" };
+                if (Carried.IsCPMconnected == true && Carried.CheckForInternetConnection() == true) list.Add("CARKRT");
                 try
                 {
                     foreach (string tabload in list)
@@ -247,7 +266,7 @@ namespace WpfApp2
                             "DEGISTIRENSURUM,EMAIL1,EMAIL2,EMAIL3,EMAIL4,EMAIL5) " +
                             " VALUES(@SIRKETNO,@HESAPKOD,@KAYITTUR,@KAYITDURUM,@KARTTIP,@HESAPTIP,@UNVAN,@KISITIP,@ULKEKOD,@VERGIDAIRE,@VERGIHESAPNO,@KISIUNVAN,@KISIAD,@KISISOYAD,@KISIUYRUK,@KISIPASAPORTTARIH,@FATURAUNVAN,@FATURAADRES1,@FATURAADRES2,@FATURAADRES4,@FATURAADRES5,@FATURAADRESBINANO,@FATURAADRESBINAAD,@FATURAADRESDAIRENO,@YETKILI1,@YETKILI2,@YETKILI3,@TELEFON1,@TELEFON2,@OPSIYONTIP,@OPSIYON,@ODEMEGUN,@ISKONTOORAN,@DOVIZBANKA,@DOVIZTIP,@DOVIZCINS,@BKOD1,@BKOD2,@BKOD3,@BKOD4,@BKOD5,@BKOD6,@BKOD7,@BKOD8,@BKOD9,@NKOD1,@NKOD2,@NKOD3,@NKOD4,@NKOD5,@NKOD6,@NKOD7,@NKOD8,@NKOD9,@TARIH1,@TARIH2,@TARIH3,@TARIH4,@TARIH5,@ACIKLAMA3,@ACIKLAMA4,@ACIKLAMA5,@MUHASEBEKOD1,@ACIKHESAPLIMIT,@DOVIZACIKHESAPLIMIT,@KREDILIMIT,@DOVIZKREDILIMIT,@BORCLUKREDILIMIT,@MUTABAKATTARIH,@MUTABAKATBAKIYE,@DOVIZMUTABAKATBAKIYE,@VADEFARKMUTABAKATTARIH,@KONTROLEVRAKTIP,@FIRMATIP,@TAKVIMOZEL,@BLOKE,@BABSTIP,@EFATURADURUM,@EFATURASENARYO,@EFATURAPKETIKET,@EFATURAYUKLEMETIP,@EARSIVKAGITNUSHA,@EIRSALIYEDURUM,@EIRSALIYEPKETIKET,@GIRENKULLANICI,@GIRENTARIH,@GIRENSAAT,@GIRENKAYNAK,@GIRENSURUM,@DEGISTIRENKULLANICI,@DEGISTIRENTARIH,@DEGISTIRENSAAT,@DEGISTIRENKAYNAK,@DEGISTIRENSURUM,@EMAIL1,@EMAIL2,@EMAIL3,@EMAIL4,@EMAIL5) ";
                         c = new SqlCommand(); c.CommandText = komut;
-                        if (tabload == "CARKRT") c.Connection = s;
+                        if (tabload == "CARKRT") { c.Connection = s; s.Open(); }
                         else if (tabload == "SMRTAPPCKRT") { c.Connection = sl; sl.Open(); }
                         #region PARAMETRELER
                         c.Parameters.Add(new SqlParameter("SIRKETNO", new String('0', (3 - Carried.sirketNo.ToString().Length)) + Carried.sirketNo.ToString()));
@@ -411,7 +430,7 @@ namespace WpfApp2
             {
                 if (cb4.SelectedItem.ToString().Contains("TL")) txt12.Text = "TL";
                 if (cb4.SelectedItem.ToString().Contains("USD")) txt12.Text = "USD";
-                if (cb4.SelectedItem.ToString().Contains("EURO")) txt12.Text = "EURO";
+                if (cb4.SelectedItem.ToString().Contains("EURO")) txt12.Text = "EUR";
             }
             cb4.IsDropDownOpen = false;
         }

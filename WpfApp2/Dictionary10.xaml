@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ImageBrush x:Key="kapali" ImageSource="\icons\expanddownbeyaz .png" Stretch="Uniform"/>
+    <ImageBrush x:Key="acik" ImageSource="\icons\expandupbeyaz .png" Stretch="Uniform"/>
+    <!-- This style is used for buttons, to remove the WPF default 'animated' mouse over effect -->
+    <Style x:Key="Dictionary10" TargetType="ToggleButton">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <!--<Setter Property="Margin" Value="{TemplateBinding Margin}"/>-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background"
+                                        TargetName="border"
+                                        Value="{StaticResource kapali}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="Background"
+                                        TargetName="border"
+                                        Value="{StaticResource acik}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

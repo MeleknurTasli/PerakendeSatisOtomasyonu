@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="ParametreEkrani" Height="550" Width="900" >
-    <Grid>
+        Title="ParametreEkrani" Height="550" Width="1100" >
+    <Grid Loaded="Grid_Loaded" >
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1">
                 <GradientStop Color="Black"/>
@@ -58,7 +58,7 @@
                 </Style>
             </Button.Resources>
         </Button>
-        <Button  Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Content="KASA" Background="#cc156F97" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
+        <Button  Grid.Column="3" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="1" Content="KASA" Background="#cc156F97" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
@@ -72,20 +72,40 @@
                 </Style>
             </Button.Resources>
         </Button>
-        <Button  Grid.Column="4" Grid.Row="2" Grid.ColumnSpan="1" Content="SİPARİŞ" Background="#cc2A6580" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
+        <Button  Grid.Column="3" Grid.Row="2" Grid.ColumnSpan="1" Content="SİPARİŞ" Background="#cc2A6580" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Button  Grid.Column="5" Grid.Row="2" Grid.ColumnSpan="1" Content="DİĞER" Background="#cc3995BD" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
-            <Button.Resources>
-                <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="20"/>
-                </Style>
-            </Button.Resources>
-        </Button>
+        <Grid Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Button x:Name="fatduz" Grid.RowSpan="2"  Content="Belge Dizayn" Background="#cc3995BD" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic" Click="fatduz_Click" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <!--<Button x:Name="earsivduz"   Grid.Row="1"  Content="E-Arşiv Fatura Düzenle" Background="#cc3995BD" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic" Click="earsivduz_Click">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+            </Button>-->
+            <UniformGrid Columns="3" Grid.Row="2"  Background="#443995BD"  Margin="5"  >
+                <RadioButton x:Name="fatura" Margin="10,10,10,10" FontSize="15" Content="FATURA" Foreground="White"  Checked="fatura_Checked"></RadioButton>
+                <RadioButton x:Name="earsiv" Margin="10,10,10,10" FontSize="15" Content="E-ARŞİV" Foreground="White"  Checked="earsiv_Checked"></RadioButton>
+                <RadioButton x:Name="fis" Margin="10,10,10,10" FontSize="15" Content="FİŞ" Foreground="White"  Checked="fis_Checked"></RadioButton>
+            </UniformGrid>
+        </Grid>
+        
 
         <Grid x:Name="grid1" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Visibility="Hidden">
             <Grid.Background>
@@ -94,7 +114,7 @@
                     <GradientStop Color="#FF24566F" Offset="1"/>
                 </LinearGradientBrush>
             </Grid.Background>
-        <GroupBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Padding="10" Margin="0,-13,5,5">
+              <GroupBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Padding="10" Margin="0,-13,5,5">
                 <GroupBox.Header>
                     <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Evrak Tipleri</TextBlock>
                 </GroupBox.Header>
@@ -196,6 +216,52 @@
                         </Button.Resources>
                     </Button>
                     <Button x:Name="Geri1" Margin="5,15,5,5" Grid.Column="1" Grid.Row="6" Content="GERİ" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f"  Style="{StaticResource Dictionary5}" Click="Geri1_Click" >
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <Grid x:Name="grid2" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Visibility="Hidden">
+            <Grid.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="#FF000010"/>
+                    <GradientStop Color="#FF24566F" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <GroupBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Padding="10" Margin="0,-13,5,5">
+                <GroupBox.Header>
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Evrak Tipleri</TextBlock>
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    
+
+                        <Button x:Name="Kaydet_diger" Margin="5,15,5,5" Grid.Row="6" Content="KAYDET" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f" Grid.Column="0" Style="{StaticResource Dictionary5}"  >
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="Geri1_diger" Margin="5,15,5,5" Grid.Column="1" Grid.Row="6" Content="GERİ" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f"  Style="{StaticResource Dictionary5}"  >
                         <Button.Resources>
                             <Style TargetType="{x:Type Border}">
                                 <Setter Property="CornerRadius" Value="10"/>

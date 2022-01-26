@@ -51,7 +51,7 @@ namespace WpfApp2
             {
                 s = new SqlConnection(Carried.girisBaglantiCPM);
                 s.Open();
-                c = new SqlCommand("select SUBEAD FROM SRKSUB WHERE SIRKETNO = '" + sirketno.ToString() + "'");
+                c = new SqlCommand("select SUBEAD FROM SRKSUB WHERE SIRKETNO = '" + new String('0', (3 - Carried.sirketNo.ToString().Length)) + "'");
                 SqlDataReader reader1 = c.ExecuteReader();
                 ArrayList arrlist = new ArrayList();
                 while (reader1.Read())
@@ -194,33 +194,39 @@ namespace WpfApp2
 
         private void hesaptip_Click(object sender, RoutedEventArgs e)
         {
-            cb3.Items.Clear();
-            try
-            {
-                string tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
-                string constr = Carried.IsCPMconnected == true ? Carried.girisBaglantiCPM : Carried.girisBaglantiLocal;
-                using (s = new SqlConnection(constr))
+            //if (cb3.IsDropDownOpen == false)
+            //{
+                cb3.ItemsSource = null;
+                try
                 {
-                    s.Open();
-                    SqlDataAdapter ProjectTableTableAdapter = new SqlDataAdapter("SELECT HESAPKOD FROM " + tabloadi + " where HESAPTIP=4" , s);
-                    DataSet ds = new DataSet();
-                    ProjectTableTableAdapter.Fill(ds);
+                    string tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
+                    string constr = Carried.IsCPMconnected == true ? Carried.girisBaglantiCPM : Carried.girisBaglantiLocal;
+                    using (s = new SqlConnection(constr))
+                    {
+                        s.Open();
+                        SqlDataAdapter ProjectTableTableAdapter = new SqlDataAdapter("SELECT HESAPKOD FROM " + tabloadi + " where HESAPTIP=4", s);
+                        DataSet ds = new DataSet();
+                        ProjectTableTableAdapter.Fill(ds);
 
-                    cb3.DisplayMemberPath = "HESAPKOD";
-                    cb3.SelectedValuePath = "HESAPKOD";
-                    cb3.ItemsSource = ds.Tables[0].DefaultView;
-                    cb3.IsDropDownOpen = true;
+                        cb3.DisplayMemberPath = "HESAPKOD";
+                        cb3.SelectedValuePath = "HESAPKOD";
+                        cb3.ItemsSource = ds.Tables[0].DefaultView;
+                        cb3.IsDropDownOpen = true;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Carried.showMessage(ex.ToString());
-            }
+                catch (Exception ex)
+                {
+                    Carried.showMessage(ex.ToString());
+                }
+            //}
         }
 
         private void cb3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            tb3.Text = cb3.SelectedItem.ToString();
+            if (cb3.SelectedItem != null)
+            {
+                tb3.Text = cb3.SelectedValue.ToString();
+            }
         }
 
         private void kasaBilgileriGetir()

@@ -4,6 +4,15 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ReferencePath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win32_x86\dotnet\</ReferencePath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +32,12 @@
     <None Remove="e-arsiv-icon2.png" />
     <None Remove="e-fatura-icon2.png" />
     <None Remove="e-irsaliye-icon2.png" />
+    <None Remove="expanddownbeyaz .png" />
+    <None Remove="expandupbeyaz .png" />
     <None Remove="fatura.png" />
     <None Remove="goz.png" />
     <None Remove="hesapmakinesibeyaz.png" />
+    <None Remove="iade beyaz.png" />
     <None Remove="kapalıswitch.png" />
     <None Remove="kasa.png" />
     <None Remove="kaydet.png" />
@@ -37,14 +49,19 @@
     <None Remove="output-onlinepngtools %282%29.png" />
     <None Remove="output-onlinepngtools %283%29.png" />
     <None Remove="output-onlinepngtools.png" />
+    <None Remove="persatis.png" />
     <None Remove="pngegg %2810%29.png" />
+    <None Remove="pngegg %2819%29.png" />
     <None Remove="pngegg %285%29.png" />
     <None Remove="pngeggddd.png" />
     <None Remove="rapor beyaz %281%29.png" />
     <None Remove="resfresh beyaz.png" />
+    <None Remove="robot.png" />
     <None Remove="sat.png" />
+    <None Remove="sc-modal-img-info.png" />
     <None Remove="secili.png" />
     <None Remove="secilidegil.png" />
+    <None Remove="selectall.png" />
     <None Remove="sil.png" />
     <None Remove="siparis.png" />
     <None Remove="stok.png" />
@@ -53,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspose.Words" Version="22.1.0" />
     <PackageReference Include="Core.System.Configuration.Install" Version="1.1.0" />
     <PackageReference Include="DevExpress.Data" Version="21.2.4" />
     <PackageReference Include="devexpress.win.design" Version="21.2.4" />
@@ -74,6 +92,9 @@
   <ItemGroup>
     <Reference Include="BespokeFusion">
       <HintPath>..\..\..\..\Desktop\dlls\BespokeFusion.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Shared.resources">
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\CrystalDecisions.Shared.resources\v4.0_13.0.4000.0_sk_692fbea5521e1304\CrystalDecisions.Shared.resources.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Data.Desktop.v21.2">
       <HintPath>..\..\DXApplication1\DXApplication1\bin\Debug\DevExpress.Data.Desktop.v21.2.dll</HintPath>
@@ -129,6 +150,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="icons\expandupbeyaz .png" />
+    <Resource Include="icons\expanddownbeyaz .png" />
+    <Resource Include="icons\iade beyaz.png" />
     <Resource Include="icons\ayarlargorsel.png" />
     <Resource Include="icons\e-arsiv-icon2.png" />
     <Resource Include="icons\e-fatura-icon2.png" />
@@ -171,7 +195,16 @@
     <Resource Include="icons\secili.png" />
     <Resource Include="icons\secilidegil.png" />
     <Resource Include="icons\pngegg %285%29.png" />
-    <Resource Include="resfresh beyaz.png" />
+    <Resource Include="icons\resfresh beyaz.png" />
+    <Resource Include="icons\persatis.png" />
+    <Resource Include="icons\sc-modal-img-info.png" />
+    <Resource Include="icons\selectall.png" />
+    <Resource Include="icons\pngegg %2819%29.png" />
+    <Resource Include="icons\robot.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{c0c07587-41a7-46c8-8fbd-3f9c8ebe2ddc}" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,70 @@
+﻿<Window x:Class="WpfApp2.Odeme.nakit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2.Odeme"
+        mc:Ignorable="d"
+        Title="NAKİT ÖDEME" Height="400" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    
+    <Grid >
+        <Grid.Background>
+            <LinearGradientBrush >
+                <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                <GradientStop Color="#ff156F90" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="tbtoplamtutar" Text="Toplam Tutar:" Foreground="White" FontSize="30" TextWrapping="Wrap" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,0" />
+        <TextBlock x:Name="tbodenen" Text="Ödenen:" Foreground="White" FontSize="30" TextWrapping="Wrap" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,0"  />
+        <TextBlock x:Name="tbparaustu" Text="Para Üstü:" Foreground="White" FontSize="30" TextWrapping="Wrap" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,0"  />
+
+        <TextBox x:Name="txttoplamtutar" Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="20,0" Grid.Row="0" IsEnabled="False"  BorderBrush="Transparent" FontSize="20"  Background="#AA427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="txtodenen" Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="20,0" Grid.Row="1"  BorderBrush="Transparent" FontSize="20"  Background="#AA427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TextChanged="txtodenen_TextChanged" PreviewTextInput="txtodenen_PreviewTextInput">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="txtparaustu" Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="20,0" Grid.Row="2" IsEnabled="False"  BorderBrush="Transparent" FontSize="20"  Background="#AA427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <Button x:Name="btnode" Margin="10" Height="50"  Grid.Column="0" Grid.Row="3"  Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Style="{StaticResource Dictionary5}" Click="odeme_Click"   >
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="15"/>
+                </Style>
+            </Button.Resources>
+            <Button.Background>
+                <LinearGradientBrush >
+                    <GradientStop Color="#cc24405A"  />
+                    <GradientStop Color="#88298CA5" Offset="1.8" />
+                </LinearGradientBrush>
+            </Button.Background>
+            <StackPanel Orientation="Horizontal">
+                <Image Width="40" Height="40" Margin="5,0,10,0" Source="\icons\sat.png"  ></Image>
+                <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="25" FontWeight="SemiBold">TAHSİLATI TAMAMLA</TextBlock>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

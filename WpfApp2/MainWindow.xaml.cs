@@ -130,7 +130,8 @@ namespace WpfApp2
                 }
                 catch 
                 { 
-                    Carried.showMessage("Yapmadıysanız CPM bağlantısını yapıp, ardından şirket seçin."); return; 
+                    Carried.showMessage("Yapmadıysanız CPM bağlantısını yapıp, ardından şirket seçin."); 
+                    return; 
                 }
             }
 
@@ -1222,7 +1223,9 @@ namespace WpfApp2
                         TablolariGetir.CreateSMRTAPPDEPO();
                         progressBar.Value += 20;
                         TablolariGetir.CreateSMRTAPPETIKET();
-                        progressBar.Value += 20;
+                        progressBar.Value += 10;
+                        TablolariGetir.CreateSRKKRT();
+                        progressBar.Value += 10;
 
                         if (progressBar.Value >= 121)
                         {
@@ -1283,6 +1286,54 @@ namespace WpfApp2
         private void kapatkasa_Click(object sender, RoutedEventArgs e)
         {
             kasaPopup.IsOpen = false;
+        }
+
+
+
+
+        public static decimal FromTryToEur = 0, FromTryToUsd = 0, FromUsdToTry = 0, FromEurToTry = 0, FromEurToUsd = 0, FromUsdToEur = 0;
+        private void MainGrid_Loaded(object sender, RoutedEventArgs e)//internetten döviz kurlarını alıp, localdeki tabloya yazıyor
+        {
+            try
+            {
+                FromTryToEur = Carried.CurrencyConversion(1, "try", "eur");
+                FromTryToUsd = Carried.CurrencyConversion(1, "try", "usd");
+                FromUsdToTry = Carried.CurrencyConversion(1, "usd", "try");
+                FromEurToTry = Carried.CurrencyConversion(1, "eur", "try");
+                FromEurToUsd = Carried.CurrencyConversion(1, "eur", "usd");
+                FromUsdToEur = Carried.CurrencyConversion(1, "usd", "eur");
+                Carried.DosyaDecrypt();
+                string con = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("LocalConnection", "Baglanti.ini");
+                Carried.DosyaEncrypt();
+                if (!String.IsNullOrWhiteSpace(con))
+                {
+                    SqlConnection s = new SqlConnection(con);
+                    s.Open();
+                    SqlCommand c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('TRY', 'EUR', " + FromTryToEur.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                    c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('TRY', 'USD', " + FromTryToUsd.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                    c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('USD', 'TRY', " + FromUsdToTry.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                    c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('EUR', 'TRY', " + FromEurToTry.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                    c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('EUR', 'USD', " + FromEurToUsd.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                    c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('USD', 'EUR', " + FromUsdToEur.ToString().Replace(",", ".") + ", @tarih)", s);
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                bool netcon = Carried.CheckForInternetConnection();
+                if (netcon == false) { Carried.showMessage("İnternet bağlantısı olmadığı için son döviz kurları alınamadı."); }
+            }
         }
 
 
