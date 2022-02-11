@@ -23,9 +23,10 @@ using System.Data;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Media.Animation;
-using BespokeFusion;
+//using BespokeFusion;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using Gat.Controls;
 
 namespace WpfApp2
 {
@@ -66,20 +67,40 @@ namespace WpfApp2
 
         private void showMessage(string mesaj)
         {
-            CustomMaterialMessageBox msg = new CustomMaterialMessageBox
-            {
-                TxtMessage = { Text = mesaj,
-                            TextAlignment=TextAlignment.Center,
-                            VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
-                            Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
-                TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
-                MainContentControl = { Background = Brushes.Turquoise },
-                TitleBackgroundPanel = { Background = Brushes.Blue },
-                BorderBrush = Brushes.Blue,
-                BtnCancel = { Content = "TAMAM" },
-                BtnOk = { Visibility = Visibility.Hidden }
-            };
-            msg.Show();
+            //CustomMaterialMessageBox msg = new CustomMaterialMessageBox
+            //{
+            //    TxtMessage = { Text = mesaj,
+            //                TextAlignment=TextAlignment.Center,
+            //                VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
+            //                Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
+            //    TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
+            //    MainContentControl = { Background = Brushes.Turquoise },
+            //    TitleBackgroundPanel = { Background = Brushes.Blue },
+            //    BorderBrush = Brushes.Blue,
+            //    BtnCancel = { Content = "TAMAM" },
+            //    BtnOk = { Visibility = Visibility.Hidden }
+            //};
+            //msg.Show();
+            Gat.Controls.MessageBoxView messageBox = new Gat.Controls.MessageBoxView();
+            Gat.Controls.MessageBoxViewModel vm = (Gat.Controls.MessageBoxViewModel)messageBox.FindResource("ViewModel");
+
+            vm.Message = mesaj;
+            vm.Ok = "Right";
+            vm.Cancel = "TAMAM";
+            vm.Yes = "Top";
+            vm.No = "Bottom";
+            vm.OkVisibility = false;
+            vm.CancelVisibility = true;
+            vm.YesVisibility = false;
+            vm.NoVisibility = false;
+            vm.Image = new BitmapImage(new System.Uri(@"/icons/sc-modal-img-info.png", UriKind.Relative)); 
+            vm.Caption = "UYARI";
+
+            // Center functionality
+            vm.Position = MessageBoxPosition.CenterOwner;
+            vm.Owner = this;
+
+            vm.Show();
         }
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -92,9 +113,81 @@ namespace WpfApp2
         {
             if (e.Key == Key.Enter)
             {
-                ButtonAutomationPeer peer = new ButtonAutomationPeer(Giris);
-                IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                invokeProv.Invoke();
+                //ButtonAutomationPeer peer = new ButtonAutomationPeer(Giris);
+                //IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                Carried.DosyaDecrypt();
+                girisBaglantiCPM = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("CPMconnection", "Baglanti.ini");
+                girisBaglantiLocal = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("LocalConnection", "Baglanti.ini");
+                companiesInformation = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("CompaniesInformation", "Baglanti.ini"); //listeye at ve listeyi carriedle.
+                transferCode = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("Transfer", "Baglanti.ini");
+                sirketNo = Convert.ToInt32(IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("SirketNo", "Baglanti.ini"));
+                kasaNo = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("KasaNo", "Baglanti.ini");
+                Carried.DosyaEncrypt();
+
+                //girisBaglantiCPM = Properties.Settings.Default["CPMBaglantiStr"].ToString();
+                //girisBaglantiLocal = Properties.Settings.Default["LocalBaglantiStr"].ToString();
+
+                IsCPMconnected = cpmdb.IsChecked == true ? true : false;
+                bool netcon = Carried.CheckForInternetConnection();
+                if (netcon == false && IsCPMconnected == true)
+                {
+                    Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi.");
+                    IsCPMconnected = false;
+                }
+
+                if (IsCPMconnected == true)
+                {
+                    try
+                    {
+                        SqlConnection s1 = new SqlConnection(girisBaglantiCPM);
+                        s1.Open();
+                    }
+                    catch
+                    {
+                        Carried.showMessage("Yapmadıysanız CPM bağlantısını yapıp, ardından şirket seçin.");
+                        return;
+                    }
+                }
+
+                //try
+                //{
+                //    SqlConnection s2 = new SqlConnection(girisBaglantiLocal);
+                //    s2.Open();
+                //}
+                //catch { showMessage("Yapmadıysanız CPM bağlantısını yapıp, ardından şirket seçin. Eğer yaptıysanız hatalı yapmışsınız. Yeniden yapınız."); return; }
+
+                try
+                {
+                    SqlConnection s = new SqlConnection(girisBaglantiLocal);
+                    s.Open();
+                    SqlCommand command = new SqlCommand("SELECT SIFRE FROM SMRTAPPKUL WHERE KULLANICIADI='" + kullaniciAdi.Text + "'", s);
+                    object sifreobj = command.ExecuteScalar();
+                    if (sifreobj != null)
+                    {
+                        string sifreStr = sifreobj.ToString();
+                        if (sifreStr == sifre.Password)
+                        {
+                            command = new SqlCommand("SELECT ADMIN FROM SMRTAPPKUL WHERE KULLANICIADI='" + kullaniciAdi.Text + "' AND SIFRE='" + sifre.Password + "'", s);
+                            IsAdmin = (bool)command.ExecuteScalar();
+                            SqlDataReader reader1 = new SqlCommand("select KULLANICIADI FROM SMRTAPPKASAKULLANICI WHERE KASANO='" + kasaNo + "'", s).ExecuteReader();
+                            ArrayList kulad = new ArrayList();
+                            try
+                            {
+                                while (reader1.Read())
+                                {
+                                    kulad.Add(reader1["KULLANICIADI"].ToString());
+                                }
+                                reader1.Close();
+                            }
+                            catch (Exception ex) { Carried.showMessage(ex.Message); }
+                            if (kulad.Contains(kullaniciAdi.Text)) girisYonlendir();
+                            else Carried.showMessage("Kasa mevcut değil ya da kullanıcı kasa uyuşmazlığı var.");
+                        }
+                        else showMessage("Şifre yanlış girilmiştir.");
+                    }
+                    else showMessage("Bu kullanıcı adında bir kullanıcı yok.");
+                }
+                catch { showMessage("Önce bağlantıları yapınız."); }
             }
         }
 
@@ -155,8 +248,18 @@ namespace WpfApp2
                     {
                         command = new SqlCommand("SELECT ADMIN FROM SMRTAPPKUL WHERE KULLANICIADI='" + kullaniciAdi.Text + "' AND SIFRE='" + sifre.Password + "'", s);
                         IsAdmin = (bool)command.ExecuteScalar();
-                        object o = new SqlCommand("select KULLANICIADI FROM SMRTAPPKASAKULLANICI WHERE KASANO='" + kasaNo + "'", s).ExecuteScalar();
-                        if (o != null && kullaniciAdi.Text == o.ToString()) girisYonlendir();
+                        SqlDataReader reader1 = new SqlCommand("select KULLANICIADI FROM SMRTAPPKASAKULLANICI WHERE KASANO='" + kasaNo + "'", s).ExecuteReader();
+                        ArrayList kulad = new ArrayList();
+                        try
+                        {
+                            while (reader1.Read())
+                            {
+                                kulad.Add(reader1["KULLANICIADI"].ToString());
+                            }
+                            reader1.Close();
+                        }
+                        catch(Exception ex) { Carried.showMessage(ex.Message); }
+                        if (kulad.Contains(kullaniciAdi.Text)) girisYonlendir();
                         else Carried.showMessage("Kasa mevcut değil ya da kullanıcı kasa uyuşmazlığı var.");
                     }
                     else showMessage("Şifre yanlış girilmiştir.");
@@ -340,20 +443,21 @@ namespace WpfApp2
                 }
                 catch
                 {
-                    CustomMaterialMessageBox msg = new CustomMaterialMessageBox
-                    {
-                        TxtMessage = { Text = "Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.",
-                            TextAlignment=TextAlignment.Center,
-                            VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
-                            Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
-                        TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
-                        MainContentControl = { Background = Brushes.Turquoise },
-                        TitleBackgroundPanel = { Background = Brushes.Blue },
-                        BorderBrush = Brushes.Blue,
-                        BtnCancel = { Content = "TAMAM" },
-                        BtnOk = { Visibility = Visibility.Hidden }
-                    };
-                    msg.Show();
+                    Carried.showMessage("Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.");
+                    //CustomMaterialMessageBox msg = new CustomMaterialMessageBox
+                    //{
+                    //    TxtMessage = { Text = "Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.",
+                    //        TextAlignment=TextAlignment.Center,
+                    //        VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
+                    //        Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
+                    //    TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
+                    //    MainContentControl = { Background = Brushes.Turquoise },
+                    //    TitleBackgroundPanel = { Background = Brushes.Blue },
+                    //    BorderBrush = Brushes.Blue,
+                    //    BtnCancel = { Content = "TAMAM" },
+                    //    BtnOk = { Visibility = Visibility.Hidden }
+                    //};
+                    //msg.Show();
                 }
             }
         }
@@ -519,20 +623,21 @@ namespace WpfApp2
                     }
                     catch
                     {
-                        CustomMaterialMessageBox msg = new CustomMaterialMessageBox
-                        {
-                            TxtMessage = { Text = "Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.",
-                            TextAlignment=TextAlignment.Center,
-                            VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
-                            Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
-                            TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
-                            MainContentControl = { Background = Brushes.Turquoise },
-                            TitleBackgroundPanel = { Background = Brushes.Blue },
-                            BorderBrush = Brushes.Blue,
-                            BtnCancel = { Content = "TAMAM" },
-                            BtnOk = { Visibility = Visibility.Hidden }
-                        };
-                        msg.Show();
+                        Carried.showMessage("Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.");
+                        //CustomMaterialMessageBox msg = new CustomMaterialMessageBox
+                        //{
+                        //    TxtMessage = { Text = "Bağlantı sağlanamadı. Yanlış veriler giriyor olabilirsiniz.",
+                        //    TextAlignment=TextAlignment.Center,
+                        //    VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
+                        //    Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
+                        //    TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
+                        //    MainContentControl = { Background = Brushes.Turquoise },
+                        //    TitleBackgroundPanel = { Background = Brushes.Blue },
+                        //    BorderBrush = Brushes.Blue,
+                        //    BtnCancel = { Content = "TAMAM" },
+                        //    BtnOk = { Visibility = Visibility.Hidden }
+                        //};
+                        //msg.Show();
                     }
                 }
             }
@@ -889,7 +994,7 @@ namespace WpfApp2
                             {
                                 if (!string.IsNullOrWhiteSpace(liste[0]))
                                 {
-                                    c1 = new SqlCommand("IF EXISTS (SELECT * FROM SMRTappkul WHERE KULLANICIADI = '" + liste[1] + "') BEGIN DELETE FROM SMRTAPPKUL WHERE KULLANICIADI='" + liste[1] + "' END INSERT INTO SMRTAPPKUL VALUES('" + liste[1] + "','" + liste[0] + "',0) ", s); //password,kullanıcıadı
+                                    c1 = new SqlCommand("IF EXISTS (SELECT * FROM SMRTappkul WHERE KULLANICIADI = '" + liste[1] + "') BEGIN DELETE FROM SMRTAPPKUL WHERE KULLANICIADI='" + liste[1] + "' END INSERT INTO SMRTAPPKUL(KULLANICIADI, SIFRE, ADMIN) VALUES('" + liste[1] + "','" + liste[0] + "',0) ", s); //password,kullanıcıadı
                                     c1.ExecuteNonQuery();
                                 }
                                 else
@@ -992,6 +1097,8 @@ namespace WpfApp2
                 {
                     sdadminPopup.IsOpen = false;
                     sifreDegistirPopup.IsOpen = true;
+                    adminSifre.Clear();
+                    adminKullaniciAdi.Clear();
                 }
                 else showMessage("Admin bilgileri yanlış.");
             }
@@ -1003,6 +1110,8 @@ namespace WpfApp2
         private void adminkapat_Click(object sender, RoutedEventArgs e)
         {
             adminPopup.IsOpen = false;
+            adminKullaniciAdi2.Clear();
+            adminSifre2.Clear();
         }
         private void adminileri_Click(object sender, RoutedEventArgs e)
         {
@@ -1028,6 +1137,8 @@ namespace WpfApp2
                         {
                             adminPopup.IsOpen = false;
                             kasaPopup.IsOpen = true;
+                            adminKullaniciAdi2.Clear();
+                            adminSifre2.Clear();
                             Kasa kasa = new Kasa();
                             TabItem tabUserPage = new TabItem { Content = kasa };
                             tabKasa.Items.Add(tabUserPage);
@@ -1056,6 +1167,8 @@ namespace WpfApp2
                         if (stradminSifre == adminSifre2.Password && stradminKullaniciAdi == adminKullaniciAdi2.Text)
                         {
                             adminPopup.IsOpen = false;
+                            adminKullaniciAdi2.Clear();
+                            adminSifre2.Clear();
                             ParametreEkrani p = new ParametreEkrani();
                             p.Width = this.ActualWidth;
                             p.Height = this.ActualHeight;
@@ -1088,6 +1201,8 @@ namespace WpfApp2
                         {
                             adminPopup.IsOpen = false;
                             cpmPopup.IsOpen = true;
+                            adminKullaniciAdi2.Clear();
+                            adminSifre2.Clear();
                         }
                         else showMessage("Admin bilgileri yanlış.");
                     }
@@ -1189,23 +1304,44 @@ namespace WpfApp2
             {
                 if (IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("SirketSecildiMi", "Baglanti.ini") != null)
                 {
-                    CustomMaterialMessageBox msg = new CustomMaterialMessageBox
-                    {
-                        TxtMessage = { Text = "Bu işlem uzun zaman alabilir. Yapmak istediğinize emin misiniz?",
-                            TextAlignment=TextAlignment.Center,
-                            VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
-                            Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
-                        TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
-                        MainContentControl = { Background = Brushes.Turquoise },
-                        TitleBackgroundPanel = { Background = Brushes.Blue },
-                        BorderBrush = Brushes.Blue,
-                        BtnCancel = { Content = "HAYIR", Background = Brushes.Red, IsCancel = true },
-                        BtnOk = { Content = "EVET", Background = Brushes.Green }
-                    };
-                    msg.Show();
-                    MessageBoxResult results = msg.Result;
-                    if (results == MessageBoxResult.Cancel) LV.SelectedItem = -1;
-                    else if (results == MessageBoxResult.OK)
+                    //CustomMaterialMessageBox msg = new CustomMaterialMessageBox
+                    //{
+                    //    TxtMessage = { Text = "Bu işlem uzun zaman alabilir. Yapmak istediğinize emin misiniz?",
+                    //        TextAlignment=TextAlignment.Center,
+                    //        VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
+                    //        Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
+                    //    TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
+                    //    MainContentControl = { Background = Brushes.Turquoise },
+                    //    TitleBackgroundPanel = { Background = Brushes.Blue },
+                    //    BorderBrush = Brushes.Blue,
+                    //    BtnCancel = { Content = "HAYIR", Background = Brushes.Red, IsCancel = true },
+                    //    BtnOk = { Content = "EVET", Background = Brushes.Green }
+                    //};
+                    //msg.Show();
+                    //MessageBoxResult results = msg.Result;
+                    Gat.Controls.MessageBoxView messageBox = new Gat.Controls.MessageBoxView();
+                    Gat.Controls.MessageBoxViewModel vm = (Gat.Controls.MessageBoxViewModel)messageBox.FindResource("ViewModel");
+
+                    vm.Message = "Bu işlem uzun zaman alabilir. Yapmak istediğinize emin misiniz?";
+                    vm.Ok = "TAMAM";
+                    vm.Cancel = "HAYIR";
+                    vm.OkVisibility = true;
+                    vm.CancelVisibility = true;
+                    vm.YesVisibility = false;
+                    vm.NoVisibility = false;
+                    vm.Image = new BitmapImage(new System.Uri(@"/icons/sc-modal-img-info.png", UriKind.Relative));
+                    vm.Caption = "Test Message";
+
+                    // Center functionality
+                    vm.Position = MessageBoxPosition.CenterOwner;
+                    vm.Owner = this;
+
+                    //vm.Show();
+                        
+                    Gat.Controls.MessageBoxResult result = vm.Show();
+                    
+                    if (result == Gat.Controls.MessageBoxResult.Cancel) LV.SelectedItem = -1;
+                    else if (result == Gat.Controls.MessageBoxResult.Ok)
                     {
                         LV.SelectedItem = -1;
                         progressPopup.IsOpen = true;
@@ -1229,7 +1365,7 @@ namespace WpfApp2
 
                         if (progressBar.Value >= 121)
                         {
-                            showMessage("Tamamlandı."); 
+                            showMessage("Tamamlandı.");
                             progressPopup.IsOpen = false;
                         }
                     }
@@ -1253,6 +1389,12 @@ namespace WpfApp2
             cbtransfer.Items.Add("BKOD3");
             cbtransfer.Items.Add("BKOD4");
             cbtransfer.Items.Add("BKOD5");
+           
+            Carried.DosyaDecrypt();
+            string t = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("Transfer", "Baglanti.ini");
+            Carried.DosyaEncrypt();
+            if (t != null) cbtransfer.SelectedIndex = cbtransfer.Items.IndexOf(t);
+
             Popup_transfer.IsOpen = true;
             LV.SelectedItem = null;
         }
@@ -1296,12 +1438,18 @@ namespace WpfApp2
         {
             try
             {
-                FromTryToEur = Carried.CurrencyConversion(1, "try", "eur");
-                FromTryToUsd = Carried.CurrencyConversion(1, "try", "usd");
-                FromUsdToTry = Carried.CurrencyConversion(1, "usd", "try");
-                FromEurToTry = Carried.CurrencyConversion(1, "eur", "try");
-                FromEurToUsd = Carried.CurrencyConversion(1, "eur", "usd");
-                FromUsdToEur = Carried.CurrencyConversion(1, "usd", "eur");
+                //FromTryToEur = Carried.CurrencyConversion(1, "try", "eur");
+                //FromTryToUsd = Carried.CurrencyConversion(1, "try", "usd");
+                //FromUsdToTry = Carried.CurrencyConversion(1, "usd", "try");
+                //FromEurToTry = Carried.CurrencyConversion(1, "eur", "try");
+                //FromEurToUsd = Carried.CurrencyConversion(1, "eur", "usd");
+                //FromUsdToEur = Carried.CurrencyConversion(1, "usd", "eur");
+                FromEurToTry = Carried.MerkezBankasi_CurrencyConversion("EUR");
+                FromUsdToTry = Carried.MerkezBankasi_CurrencyConversion("USD");
+                FromTryToEur = 1 / FromEurToTry;
+                FromTryToUsd = 1 / FromUsdToTry;
+                FromEurToUsd = FromUsdToTry / FromEurToTry;
+                FromUsdToEur = FromEurToTry / FromUsdToTry;
                 Carried.DosyaDecrypt();
                 string con = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("LocalConnection", "Baglanti.ini");
                 Carried.DosyaEncrypt();
@@ -1310,22 +1458,22 @@ namespace WpfApp2
                     SqlConnection s = new SqlConnection(con);
                     s.Open();
                     SqlCommand c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('TRY', 'EUR', " + FromTryToEur.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                     c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('TRY', 'USD', " + FromTryToUsd.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                     c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('USD', 'TRY', " + FromUsdToTry.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                     c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('EUR', 'TRY', " + FromEurToTry.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                     c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('EUR', 'USD', " + FromEurToUsd.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                     c = new SqlCommand("insert into SMRTAPPDVZ([FROM],[TO],[ORAN],[TARIH]) VALUES('USD', 'EUR', " + FromUsdToEur.ToString().Replace(",", ".") + ", @tarih)", s);
-                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c.Parameters.Add("@tarih", SqlDbType.SmallDateTime).Value = DateTime.Now;
                     c.ExecuteNonQuery();
                 }
             }

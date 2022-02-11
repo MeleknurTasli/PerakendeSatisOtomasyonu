@@ -65,7 +65,7 @@
                 </Style>
             </Button.Resources>
         </Button>
-        <Button  Grid.Column="4" Grid.Row="1" Grid.ColumnSpan="2" Content="STOK" Background="#cc1B789A" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic">
+        <Button x:Name="btnStk"  Grid.Column="4" Grid.Row="1" Grid.ColumnSpan="2" Content="STOK" Background="#cc1B789A" FontSize="25" Margin="5" Style="{StaticResource Dictionary5}" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic" Click="btnStk_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
@@ -116,7 +116,7 @@
             </Grid.Background>
               <GroupBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Padding="10" Margin="0,-13,5,5">
                 <GroupBox.Header>
-                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Evrak Tipleri</TextBlock>
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Evrak Tipleri ve Diğer</TextBlock>
                 </GroupBox.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -226,7 +226,7 @@
             </GroupBox>
         </Grid>
 
-        <Grid x:Name="grid2" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Visibility="Hidden">
+        <Grid x:Name="grid2" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Visibility="Hidden" Loaded="grid2_Loaded">
             <Grid.Background>
                 <LinearGradientBrush>
                     <GradientStop Color="#FF000010"/>
@@ -235,7 +235,7 @@
             </Grid.Background>
             <GroupBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="2" Padding="10" Margin="0,-13,5,5">
                 <GroupBox.Header>
-                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Evrak Tipleri</TextBlock>
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="White">Stok Parametreleri</TextBlock>
                 </GroupBox.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -252,16 +252,38 @@
                         <RowDefinition></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    
+                    <TextBlock Foreground="White" FontSize="30"  Grid.Column="0"  HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Row="0" Grid.RowSpan="3">KULLANICI-DEPOKOD</TextBlock>
 
-                        <Button x:Name="Kaydet_diger" Margin="5,15,5,5" Grid.Row="6" Content="KAYDET" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f" Grid.Column="0" Style="{StaticResource Dictionary5}"  >
+                    <DataGrid x:Name="depokullanici_dataGrid" IsEnabled="True" Grid.RowSpan="3" Grid.Row="0" Grid.Column="1"  VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="0.5"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" SelectionMode="Extended"  >
+                        <DataGrid.Resources  >
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="Background" Value="#66ADD8E6" />
+                                <Setter Property="BorderThickness" Value="0.5" />
+                                <Setter Property="BorderBrush" Value="White" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontSize" Value="20" />
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.RowStyle >
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="#66ADD8E6" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontSize" Value="16"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+
+                    <Button x:Name="Kaydet_diger" Margin="5,15,5,5" Grid.Row="6" Content="KAYDET" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f" Grid.Column="0" Style="{StaticResource Dictionary5}" Click="Kaydet_diger_Click"  >
                         <Button.Resources>
                             <Style TargetType="{x:Type Border}">
                                 <Setter Property="CornerRadius" Value="10"/>
                             </Style>
                         </Button.Resources>
                     </Button>
-                    <Button x:Name="Geri1_diger" Margin="5,15,5,5" Grid.Column="1" Grid.Row="6" Content="GERİ" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f"  Style="{StaticResource Dictionary5}"  >
+                    <Button x:Name="Geri1_diger" Margin="5,15,5,5" Grid.Column="1" Grid.Row="6" Content="GERİ" Foreground="White" FontSize="35" FontWeight="Bold" FontFamily="Book Antiqua" Background="#FF044E7f"  Style="{StaticResource Dictionary5}" Click="Geri1_diger_Click"  >
                         <Button.Resources>
                             <Style TargetType="{x:Type Border}">
                                 <Setter Property="CornerRadius" Value="10"/>

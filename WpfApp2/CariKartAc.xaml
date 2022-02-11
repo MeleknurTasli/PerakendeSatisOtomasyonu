@@ -12,7 +12,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2;assembly=WpfApp2" 
         mc:Ignorable="d"
-        Title="CariKartAc" Height="800" Width="1320" ActiveGlowColor="White">
+        Title="Cari Kart" Height="800" Width="1320" ActiveGlowColor="White">
     
     
     <Grid Loaded="Grid_Loaded">
@@ -218,10 +218,10 @@
                     <dxlc:LayoutItem Label="Fatura Daire No:" Foreground="White" FontSize="15">
                         <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt20" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem Label="Fatura İli:" Foreground="White" FontSize="15">
+                    <dxlc:LayoutItem x:Name="l_fatil" Label="Fatura İli:" Foreground="White" FontSize="15">
                         <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt22" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem Label="Fatura İlçesi:" Foreground="White" FontSize="15">
+                    <dxlc:LayoutItem x:Name="l_fatilce" Label="Fatura İlçesi:" Foreground="White" FontSize="15">
                         <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt23" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
                     </dxlc:LayoutItem>
                     
@@ -239,7 +239,7 @@
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Kişilik:" Foreground="White" FontSize="15">
                         <StackPanel  Width="250" HorizontalAlignment="Right" >
-                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt27" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt27" IsEnabled="False" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  PreviewTextInput="txt11_PreviewTextInput"/>
                             <ComboBox x:Name="cb5" Visibility="Hidden" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Bottom" Height="0" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" SelectionChanged="cb4_SelectionChanged" Foreground="White"  >
                             </ComboBox>
                         </StackPanel>
@@ -258,7 +258,7 @@
                         </StackPanel>
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Kredi Limiti:" Foreground="White" FontSize="15">
-                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt30" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt30" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  PreviewTextInput="txt11_PreviewTextInput"/>
                     </dxlc:LayoutItem>
                     <!--<dxlc:LayoutItem Label="Muhasebe Kodu:" Foreground="White" FontSize="15">
                         <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt31" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
@@ -280,7 +280,8 @@
             </Grid>
         </Border>
 
-        <Button x:Name="Kaydet" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource Dictionary5}" Click="Kaydet_Click" >
+        <StackPanel Orientation="Horizontal"  Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right">
+            <Button x:Name="Duzenle" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource Dictionary5}" Click="Duzenle_Click"  >
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
@@ -288,9 +289,21 @@
             </Button.Resources>
             <StackPanel Orientation="Horizontal">
                 <Image Width="55" Height="55" Margin="5,0,10,0" Source="icons/kaydet.png" ></Image>
-                <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="24" FontWeight="SemiBold" Margin="0,0,5,0" Text="Kaydet   "></TextBlock>
+                <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="22" FontWeight="SemiBold" Margin="0,0,5,0" Text="Düzenle   "></TextBlock>
             </StackPanel>
         </Button>
+        <Button x:Name="Kaydet" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource Dictionary5}" Click="Kaydet_Click" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="55" Height="55" Margin="5,0,10,0" Source="icons/kaydet.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="24" FontWeight="SemiBold" Margin="0,0,5,0" Text="Kaydet   "></TextBlock>
+                </StackPanel>
+        </Button>
+        </StackPanel>
 
         <Grid x:Name="gridcarikartara" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="10,0">
             <Grid.ColumnDefinitions>
@@ -299,19 +312,68 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Label Foreground="White" VerticalAlignment="Top" Margin="10,5,0,10" FontFamily="Malgun Gothic" FontSize="20" Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontWeight="Heavy" Background="#66156F90">Cari Kart Ara</Label>
-           <TextBlock Foreground="White" VerticalAlignment="Center" Margin="10,5,0,0" FontFamily="Book Antiqua" FontSize="24">Vergi No:</TextBlock>
-            <TextBox x:Name="txtcariara" Grid.Column="1" Margin="10,10,10,0" CaretBrush="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="60" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="30"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  >
+            <TextBlock Foreground="White" VerticalAlignment="Center" Margin="10,8,0,0" FontFamily="Book Antiqua" FontSize="24">Cari Ara: </TextBlock>
+            <TextBox x:Name="txtcariara" Grid.Column="1" Margin="10,10,10,0" CaretBrush="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="60" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="30"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="txtcariara_KeyDown" TextChanged="txtcariara_TextChanged"  >
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="15"/>
                     </Style>
                 </TextBox.Resources>
             </TextBox>
-            <Button x:Name="ara" Grid.Column="2" Width="50" VerticalAlignment="Center" Background="Transparent" Style="{StaticResource Dictionary3}" Margin="3" >
+            <Button x:Name="ara" Grid.Column="2" Width="50" VerticalAlignment="Center" Background="Transparent" Style="{StaticResource Dictionary3}" Margin="3" Click="ara_Click" >
                 <Image Source="/icons/ara.png"  Width="50" Height="45"></Image>
             </Button>
         </Grid>
-       
+
+
+        <Popup x:Name="PopupUnvan" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False"  >
+            <Border BorderThickness="5" CornerRadius="20" >
+                <Border.BorderBrush>
+                    <LinearGradientBrush >
+                        <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                        <GradientStop Color="#ff156F90" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Grid Width="550" Height="400"  >
+                    <Grid.Background>
+                        <LinearGradientBrush >
+                            <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                            <GradientStop Color="#ff156F90" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                    <ListBox  x:Name="lbUnvan" BorderThickness="0" TextSearch.TextPath="UNVAN" IsTextSearchEnabled="True" Background="Transparent" FontFamily="Arial" FontSize="14" IsSynchronizedWithCurrentItem="False" MouseDoubleClick="lbUnvan_MouseDoubleClick"  >
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontFamily" Value="Century Gothic" />
+                                <Setter Property="Background" Value="#ff156F90" />
+                                <Setter Property="Margin" Value="9" />
+                                <Setter Property="Height" Value="35" />
+                                <Setter Property="BorderBrush" Value="#FF13B9D9" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True" >
+                                        <Setter Property="FontWeight" Value="ExtraBold" />
+                                        <Setter Property="Background" Value="#FF062f54" />
+                                        <Setter Property="Foreground" Value="#FF75D5E8" />
+                                        <Setter Property="FontSize" Value="18" />
+                                        <Setter Property="BorderBrush" Value="#FF0A7D73" />
+                                        <Setter Property="Height" Value="45" />
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                                    <!-- Background of selected item when focussed -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF007A7A"/>
+                                    <!-- Background of selected item when not focussed -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FF11B3D3" />
+                                </Style.Resources>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Popup>
 
     </Grid>
 

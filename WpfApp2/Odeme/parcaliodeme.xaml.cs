@@ -70,7 +70,11 @@ namespace WpfApp2.Odeme
         {
             //source = null;
         }
-        
+
+        private void odemeyikapat_Click(object sender, RoutedEventArgs e)
+        {
+            source = null;
+        }
     }
 
     public class odeme

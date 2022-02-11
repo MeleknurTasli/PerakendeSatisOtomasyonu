@@ -132,7 +132,7 @@
             </StackPanel>
         </Button>
 
-        <Button x:Name="button4" Background="#FF20ABFF" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic"  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="10,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource Dictionary3}">
+        <Button x:Name="button4" Background="#FF20ABFF" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic"  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="10,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource Dictionary3}" Click="button4_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
@@ -146,7 +146,7 @@
             </StackPanel>
         </Button>
 
-        <Button x:Name="button5" Background="#FF3876A8" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic"  Grid.Column="4" Grid.Row="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="10,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource Dictionary3}">
+        <Button x:Name="button5" Background="#FF3876A8" BorderBrush="Transparent" Foreground="#FFFFF5F5" FontFamily="Century Gothic"  Grid.Column="4" Grid.Row="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="10,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource Dictionary3}" Click="button5_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="20"/>
@@ -251,7 +251,7 @@
                     <Button x:Name="btnEkle" Style="{StaticResource Dictionary5}" Content="Ekle" FontSize="20" Height="40" Foreground="White" Background="#FF236D8E" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,0,0" Click="btnEkle_Click"  />
                     <TextBlock x:Name="durum" Background="Transparent" Foreground="White" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,0,20" Height="25"></TextBlock>
                     <Button x:Name="kullaniciGor" Content="Kullanıcı Listesi Gör" Style="{StaticResource Dictionary5}" Background="Transparent" Foreground="White" FontSize="15" Click="kullaniciGor_Click"></Button>
-                    <DataGrid x:Name="DGkullanicilar" Background="Transparent" CanUserSortColumns="False" HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderBrush="Transparent" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" AutoGenerateColumns = "TRUE" Width="300" Height="150"  Margin="0,15,0,15" >
+                    <DataGrid x:Name="DGkullanicilar" Background="Transparent" CanUserSortColumns="False" HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderBrush="Transparent" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" AutoGenerateColumns = "TRUE" Width="400" Height="150"  Margin="0,15,0,15" >
                         <DataGrid.Resources>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
                         </DataGrid.Resources>
@@ -363,7 +363,7 @@
                     <Button x:Name="btnCikar" Style="{StaticResource Dictionary5}" Content="Sil" FontSize="20" Height="40" Foreground="White" Background="#FF236D8E" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,0,0" Click="btnCikar_Click"  />
                     <TextBlock x:Name="durum2" Background="Transparent" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="0,15,0,20" Height="25"></TextBlock>
                     <Button x:Name="kullaniciGor2" Style="{StaticResource Dictionary5}" Content="Kullanıcı Listesi Gör"  Background="Transparent" Foreground="White" FontSize="15"  Click="kullaniciGor2_Click"></Button>
-                    <DataGrid x:Name="DGkullanicilar2" HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns = "TRUE" CanUserAddRows="False" CanUserReorderColumns="False" CanUserDeleteRows="False" Width="300" Height="150"  Margin="0,15,0,15">
+                    <DataGrid x:Name="DGkullanicilar2" HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="Transparent" BorderBrush="Transparent" AutoGenerateColumns = "TRUE" CanUserAddRows="False" CanUserReorderColumns="False" CanUserDeleteRows="False" Width="400" Height="150"  Margin="0,15,0,15">
                         <DataGrid.Resources>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"  Color="#FF03BADC"/>
                         </DataGrid.Resources>

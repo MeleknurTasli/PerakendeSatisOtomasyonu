@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -30,7 +31,7 @@ namespace WpfApp2
         string tabloadi, hesapno="", vkn="";
         string ilAdi, ilceAdi, mahalleSemt, koy, caddeSokak, disKapiNo, icKapiNo, beldeBucak, ad, soyad;
         SqlConnection s, sl;
-        SqlCommand c;
+        SqlCommand c, c1;
         string path;
         public CariKartAc(string path)
         {
@@ -41,6 +42,10 @@ namespace WpfApp2
             sl = new SqlConnection(Carried.girisBaglantiLocal);
             txt24.IsEnabled = true;
             this.path = path;
+            l_fatil.Height = 0;
+            l_fatilce.Height = 0;
+            txt22.Height = 0;
+            txt23.Height = 0;
         }
         public CariKartAc(string vkn, string hesapno)
         {
@@ -233,6 +238,8 @@ namespace WpfApp2
             w.VerticalAlignment = this.VerticalAlignment;
             w.HorizontalAlignment = this.HorizontalAlignment;
         }
+
+
         private void Kaydet_Click(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(txt2.Text) && !String.IsNullOrWhiteSpace(txt3.Text) && !String.IsNullOrWhiteSpace(txt4.Text) && !String.IsNullOrWhiteSpace(txt12.Text) && !String.IsNullOrWhiteSpace(txt24.Text) && !String.IsNullOrWhiteSpace(txt25.Text) && !String.IsNullOrWhiteSpace(txt26.Text) && !String.IsNullOrWhiteSpace(txt27.Text) && !String.IsNullOrWhiteSpace(txt13.Text) && !String.IsNullOrWhiteSpace(txt36.Text) && !String.IsNullOrWhiteSpace(txt37.Text) && !String.IsNullOrWhiteSpace(txt2.Text))
@@ -402,6 +409,8 @@ namespace WpfApp2
             }
 
         }
+
+        
         private async void txt24_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -447,6 +456,7 @@ namespace WpfApp2
             }
         }
 
+        
 
         List<string> comboboxitemslist = new List<string>();
         Dictionary<int, string> comboboxitems = new Dictionary<int, string>();
@@ -517,6 +527,311 @@ namespace WpfApp2
             layoutgroup2.Visibility = Visibility.Visible;
             layoutgroup3.Visibility = Visibility.Visible;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ara_Click(object sender, RoutedEventArgs e)//ARA BUTONUNA BASINCA UNVANLAR GELİYOR
+        {
+            lbUnvan.Items.Clear();
+            tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
+            string constr = Carried.IsCPMconnected == true ? Carried.girisBaglantiCPM : Carried.girisBaglantiLocal;
+            string phrase = txtcariara.Text.ToString();
+            string[] words = phrase.Split(' ');
+            string cmdUnvanlar = " select UNVAN from " + tabloadi + " where UNVAN like '%";
+            for (int i = 0; i < words.Length; i++)
+            {
+                cmdUnvanlar += words[i] + "%'";
+                if (i != words.Length - 1) { cmdUnvanlar += " and UNVAN like '%"; }
+            }
+            try
+            {
+                s = new SqlConnection(constr);
+                s.Open();
+                c1 = new SqlCommand(cmdUnvanlar, s);
+                SqlDataReader reader1 = c1.ExecuteReader();
+                ArrayList arrUnvanlar = new ArrayList();
+                if (reader1 != null)
+                {
+                    try
+                    {
+                        while (reader1.Read())
+                        {
+                            arrUnvanlar.Add(reader1["UNVAN"].ToString());
+                        }
+                    }
+                    finally { reader1.Close(); }
+                }
+                if (arrUnvanlar.Count != 0)
+                {
+                    for (int i = 0; i < arrUnvanlar.Count; i++)
+                        lbUnvan.Items.Add(arrUnvanlar[i]);
+                    PopupUnvan.IsOpen = true;
+                }
+                else Carried.showMessage("Bu unvan mevcut değil.");
+            }
+            catch (Exception ex)
+            {
+                if (Carried.IsCPMconnected == true)
+                {
+                    bool netcon = Carried.CheckForInternetConnection();
+                    Carried.IsCPMconnected = netcon == true ? true : false;
+                    if (Carried.IsCPMconnected == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); }
+                    else Carried.showMessage(ex.Message);
+                }
+                else Carried.showMessage(ex.Message);
+            }
+        }
+        private void txtcariara_KeyDown(object sender, KeyEventArgs e)//ENTER BASINCA UNVANLAR GELİYOR
+        {
+            if (e.Key == Key.Enter)
+            {
+                lbUnvan.Items.Clear();
+                tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
+                string constr = Carried.IsCPMconnected == true ? Carried.girisBaglantiCPM : Carried.girisBaglantiLocal;
+                string phrase = txtcariara.Text.ToString();
+                string[] words = phrase.Split(' ');
+                string cmdUnvanlar = " select UNVAN from " + tabloadi + " where UNVAN like '%";
+                for (int i = 0; i < words.Length; i++)
+                {
+                    cmdUnvanlar += words[i] + "%'";
+                    if (i != words.Length - 1) { cmdUnvanlar += " and UNVAN like '%"; }
+                }
+                try
+                {
+                    s = new SqlConnection(constr);
+                    s.Open();
+                    c1 = new SqlCommand(cmdUnvanlar, s);
+                    SqlDataReader reader1 = c1.ExecuteReader();
+                    ArrayList arrUnvanlar = new ArrayList();
+                    if (reader1 != null)
+                    {
+                        try
+                        {
+                            while (reader1.Read())
+                            {
+                                arrUnvanlar.Add(reader1["UNVAN"].ToString());
+                            }
+                        }
+                        finally { reader1.Close(); }
+                    }
+                    if (arrUnvanlar.Count != 0)
+                    {
+                        for (int i = 0; i < arrUnvanlar.Count; i++)
+                            lbUnvan.Items.Add(arrUnvanlar[i]);
+                        PopupUnvan.IsOpen = true;
+                    }
+                    else Carried.showMessage("Bu unvan mevcut değil.");
+                }
+                catch (Exception ex)
+                {
+                    if (Carried.IsCPMconnected == true)
+                    {
+                        bool netcon = Carried.CheckForInternetConnection();
+                        Carried.IsCPMconnected = netcon == true ? true : false;
+                        if (Carried.IsCPMconnected == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); }
+                        else Carried.showMessage(ex.Message);
+                    }
+                    else Carried.showMessage(ex.Message);
+                }
+            }
+        }
+        private void lbUnvan_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                txtcariara.Clear();
+                txtcariara.Text = lbUnvan.Items[lbUnvan.SelectedIndex].ToString();
+                PopupUnvan.IsOpen = false;
+                lbUnvan.Items.Clear();
+            }
+            catch { return; }
+        }
+        private string VergiNoVSHesapKodVSUnvan()
+        {
+            object o1, o2, o3;
+            if (Carried.IsCPMconnected == true)
+            {
+                s = new SqlConnection(Carried.girisBaglantiCPM);
+                s.Open();
+                c1 = new SqlCommand("select VERGIHESAPNO from CARKRT where VERGIHESAPNO = '" + txtcariara.Text + "'", s);
+                o1 = c1.ExecuteScalar();
+                c1 = new SqlCommand("select HESAPKOD from CARKRT where HESAPKOD = '" + txtcariara.Text + "'", s);
+                o2 = c1.ExecuteScalar();
+                c1 = new SqlCommand("select UNVAN from CARKRT where UNVAN = '" + txtcariara.Text + "'", s);
+                o3 = c1.ExecuteScalar();
+            }
+            else
+            {
+                s = new SqlConnection(Carried.girisBaglantiLocal);
+                s.Open();
+                c1 = new SqlCommand("select VERGIHESAPNO from SMRTAPPCKRT where VERGIHESAPNO = '" + txtcariara.Text + "'", s);
+                o1 = c1.ExecuteScalar();
+                c1 = new SqlCommand("select HESAPKOD from SMRTAPPCKRT where HESAPKOD = '" + txtcariara.Text + "'", s);
+                o2 = c1.ExecuteScalar();
+                c1 = new SqlCommand("select UNVAN from SMRTAPPCKRT where UNVAN = '" + txtcariara.Text + "'", s);
+                o3 = c1.ExecuteScalar();
+            }
+
+            if (o1 != null && !String.IsNullOrEmpty(o1.ToString())) return " where VERGIHESAPNO = '" + o1.ToString() + "'";
+            else if (o2 != null && !String.IsNullOrEmpty(o2.ToString())) return " where HESAPKOD = '" + o2.ToString() + "'";
+            else if (o3 != null && !String.IsNullOrEmpty(o3.ToString())) return " where UNVAN = '" + o3.ToString() + "'";
+            else return null;
+        }
+        string value;
+        private void txtcariara_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtcariara.Text))
+            {
+                if (txtcariara.Text.StartsWith(" ")) { txtcariara.Clear(); }
+
+                try
+                {
+                    value = VergiNoVSHesapKodVSUnvan();
+                    if(value != null)
+                    {
+                        try
+                        {
+                            veriGetir(value);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (Carried.IsCPMconnected == true)
+                            {
+                                bool netcon = Carried.CheckForInternetConnection();
+                                Carried.IsCPMconnected = netcon == true ? true : false;
+                                if (netcon == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); return; }
+                            }
+                            if (ex.Message.Contains("String or binary data would be truncated")) Carried.showMessage("Girdiğiniz bazı değerler çok uzun olduğu için işlem yapılamadı.");
+                            else Carried.showMessage(ex.Message);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (Carried.IsCPMconnected == true)
+                    {
+                        bool netcon = Carried.CheckForInternetConnection();
+                        Carried.IsCPMconnected = netcon == true ? true : false;
+                        if (Carried.IsCPMconnected == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); }
+                        else Carried.showMessage(ex.Message);
+                    }
+                    else Carried.showMessage(ex.Message);
+                }
+            }
+        }
+        private void veriGetir(string value)
+        {
+            string tablename; object o;
+            if(Carried.IsCPMconnected == true)
+            {
+                s = new SqlConnection(Carried.girisBaglantiCPM);
+                tablename = "CARKRT";
+            }
+            else
+            {
+                s = new SqlConnection(Carried.girisBaglantiLocal);
+                tablename = "SMRTAPPCKRT";
+            }
+            s.Open();
+            
+            txt1.Text = (o = new SqlCommand("select KAYITDURUM from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            int ht = (o = new SqlCommand("select HESAPTIP from " + tablename + " " + value, s).ExecuteScalar()) != null ? Convert.ToInt16(o) : 0;       
+            txt2.Text = Enum.GetName(typeof(HesapTipleri), ht);       
+            txt3.Text = (o = new SqlCommand("select HESAPKOD from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt4.Text = (o = new SqlCommand("select UNVAN from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt5.Text = (o = new SqlCommand("select UNVAN2 from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt6.Text = (o = new SqlCommand("select ISKONTOORAN from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt12.Text = (o = new SqlCommand("select DOVIZCINS from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : ""; 
+                  
+            txt24.Text = (o = new SqlCommand("select VERGIHESAPNO from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt25.Text = (o = new SqlCommand("select EMAIL1 from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt26.Text = (o = new SqlCommand("select VERGIDAIRE from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt27.Text = (o = new SqlCommand("select KISITIP from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";
+            txt28.Text = (o = new SqlCommand("select ODEMEIBAN from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt29.Text = (o = new SqlCommand("select ODEMEGUN from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt30.Text = (o = new SqlCommand("select KREDILIMIT from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt33.Text = (o = new SqlCommand("select ODEMEBANKAKOD from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt34.Text = (o = new SqlCommand("select KISIAD from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";       
+            txt38.Text = (o = new SqlCommand("select KISISOYAD from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";
+            
+            txt13.Text = (o = new SqlCommand("select EFATURADURUM from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt36.Text = (o = new SqlCommand("select EIRSALIYEDURUM from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt37.Text = txt13.Text == "1" ? "0" : "1";   
+            txt14.Text = (o = new SqlCommand("select EFATURASENARYO from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt15.Text = (o = new SqlCommand("select EFATURAPKETIKET from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt35.Text = (o = new SqlCommand("select EIRSALIYEPKETIKET from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt16.Text = (o = new SqlCommand("select FATURAADRES1 from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt17.Text = (o = new SqlCommand("select FATURAADRES2 from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt18.Text = (o = new SqlCommand("select FATURAADRESBINANO from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt19.Text = (o = new SqlCommand("select FATURAADRESBINAAD from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            txt20.Text = (o = new SqlCommand("select FATURAADRESDAIRENO from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";
+            //txt22.Clear();
+            //txt23.Clear();
+            //txt22.IsEnabled = false;
+            //txt23.IsEnabled = false;
+            ////txt22.Text = (o = new SqlCommand("select  from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+            ////txt23.Text = (o = new SqlCommand("select  from " + tablename + " " + value, s).ExecuteScalar()) != null ? o.ToString() : "";   
+        }
+        private void Duzenle_Click(object sender, RoutedEventArgs e)
+        {
+            s = new SqlConnection(Carried.girisBaglantiLocal);
+            Duzenle_("SMRTAPPCKRT", s);
+
+            if (Carried.IsCPMconnected == true)
+            {
+                s = new SqlConnection(Carried.girisBaglantiCPM);
+                Duzenle_("CARKRT", s);
+            }
+        }
+
+        private void Duzenle_(string tablename, SqlConnection s)
+        {
+            s.Open();
+            string ekle = " KAYITDURUM=@KAYITDURUM, HESAPTIP=@HESAPTIP, UNVAN = @UNVAN, UNVAN2=@UNVAN2, ISKONTOORAN=@ISKONTOORAN, DOVIZCINS=@DOVIZCINS, EMAIL1=@EMAIL1," +
+                " VERGIDAIRE=@VERGIDAIRE, KISITIP=@KISITIP, ODEMEIBAN=@ODEMEIBAN, ODEMEGUN=@ODEMEGUN, KREDILIMIT=@KREDILIMIT, ODEMEBANKAKOD=@ODEMEBANKAKOD, KISIAD=@KISIAD, KISISOYAD=@KISISOYAD, EFATURADURUM=@EFATURADURUM, EIRSALIYEDURUM=@EIRSALIYEDURUM, EFATURASENARYO=@EFATURASENARYO, EFATURAPKETIKET=@EFATURAPKETIKET, EIRSALIYEPKETIKET=@EIRSALIYEPKETIKET," +
+                " FATURAADRES1=@FATURAADRES1, FATURAADRES2=@FATURAADRES, FATURAADRESBINANO=@FATURAADRESBINANO, FATURAADRESBINAAD=@FATURAADRESBINAAD, FATURAADRESDAIRENO=@FATURAADRESDAIRENO, " +
+                "DEGISTIRENKULLANICI=@DEGISTIRENKULLANICI, DEGISTIRENTARIH=@DEGISTIRENTARIH, DEGISTIRENSAAT=@DEGISTIRENSAAT, DEGISTIRENKAYNAK=@DEGISTIRENKAYNAK, DEGISTIRENSURUM=@DEGISTIRENSURUM ";
+            c1 = new SqlCommand("UPDATE " + tablename + " SET " + ekle + " WHERE VERGIHESAPNO='" + txt24.Text + "'", s);
+            c1.Parameters.AddWithValue("@KAYITDURUM", Convert.ToInt16(txt1.Text));
+            Dictionary<string, int> enumdict = new Dictionary<string, int>() { { "Genel", 0 }, {"Müşteri" , 1 }, {"Tedarikçi" , 2 }, {"Kasa" , 3 }, {"Banka" , 4 },
+                {"GiderYeri" , 5 }, {"SevkYeri" , 6 }, {"BankaKrediKart" , 7 }, {"ZimmetYeri" , 8 }, {"ÜretimHattı" , 9 }, {"Avans" , 10 }, {"DiğerAlacaklılar" , 11 }, {"OrtaklarCariHesap" , 12 }, {"Bayi" , 98 }, {"Potansiyel" , 99 } };
+            var myKey = enumdict.FirstOrDefault(x => x.Key == txt2.Text).Value;
+            c1.Parameters.AddWithValue("@HESAPTIP", Convert.ToInt16(myKey.ToString()));
+            c1.Parameters.AddWithValue("@UNVAN", txt4.Text);
+            c1.Parameters.AddWithValue("@UNVAN2", txt5.Text);
+            c1.Parameters.AddWithValue("@ISKONTOORAN", Convert.ToDecimal(txt6.Text));
+            c1.Parameters.AddWithValue("@DOVIZCINS", txt12.Text);
+            c1.Parameters.AddWithValue("@EMAIL1", txt25.Text);
+            c1.Parameters.AddWithValue("@VERGIDAIRE", txt26.Text);
+            c1.Parameters.AddWithValue("@KISITIP", Convert.ToInt16(txt27.Text));
+            c1.Parameters.AddWithValue("@ODEMEIBAN", txt28.Text);
+            c1.Parameters.AddWithValue("@ODEMEGUN", Convert.ToInt16(txt29.Text));
+            c1.Parameters.AddWithValue("@KREDILIMIT", Convert.ToDecimal(txt30.Text));
+            c1.Parameters.AddWithValue("@ODEMEBANKAKOD", txt33.Text);
+            c1.Parameters.AddWithValue("@KISIAD", txt34.Text);
+            c1.Parameters.AddWithValue("@KISISOYAD", txt38.Text);
+            c1.Parameters.AddWithValue("@EFATURADURUM", Convert.ToInt16(txt13.Text));
+            c1.Parameters.AddWithValue("@EIRSALIYEDURUM", Convert.ToInt16(txt36.Text));
+            c1.Parameters.AddWithValue("@EFATURASENARYO", txt14.Text);
+            c1.Parameters.AddWithValue("@EFATURAPKETIKET", txt15.Text);
+            c1.Parameters.AddWithValue("@EIRSALIYEPKETIKET", txt35.Text);
+            c1.Parameters.AddWithValue("@FATURAADRES1", txt16.Text);
+            c1.Parameters.AddWithValue("@FATURAADRES2", txt17.Text);
+            c1.Parameters.AddWithValue("@FATURAADRESBINANO", txt18.Text);
+            c1.Parameters.AddWithValue("@FATURAADRESBINAAD", txt19.Text);
+            c1.Parameters.AddWithValue("@FATURAADRESDAIRENO", txt20.Text);
+            c1.Parameters.Add(new SqlParameter("@DEGISTIRENKULLANICI", Carried.girenKullanici.Substring(0, Math.Min(Carried.girenKullanici.Length, 30))));
+            c1.Parameters.Add("@DEGISTIRENTARIH", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+            c1.Parameters.Add("@DEGISTIRENSAAT", SqlDbType.SmallDateTime).Value = DateTime.Now;
+            c1.Parameters.Add(new SqlParameter("@DEGISTIRENKAYNAK", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Substring(0, Math.Min(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Length, 30))));
+            c1.Parameters.Add(new SqlParameter("@DEGISTIRENSURUM", ""));
+            c1.ExecuteNonQuery();
+        }
+
     }
 
     enum HesapTipleri

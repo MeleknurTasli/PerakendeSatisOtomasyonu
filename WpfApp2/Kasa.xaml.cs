@@ -175,7 +175,10 @@ namespace WpfApp2
                 {
                     for (int i = 0; i < arraylist.Count; i++)
                     {
-                        c = new SqlCommand("IF NOT EXISTS (SELECT * FROM SMRTAPPKASAKULLANICI WHERE KULLANICIADI='" + arraylist[i] + "') BEGIN INSERT INTO SMRTAPPKASAKULLANICI VALUES('" + arraylist[i] + "','" + tb1.Text + "') END", s);
+                        c = new SqlCommand("IF EXISTS (SELECT * FROM SMRTAPPKASAKULLANICI WHERE KULLANICIADI='" + arraylist[i] + "') BEGIN delete from SMRTAPPKASAKULLANICI where KULLANICIADI='" + arraylist[i] + "') END", s);
+                        c.ExecuteNonQuery();
+                        //c = new SqlCommand("IF NOT EXISTS (SELECT * FROM SMRTAPPKASAKULLANICI WHERE KULLANICIADI='" + arraylist[i] + "') BEGIN INSERT INTO SMRTAPPKASAKULLANICI VALUES('" + arraylist[i] + "','" + tb1.Text + "') END", s);
+                        c = new SqlCommand("INSERT INTO SMRTAPPKASAKULLANICI VALUES('" + arraylist[i] + "','" + tb1.Text + "'", s);
                         c.ExecuteNonQuery();
                     }
                 }

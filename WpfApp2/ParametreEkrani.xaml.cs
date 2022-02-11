@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,6 +42,12 @@ namespace WpfApp2
             w.Show();
             this.Close();
         }
+
+        /// <summary>
+        /// SATIŞ PARAMETRELERİ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn1_Click(object sender, RoutedEventArgs e)
         {
             grid1.Visibility = Visibility.Visible;
@@ -79,13 +88,12 @@ namespace WpfApp2
         {
             grid1.Visibility = Visibility.Hidden;
         }
-
         private void txt6_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
-
+        //////////
 
 
         //public static List<string> columnnames;
@@ -105,7 +113,11 @@ namespace WpfApp2
         //    grid2.Visibility = Visibility.Hidden;
         //}
 
-
+        /// <summary>
+        /// BELGE
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void fatduz_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\DXApplication3.exe");
@@ -134,7 +146,7 @@ namespace WpfApp2
         {
             if (File.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt"))
             {
-                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", String.Empty);
+                File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", String.Empty);//dosyada yazılanları siliyor
                 File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\reportReader\\reportReader\\bin\\Debug\\DXApplication3\\DXApplication3\\bin\\Debug\\RaporAdi.txt", "EARSIV");
             }
             else
@@ -169,5 +181,65 @@ namespace WpfApp2
                 else if (t1 == "FIS") fis.IsChecked = true;
             }
         }
+        /////////////////
+        
+
+
+        /// <summary>
+        /// STOK PARAMETRELERİ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnStk_Click(object sender, RoutedEventArgs e)
+        {
+            grid2.Visibility = Visibility.Visible;
+        }
+
+        //private static ObservableCollection<KullanıcıDepo> source;
+        SqlCommand c1; SqlConnection sl;
+        private void grid2_Loaded(object sender, RoutedEventArgs e)
+        {
+            Carried.DosyaDecrypt();
+            string lc = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("LocalConnection", "Baglanti.ini");
+            Carried.DosyaEncrypt();
+            if (lc != null)
+            {
+                sl = new SqlConnection(lc);
+                sl.Open();
+                DataTable table = new DataTable();
+                SqlDataAdapter a = new SqlDataAdapter("select KULLANICIADI as 'Kullanıcı Adı' , DEPOKOD as 'Depo Kodu' from SMRTAPPKUL", sl);
+                a.Fill(table);
+                this.depokullanici_dataGrid.ItemsSource = table.DefaultView;
+                int x = 0;
+                foreach (DataGridColumn column in depokullanici_dataGrid.Columns)
+                {
+                    if (x == 0) { column.IsReadOnly = true; column.Width = 200; }
+                    else { column.IsReadOnly = false; column.Width = 250; }
+                    x++;
+                }
+            }
+            else { Carried.showMessage("Önce local bağlantıyı sağlayınız."); grid2.Visibility = Visibility.Hidden; }
+        }
+        private void Geri1_diger_Click(object sender, RoutedEventArgs e)
+        {
+            grid2.Visibility = Visibility.Hidden;
+        }
+        private void Kaydet_diger_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < depokullanici_dataGrid.Items.Count; i++)
+            {
+                DataRowView rowView = depokullanici_dataGrid.Items[i] as DataRowView;
+                c1 = new SqlCommand("update smrtappkul set DEPOKOD = '" + rowView[1].ToString() + "' WHERE KULLANICIADI='" + rowView[0].ToString() + "'", sl);
+                c1.ExecuteNonQuery();
+                grid2.Visibility = Visibility.Hidden;
+            }
+        }
+        ///////////////////////
     }
+
+    //class KullanıcıDepo
+    //{
+    //    public string KullanıcıAdi { get; set; }
+    //    public decimal DepoKod { get; set; }
+    //}
 }

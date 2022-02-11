@@ -23,7 +23,7 @@ using System.Data;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Media.Animation;
-using BespokeFusion;
+//using BespokeFusion;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Reflection;
@@ -64,86 +64,86 @@ namespace WpfApp2
         }
 
         //sor - sor boşlara ne gelcek? 
-        public static void SMRTAPPBAS()
-        {
-            string cmdstrsayi = "select count(*) from ( select evrbas.ID,[EVRAKNO],[HESAPTIP],evrbas.[HESAPKOD],[UNVAN],[EFATURADURUM],[EARSIV],[PKETIKET],evrbas.[DOVIZCINS], [EVRAKDOVIZCINS],[EVRAKTARIH],evrbas.[ACIKLAMA1],[KARSIHESAPKOD],[_MIKTAR],[_EVRAKDURUM],EVRBAS.[KAYITDURUM] from EVRBAS inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD inner join EFABAS on evrbas.EVRAKSN = EFABAS.EVRAKSN ) as sayi";
-            SqlCommand commandSourceDataMiktar = new SqlCommand(cmdstrsayi, sourceConnection);
-            int rows = Convert.ToInt32(commandSourceDataMiktar.ExecuteScalar());
+        //public static void SMRTAPPBAS()
+        //{
+        //    string cmdstrsayi = "select count(*) from ( select evrbas.ID,[EVRAKNO],[HESAPTIP],evrbas.[HESAPKOD],[UNVAN],[EFATURADURUM],[EARSIV],[PKETIKET],evrbas.[DOVIZCINS], [EVRAKDOVIZCINS],[EVRAKTARIH],evrbas.[ACIKLAMA1],[KARSIHESAPKOD],[_MIKTAR],[_EVRAKDURUM],EVRBAS.[KAYITDURUM] from EVRBAS inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD inner join EFABAS on evrbas.EVRAKSN = EFABAS.EVRAKSN ) as sayi";
+        //    SqlCommand commandSourceDataMiktar = new SqlCommand(cmdstrsayi, sourceConnection);
+        //    int rows = Convert.ToInt32(commandSourceDataMiktar.ExecuteScalar());
 
-            //string cmdstr = "select evrbas.[ID],[EVRAKNO],[HESAPTIP],evrbas.[HESAPKOD],[UNVAN],[EFATURADURUM],[EARSIV],[PKETIKET],evrbas.[DOVIZCINS]," +
-            //    "[EVRAKDOVIZCINS],[EVRAKTARIH],evrbas.[ACIKLAMA1],[KARSIHESAPKOD],[_MIKTAR],[_EVRAKDURUM],EVRBAS.[KAYITDURUM] from EVRBAS" +
-            //    " inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD inner join EFABAS on evrbas.EVRAKSN = EFABAS.EVRAKSN";
+        //    //string cmdstr = "select evrbas.[ID],[EVRAKNO],[HESAPTIP],evrbas.[HESAPKOD],[UNVAN],[EFATURADURUM],[EARSIV],[PKETIKET],evrbas.[DOVIZCINS]," +
+        //    //    "[EVRAKDOVIZCINS],[EVRAKTARIH],evrbas.[ACIKLAMA1],[KARSIHESAPKOD],[_MIKTAR],[_EVRAKDURUM],EVRBAS.[KAYITDURUM] from EVRBAS" +
+        //    //    " inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD inner join EFABAS on evrbas.EVRAKSN = EFABAS.EVRAKSN";
 
-            for (int j = 1; j <= rows; j++)
-            {
-                SqlCommand c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.ID, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                int s1 = Convert.ToInt32(c.ExecuteScalar());
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKNO, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s2 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT CARKRT.HESAPTIP, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                short s3 = (short)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.HESAPKOD, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s4 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT CARKRT.UNVAN, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s5 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT CARKRT.EFATURADURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                short s6 = (short)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EFABAS.EARSIV, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                short s7 = (short)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EFABAS.PKETIKET, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s8 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.DOVIZCINS, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s9 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKDOVIZCINS, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s10 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKTARIH, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                DateTime s11 = (DateTime)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.ACIKLAMA1, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s12 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.KARSIHESAPKOD , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                string s13 = c.ExecuteScalar().ToString();
-                //c = new SqlCommand("WITH CTE AS (SELECT , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                //string s14 = c.ExecuteScalar().ToString();
-                //c = new SqlCommand("WITH CTE AS (SELECT , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                //string s15 = c.ExecuteScalar().ToString();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS._MIKTAR, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                decimal s16 = (decimal)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS._EVRAKDURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                short s17 = (short)c.ExecuteScalar();
-                c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.KAYITDURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
-                short s18 = (short)c.ExecuteScalar();
-                string komut = @"if not exists (select * from SMRTAPPBAS where EVRAKNO = '" + s2 + "') begin insert into SMRTAPPBAS (ID, EVRAKNO, HESAPTIP, HESAPKOD, UNVAN, EFATURADURUM, EARSIVDURUM, PKETIKET, DOVIZCINS, EVRAKDOVIZCINS, EVRAKTARIH, ACIKLAMA, KARSIHESAPKOD, MIKTAR, EVRAKDURUM, KAYITDURUM) values(@ID, @EVRAKNO, @HESAPTIP, @HESAPKOD, @UNVAN, @EFATURADURUM, @EARSIVDURUM, @PKETIKET, @DOVIZCINS, @EVRAKDOVIZCINS, @EVRAKTARIH, @ACIKLAMA, @KARSIHESAPKOD, @MIKTAR, @EVRAKDURUM, @KAYITDURUM) end "; /**/   //KARSIUNVAN, REFNO yok
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    //+ " values (" + s1.ToString() + ",'" + s2 + "'," + s3.ToString() + ",'" + s4 + "','" + s5 + "'," + s6.ToString() + "," + s7.ToString() + ",'" + s8 + "','" + s9 + "','" + s10 + "','" + s11.ToString() + "','" + s12 + "','" + s13 + "'," /*+ s14 + "," + s15 + ","*/ + s16.ToString() + "," + s17.ToString() + "," + s18.ToString() + ") end";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    //SqlCommand commandDestinationData = new SqlCommand(komut, destinationConnection);
-                SqlCommand commandDestinationData = new SqlCommand();
-                commandDestinationData.CommandText = komut;
-                commandDestinationData.Parameters.Add(new SqlParameter("ID", s1));
-                commandDestinationData.Parameters.Add(new SqlParameter("EVRAKNO", s2));
-                commandDestinationData.Parameters.Add(new SqlParameter("HESAPTIP", s3));
-                commandDestinationData.Parameters.Add(new SqlParameter("HESAPKOD", s4));
-                commandDestinationData.Parameters.Add(new SqlParameter("UNVAN", s5));
-                commandDestinationData.Parameters.Add(new SqlParameter("EFATURADURUM", s6));
-                commandDestinationData.Parameters.Add(new SqlParameter("EARSIVDURUM", s7));
-                commandDestinationData.Parameters.Add(new SqlParameter("PKETIKET", s8));
-                commandDestinationData.Parameters.Add(new SqlParameter("DOVIZCINS", s9));
-                commandDestinationData.Parameters.Add(new SqlParameter("EVRAKDOVIZCINS", s10));
-                commandDestinationData.Parameters.Add(new SqlParameter("EVRAKTARIH", s11));
-                commandDestinationData.Parameters.Add(new SqlParameter("ACIKLAMA", s12));
-                commandDestinationData.Parameters.Add(new SqlParameter("KARSIHESAPKOD", s13));
-                commandDestinationData.Parameters.Add(new SqlParameter("MIKTAR", s16));
-                commandDestinationData.Parameters.Add(new SqlParameter("EVRAKDURUM", s17));
-                commandDestinationData.Parameters.Add(new SqlParameter("KAYITDURUM", s18));
-                commandDestinationData.Connection = destinationConnection;
-                commandDestinationData.ExecuteNonQuery();
-            }
-        }
+        //    for (int j = 1; j <= rows; j++)
+        //    {
+        //        SqlCommand c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.ID, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        int s1 = Convert.ToInt32(c.ExecuteScalar());
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKNO, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s2 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT CARKRT.HESAPTIP, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        short s3 = (short)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.HESAPKOD, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s4 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT CARKRT.UNVAN, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s5 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT CARKRT.EFATURADURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        short s6 = (short)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EFABAS.EARSIV, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        short s7 = (short)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EFABAS.PKETIKET, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s8 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.DOVIZCINS, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s9 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKDOVIZCINS, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s10 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.EVRAKTARIH, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        DateTime s11 = (DateTime)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.ACIKLAMA1, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s12 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.KARSIHESAPKOD , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        string s13 = c.ExecuteScalar().ToString();
+        //        //c = new SqlCommand("WITH CTE AS (SELECT , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        //string s14 = c.ExecuteScalar().ToString();
+        //        //c = new SqlCommand("WITH CTE AS (SELECT , ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        //string s15 = c.ExecuteScalar().ToString();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS._MIKTAR, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        decimal s16 = (decimal)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS._EVRAKDURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        short s17 = (short)c.ExecuteScalar();
+        //        c = new SqlCommand("WITH CTE AS (SELECT EVRBAS.KAYITDURUM, ROW_NUMBER() OVER (ORDER BY EVRBAS.EVRAKNO) AS 'row' FROM EFABAS inner join EVRBAS ON EVRBAS.EVRAKSN=EFABAS.EVRAKSN inner join CARKRT on evrbas.HESAPKOD = CARKRT.HESAPKOD) SELECT * FROM CTE WHERE row=" + j.ToString(), sourceConnection);
+        //        short s18 = (short)c.ExecuteScalar();
+        //        string komut = @"if not exists (select * from SMRTAPPBAS where EVRAKNO = '" + s2 + "') begin insert into SMRTAPPBAS (ID, EVRAKNO, HESAPTIP, HESAPKOD, UNVAN, EFATURADURUM, EARSIVDURUM, PKETIKET, DOVIZCINS, EVRAKDOVIZCINS, EVRAKTARIH, ACIKLAMA, KARSIHESAPKOD, MIKTAR, EVRAKDURUM, KAYITDURUM) values(@ID, @EVRAKNO, @HESAPTIP, @HESAPKOD, @UNVAN, @EFATURADURUM, @EARSIVDURUM, @PKETIKET, @DOVIZCINS, @EVRAKDOVIZCINS, @EVRAKTARIH, @ACIKLAMA, @KARSIHESAPKOD, @MIKTAR, @EVRAKDURUM, @KAYITDURUM) end "; /**/   //KARSIUNVAN, REFNO yok
+        //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //+ " values (" + s1.ToString() + ",'" + s2 + "'," + s3.ToString() + ",'" + s4 + "','" + s5 + "'," + s6.ToString() + "," + s7.ToString() + ",'" + s8 + "','" + s9 + "','" + s10 + "','" + s11.ToString() + "','" + s12 + "','" + s13 + "'," /*+ s14 + "," + s15 + ","*/ + s16.ToString() + "," + s17.ToString() + "," + s18.ToString() + ") end";
+        //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //SqlCommand commandDestinationData = new SqlCommand(komut, destinationConnection);
+        //        SqlCommand commandDestinationData = new SqlCommand();
+        //        commandDestinationData.CommandText = komut;
+        //        commandDestinationData.Parameters.Add(new SqlParameter("ID", s1));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EVRAKNO", s2));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("HESAPTIP", s3));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("HESAPKOD", s4));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("UNVAN", s5));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EFATURADURUM", s6));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EARSIVDURUM", s7));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("PKETIKET", s8));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("DOVIZCINS", s9));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EVRAKDOVIZCINS", s10));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EVRAKTARIH", s11));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("ACIKLAMA", s12));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("KARSIHESAPKOD", s13));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("MIKTAR", s16));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("EVRAKDURUM", s17));
+        //        commandDestinationData.Parameters.Add(new SqlParameter("KAYITDURUM", s18));
+        //        commandDestinationData.Connection = destinationConnection;
+        //        commandDestinationData.ExecuteNonQuery();
+        //    }
+        //}
 
         public static void CreateSMRTAPPSKRT()
         {
             SqlCommand commandSourceData = new SqlCommand("DELETE FROM SMRTAPPSKRT", destinationConnection);
             commandSourceData.ExecuteNonQuery();
 
-            commandSourceData = new SqlCommand("SELECT [ID],[SIRKETNO],[KAYITTUR],[KAYITDURUM],[KARTTIP],[MALKOD],[MALTIP],[MALAD],[MALAD2],[BIRIM],[OPERATOR2],[OPERATOR3],[OPERATOR4],[OPERATOR5],[KATSAYI2],[KATSAYI3],[KATSAYI4],[KATSAYI5],[BIRIMBRUTAGIRLIK],[BIRIMNETAGIRLIK],[BIRIMBRUTHACIM],[BIRIMNETHACIM],[BIRIMKAPADET],[DOVIZCINS],[OPSIYON],[ISKONTOORAN],[OTVTIP],[OTVDEGER],[OTVKESINTIORAN],[KDVORAN],[KDVDH],[KDVKESINTIORAN],[GRUPKOD],[SKOD1],[SKOD2],[SKOD3],[SKOD4],[SKOD5],[BKOD1],[BKOD2],[BKOD3],[BKOD4],[BKOD5],[BKOD6],[BKOD7],[BKOD8],[BKOD9],[NKOD1],[NKOD2],[NKOD3],[NKOD4],[NKOD5],[NKOD6],[NKOD7],[NKOD8],[NKOD9],[TARIH1],[TARIH2],[TARIH3],[TARIH4],[TARIH5],[ACIKLAMA1],[ALISFIYAT1],[ALISFIYAT1KDVDH],[ALISFIYAT2],[ALISFIYAT2KDVDH],[ALISFIYAT3],[ALISFIYAT3KDVDH],[ALISFIYAT4],[ALISFIYAT4KDVDH],[ALISFIYAT5],[ALISFIYAT5KDVDH],[ALISFIYAT6],[ALISFIYAT6KDVDH],[SATISFIYAT1],[SATISFIYAT2],[SATISFIYAT3],[SATISFIYAT4],[SATISFIYAT5],[SATISFIYAT6],[SATISFIYAT1KDVDH],[SATISFIYAT2KDVDH],[SATISFIYAT3KDVDH],[SATISFIYAT4KDVDH],[SATISFIYAT5KDVDH],[SATISFIYAT6KDVDH],[ALTSEVIYEKOD],[MRPTIP],[KRITIKSTOKSURE],[KRITIKSTOKMIKTAR],[TEMINTIP],[TEMINSTOKKAPAT],[MAXSTOKSURE],[MAXSTOKMIKTAR],[SABITALIMMIKTAR],[MINALIMMIKTAR],[MAXALIMMIKTAR],[ALIMPARTIBUYUKLUK],[YUVARLAMA],[MONTAJFIREORAN],[TEMINYONTEM],[TEMINOZELYONTEM],[ALIMDAGITIMTIP],[ALIMDAGITIMBASTARIH],[TEMINHAZIRLAMASURE],[TEMINSEVKIYATSURE],[ALIMGUMRUKSURE],[ALIMISLEMSURE],[MINSTOKSURE],[MINSTOKMIKTAR],[SERVISSEVIYEORAN],[GUVENLIKSURETIP],[GUVENLIKSURE],[GUVENLIKSUREORAN],[BILESENFIREORAN],[MINSATISMIKTAR],[MAXSATISMIKTAR],[SATISPARTIBUYUKLUK],[SARFYONTEM],[MEKANIKSARFYONTEM],[MALIYETTIP],[MALIYET1],[MALIYET2],[MALIYET3],[VERGI1ORAN],[SABITVERGI1],[SABITVERGI2],[SABITVERGI3],[KESINTI1ORAN],[KESINTI1FONORAN],[URETICIMALKOD],[GUMRUKVERGIORAN],[GUMRUKFON],[VERSIYONSABLONNO],[SERITAKIP],[KULLANIMSURE],[KALITEMINTESTFREKANS],[STOKKONTROLDURUM],[GRUPNO],[ALTERNATIFTIP],[MHSALIMKOD],[MHSSATISKOD],[MHSALIMIADEKOD],[MHSSATISIADEKOD],[MHSSATISISKONTOKOD],[URUNTAKIP],[KKEGORAN],[GIRENKULLANICI],[GIRENTARIH],[GIRENSAAT],[GIRENKAYNAK],[GIRENSURUM],[DEGISTIRENKULLANICI],[DEGISTIRENTARIH],[DEGISTIRENSAAT],[DEGISTIRENKAYNAK],[DEGISTIRENSURUM],[BARKOD1],[BARKOD2],[BARKOD3],[BARKOD4],[BARKOD5],[MARKAAD] FROM STKKRT", sourceConnection);
+            commandSourceData = new SqlCommand("SELECT [ID],[SIRKETNO],[KAYITTUR],[KAYITDURUM],[KARTTIP],[MALKOD],[MALTIP],[MALAD],[MALAD2],[BIRIM],[OPERATOR2],[OPERATOR3],[OPERATOR4],[OPERATOR5],[KATSAYI2],[KATSAYI3],[KATSAYI4],[KATSAYI5],[BIRIMBRUTAGIRLIK],[BIRIMNETAGIRLIK],[BIRIMBRUTHACIM],[BIRIMNETHACIM],[BIRIMKAPADET],[DOVIZCINS],[OPSIYON],[ISKONTOORAN],[OTVTIP],[OTVDEGER],[OTVKESINTIORAN],[KDVORAN],[KDVDH],[KDVKESINTIORAN],[GRUPKOD],[SKOD1],[SKOD2],[SKOD3],[SKOD4],[SKOD5],[BKOD1],[BKOD2],[BKOD3],[BKOD4],[BKOD5],[BKOD6],[BKOD7],[BKOD8],[BKOD9],[NKOD1],[NKOD2],[NKOD3],[NKOD4],[NKOD5],[NKOD6],[NKOD7],[NKOD8],[NKOD9],[TARIH1],[TARIH2],[TARIH3],[TARIH4],[TARIH5],[ACIKLAMA1],[ALISFIYAT1],[ALISFIYAT1KDVDH],[ALISFIYAT2],[ALISFIYAT2KDVDH],[ALISFIYAT3],[ALISFIYAT3KDVDH],[ALISFIYAT4],[ALISFIYAT4KDVDH],[ALISFIYAT5],[ALISFIYAT5KDVDH],[ALISFIYAT6],[ALISFIYAT6KDVDH],[SATISFIYAT1],[SATISFIYAT2],[SATISFIYAT3],[SATISFIYAT4],[SATISFIYAT5],[SATISFIYAT6],[SATISFIYAT1KDVDH],[SATISFIYAT2KDVDH],[SATISFIYAT3KDVDH],[SATISFIYAT4KDVDH],[SATISFIYAT5KDVDH],[SATISFIYAT6KDVDH],[ALTSEVIYEKOD],[MRPTIP],[KRITIKSTOKSURE],[KRITIKSTOKMIKTAR],[TEMINTIP],[TEMINSTOKKAPAT],[MAXSTOKSURE],[MAXSTOKMIKTAR],[SABITALIMMIKTAR],[MINALIMMIKTAR],[MAXALIMMIKTAR],[ALIMPARTIBUYUKLUK],[YUVARLAMA],[MONTAJFIREORAN],[TEMINYONTEM],[TEMINOZELYONTEM],[ALIMDAGITIMTIP],[ALIMDAGITIMBASTARIH],[TEMINHAZIRLAMASURE],[TEMINSEVKIYATSURE],[ALIMGUMRUKSURE],[ALIMISLEMSURE],[MINSTOKSURE],[MINSTOKMIKTAR],[SERVISSEVIYEORAN],[GUVENLIKSURETIP],[GUVENLIKSURE],[GUVENLIKSUREORAN],[BILESENFIREORAN],[MINSATISMIKTAR],[MAXSATISMIKTAR],[SATISPARTIBUYUKLUK],[SARFYONTEM],[MEKANIKSARFYONTEM],[MALIYETTIP],[MALIYET1],[MALIYET2],[MALIYET3],[VERGI1ORAN],[SABITVERGI1],[SABITVERGI2],[SABITVERGI3],[KESINTI1ORAN],[KESINTI1FONORAN],[URETICIMALKOD],[GUMRUKVERGIORAN],[GUMRUKFON],[VERSIYONSABLONNO],[SERITAKIP],[KULLANIMSURE],[KALITEMINTESTFREKANS],[STOKKONTROLDURUM],[GRUPNO],[ALTERNATIFTIP],[MHSALIMKOD],[MHSSATISKOD],[MHSALIMIADEKOD],[MHSSATISIADEKOD],[MHSSATISISKONTOKOD],[URUNTAKIP],[KKEGORAN],[GIRENKULLANICI],[GIRENTARIH],[GIRENSAAT],[GIRENKAYNAK],[GIRENSURUM],[DEGISTIRENKULLANICI],[DEGISTIRENTARIH],[DEGISTIRENSAAT],[DEGISTIRENKAYNAK],[DEGISTIRENSURUM],[BARKOD1],[BARKOD2],[BARKOD3],[BARKOD4],[BARKOD5],[MARKAAD], SATISFIYAT1DOVIZCINS, SATISFIYAT2DOVIZCINS, SATISFIYAT3DOVIZCINS, SATISFIYAT4DOVIZCINS, SATISFIYAT5DOVIZCINS, MODELAD, URETICIKOD,ALISFIYAT1DOVIZCINS,ALISFIYAT2DOVIZCINS,ALISFIYAT3DOVIZCINS,ALISFIYAT4DOVIZCINS,ALISFIYAT5DOVIZCINS, ALIMEVRAKBIRIM, ALIMFIYATSEKLI, ALIMEVRAKSEKLI, SATISEVRAKBIRIM, SATISFIYATSEKLI, SATISEVRAKSEKLI, GUVENLIKKOD, OZELKOD, TIPKOD FROM STKKRT", sourceConnection);
             SqlDataReader reader = commandSourceData.ExecuteReader();
 
             SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection);
@@ -185,7 +185,7 @@ namespace WpfApp2
             SqlCommand commandSourceData = new SqlCommand("DELETE FROM SMRTAPPCKRT", destinationConnection);
             commandSourceData.ExecuteNonQuery();
 
-            commandSourceData = new SqlCommand("SELECT [ID],[SIRKETNO],[HESAPKOD],[KAYITTUR],[KAYITDURUM] ,[KARTTIP] ,[HESAPTIP] ,[UNVAN] ,[KISITIP] ,[ULKEKOD] ,[VERGIDAIRE] ,[VERGIHESAPNO] ,[KISIUNVAN] ,[KISIAD] ,[KISISOYAD] ,[KISIUYRUK] ,[KISIPASAPORTTARIH] ,[FATURAUNVAN] ,[FATURAADRES1] ,[FATURAADRES2] ,[FATURAADRES4] ,[FATURAADRES5] ,[FATURAADRESBINANO] ,[FATURAADRESBINAAD] ,[FATURAADRESDAIRENO] ,[YETKILI1] ,[YETKILI2] ,[YETKILI3] ,[TELEFON1] ,[TELEFON2] ,[OPSIYONTIP] ,[OPSIYON] ,[ODEMEGUN] ,[ISKONTOORAN] ,[DOVIZBANKA] ,[DOVIZTIP] ,[DOVIZCINS] ,[BKOD1] ,[BKOD2] ,[BKOD3] ,[BKOD4] ,[BKOD5] ,[BKOD6] ,[BKOD7] ,[BKOD8] ,[BKOD9] ,[NKOD1] ,[NKOD2] ,[NKOD3] ,[NKOD4] ,[NKOD5] ,[NKOD6] ,[NKOD7] ,[NKOD8] ,[NKOD9] ,[TARIH1] ,[TARIH2] ,[TARIH3] ,[TARIH4] ,[TARIH5] ,[ACIKLAMA3] ,[ACIKLAMA4] ,[ACIKLAMA5] ,[MUHASEBEKOD1] ,[ACIKHESAPLIMIT] ,[DOVIZACIKHESAPLIMIT] ,[KREDILIMIT] ,[DOVIZKREDILIMIT] ,[BORCLUKREDILIMIT] ,[MUTABAKATTARIH] ,[MUTABAKATBAKIYE] ,[DOVIZMUTABAKATBAKIYE] ,[VADEFARKMUTABAKATTARIH] ,[KONTROLEVRAKTIP] ,[FIRMATIP] ,[TAKVIMOZEL] ,[BLOKE] ,[BABSTIP] ,[EFATURADURUM] ,[EFATURASENARYO] ,[EFATURAPKETIKET] ,[EFATURAYUKLEMETIP] ,[EARSIVKAGITNUSHA] ,[EIRSALIYEDURUM] ,[EIRSALIYEPKETIKET] ,[GIRENKULLANICI] ,[GIRENTARIH] ,[GIRENSAAT] ,[GIRENKAYNAK] ,[GIRENSURUM] ,[DEGISTIRENKULLANICI] ,[DEGISTIRENTARIH] ,[DEGISTIRENSAAT] ,[DEGISTIRENKAYNAK] ,[DEGISTIRENSURUM], EMAIL1, EMAIL2, EMAIL3, EMAIL4, EMAIL5 FROM CARKRT", sourceConnection);
+            commandSourceData = new SqlCommand("SELECT [ID],[SIRKETNO],[HESAPKOD],[KAYITTUR],[KAYITDURUM] ,[KARTTIP] ,[HESAPTIP] ,[UNVAN] ,[KISITIP] ,[ULKEKOD] ,[VERGIDAIRE] ,[VERGIHESAPNO] ,[KISIUNVAN] ,[KISIAD] ,[KISISOYAD] ,[KISIUYRUK] ,[KISIPASAPORTTARIH] ,[FATURAUNVAN] ,[FATURAADRES1] ,[FATURAADRES2] ,[FATURAADRES4] ,[FATURAADRES5] ,[FATURAADRESBINANO] ,[FATURAADRESBINAAD] ,[FATURAADRESDAIRENO] ,[YETKILI1] ,[YETKILI2] ,[YETKILI3] ,[TELEFON1] ,[TELEFON2] ,[OPSIYONTIP] ,[OPSIYON] ,[ODEMEGUN] ,[ISKONTOORAN] ,[DOVIZBANKA] ,[DOVIZTIP] ,[DOVIZCINS] ,[BKOD1] ,[BKOD2] ,[BKOD3] ,[BKOD4] ,[BKOD5] ,[BKOD6] ,[BKOD7] ,[BKOD8] ,[BKOD9] ,[NKOD1] ,[NKOD2] ,[NKOD3] ,[NKOD4] ,[NKOD5] ,[NKOD6] ,[NKOD7] ,[NKOD8] ,[NKOD9] ,[TARIH1] ,[TARIH2] ,[TARIH3] ,[TARIH4] ,[TARIH5] ,[ACIKLAMA3] ,[ACIKLAMA4] ,[ACIKLAMA5] ,[MUHASEBEKOD1] ,[ACIKHESAPLIMIT] ,[DOVIZACIKHESAPLIMIT] ,[KREDILIMIT] ,[DOVIZKREDILIMIT] ,[BORCLUKREDILIMIT] ,[MUTABAKATTARIH] ,[MUTABAKATBAKIYE] ,[DOVIZMUTABAKATBAKIYE] ,[VADEFARKMUTABAKATTARIH] ,[KONTROLEVRAKTIP] ,[FIRMATIP] ,[TAKVIMOZEL] ,[BLOKE] ,[BABSTIP] ,[EFATURADURUM] ,[EFATURASENARYO] ,[EFATURAPKETIKET] ,[EFATURAYUKLEMETIP] ,[EARSIVKAGITNUSHA] ,[EIRSALIYEDURUM] ,[EIRSALIYEPKETIKET] ,[GIRENKULLANICI] ,[GIRENTARIH] ,[GIRENSAAT] ,[GIRENKAYNAK] ,[GIRENSURUM] ,[DEGISTIRENKULLANICI] ,[DEGISTIRENTARIH] ,[DEGISTIRENSAAT] ,[DEGISTIRENKAYNAK] ,[DEGISTIRENSURUM], EMAIL1, EMAIL2, EMAIL3, EMAIL4, EMAIL5, UNVAN2, ODEMEIBAN, ODEMEBANKAKOD FROM CARKRT", sourceConnection);
             SqlDataReader reader = commandSourceData.ExecuteReader();
 
             SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection);

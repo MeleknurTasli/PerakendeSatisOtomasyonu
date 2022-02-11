@@ -52,6 +52,7 @@
     <None Remove="persatis.png" />
     <None Remove="pngegg %2810%29.png" />
     <None Remove="pngegg %2819%29.png" />
+    <None Remove="pngegg %2837%29.png" />
     <None Remove="pngegg %285%29.png" />
     <None Remove="pngeggddd.png" />
     <None Remove="rapor beyaz %281%29.png" />
@@ -82,6 +83,7 @@
     <PackageReference Include="MaterialDesignColors" Version="2.0.4" />
     <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
     <PackageReference Include="MediaFoundation" Version="3.1.0" />
+    <PackageReference Include="MessageBox" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
@@ -201,6 +203,7 @@
     <Resource Include="icons\selectall.png" />
     <Resource Include="icons\pngegg %2819%29.png" />
     <Resource Include="icons\robot.png" />
+    <Resource Include="icons\pngegg %2837%29.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using BespokeFusion;
+//using BespokeFusion;
 using System.Data;
 
 namespace WpfApp2
@@ -56,6 +56,28 @@ namespace WpfApp2
             w.VerticalAlignment = this.VerticalAlignment;
             w.HorizontalAlignment = this.HorizontalAlignment;
         }
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            StokKartAc w = new StokKartAc();
+            w.Show();
+            this.Close();
+            //w.Width = this.ActualWidth;
+            //w.Height = this.ActualHeight;
+            w.WindowState = this.WindowState;
+            w.VerticalAlignment = this.VerticalAlignment;
+            w.HorizontalAlignment = this.HorizontalAlignment;
+        }
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            CariKartAc w = new CariKartAc("SECIM");
+            w.Show();
+            this.Close();
+            //w.Width = this.ActualWidth;
+            //w.Height = this.ActualHeight;
+            w.WindowState = this.WindowState;
+            w.VerticalAlignment = this.VerticalAlignment;
+            w.HorizontalAlignment = this.HorizontalAlignment;
+        }
 
 
 
@@ -87,7 +109,7 @@ namespace WpfApp2
                 object sayi = command.ExecuteScalar();
                 if ((int)sayi == 0)
                 {
-                    command = new SqlCommand("INSERT INTO SMRTAPPKUL VALUES('" + txtAd.Text + "','" + txtSifre.Text + "',0)", s);
+                    command = new SqlCommand("INSERT INTO SMRTAPPKUL(KULLANICIADI, SIFRE, ADMIN) VALUES('" + txtAd.Text + "','" + txtSifre.Text + "',0)", s);
                     command.ExecuteNonQuery();
                     durum.Text = "Kullanıcı eklendi.";
                 }
@@ -118,6 +140,8 @@ namespace WpfApp2
                             {
                                 command = new SqlCommand("DELETE FROM SMRTAPPKUL WHERE KULLANICIADI='" + txtAd2.Text + "' AND SIFRE='" + txtSifre2.Text + "'", s);
                                 command.ExecuteNonQuery(); //kullanıcıyı sil
+                                command = new SqlCommand("DELETE FROM SMRTAPPKASAKULLANICI WHERE KULLANICIADI='" + txtAd2.Text + "'", s);
+                                command.ExecuteNonQuery();
                                 durum2.Text = "Kullanıcı silindi.";
                             }
                             else durum2.Text = "Admin silinemez.";
@@ -191,5 +215,7 @@ namespace WpfApp2
         {
             this.Opacity = 0.5;
         }
+
+        
     }
 }

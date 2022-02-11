@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Navigation;
 using System.Configuration;
 using System.Security.Cryptography;
-using BespokeFusion;
+//using BespokeFusion;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Interop;
@@ -42,6 +42,7 @@ using DevExpress.DataAccess.ConnectionParameters;
 using DevExpress.Xpo;
 using DevExpress.Xpo.DB.Exceptions;
 using DevExpress.Xpo.DB;
+using Gat.Controls;
 
 namespace WpfApp2
 {
@@ -62,7 +63,6 @@ namespace WpfApp2
         }
 
        
-
         private void txtBrkd_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!string.IsNullOrEmpty(txtBrkd.Text))
@@ -72,27 +72,13 @@ namespace WpfApp2
                 try
                 {
                     value = BarkodVSMalkodVSMalad();
-                }
-                catch (Exception ex)
-                {
-                    if (Carried.IsCPMconnected == true)
-                    {
-                        bool netcon = Carried.CheckForInternetConnection();
-                        Carried.IsCPMconnected = netcon == true ? true : false;
-                        if (Carried.IsCPMconnected == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); }
-                        else Carried.showMessage(ex.Message);
-                    }
-                    else Carried.showMessage(ex.Message);
-                }
-                if (value != null)
-                {
-                    try
+                    if (value != null)
                     {
                         Carried.DosyaDecrypt();
                         string evtip = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("Satis Faturasi Evrak Tipi", "Baglanti.ini");
                         Carried.DosyaEncrypt();
                         if (!string.IsNullOrEmpty(evtip)) txt5.Text = evtip;
-                        else Carried.showMessage("Parametreler ekranından evrak tipini belirtmeden kayıt işlemi yapamazsınız.");
+                        else { Carried.showMessage("Parametreler ekranından evrak tipini belirtmeden kayıt işlemi yapamazsınız."); return; }
                         UrunResminiGetir(value);  //resim(value); 
                         DepoVersiyonGetir(value);
                         StokBilgileriGetir(value);
@@ -100,33 +86,33 @@ namespace WpfApp2
                         SatisHareketleriGetir(value);
                         txtBrkd.Clear();
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        if (Carried.IsCPMconnected == true)
+                        urunresmi.Source = new BitmapImage(new Uri(@"/icons/cpm-logo-yazili-beyaz_c@2x.png", UriKind.Relative));
+                        this.depo_dataGrid.ItemsSource = null;
+                        foreach (UIElement item in eklenecekyer.Children)
                         {
-                            bool netcon = Carried.CheckForInternetConnection();
-                            Carried.IsCPMconnected = netcon == true ? true : false;
-                            if (netcon == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); return; }
+                            if (item.GetType().Equals(typeof(TextBox)))
+                            {
+                                TextBox tbox = (TextBox)item;
+                                tbox.Clear();
+                            }
                         }
-                        if (ex.Message.Contains("String or binary data would be truncated")) Carried.showMessage("Girdiğiniz bazı değerler çok uzun olduğu için işlem yapılamadı.");
-                        else Carried.showMessage(ex.Message);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    urunresmi.Source = new BitmapImage(new Uri(@"/icons/cpm-logo-yazili-beyaz_c@2x.png", UriKind.Relative));
-                    this.depo_dataGrid.ItemsSource = null;
-                    foreach (UIElement item in eklenecekyer.Children)
+                    if (Carried.IsCPMconnected == true)
                     {
-                        if (item.GetType().Equals(typeof(TextBox)))
-                        {
-                            TextBox tbox = (TextBox)item;
-                            tbox.Clear();
-                        }
+                        bool netcon = Carried.CheckForInternetConnection();
+                        Carried.IsCPMconnected = netcon == true ? true : false;
+                        if (netcon == false) { Carried.showMessage("İnternet bağlantısı bulunamadığı için local bağlantıya geçildi. İşlemi tekrar yapınız"); return; }
                     }
+                    if (ex.Message.Contains("String or binary data would be truncated")) Carried.showMessage("Girdiğiniz bazı değerler çok uzun olduğu için işlem yapılamadı.");
+                    else Carried.showMessage(ex.Message);
+
                 }
             }
-            //else urunresmi.Source = new BitmapImage(new Uri(@"/icons/cpm-logo-yazili-beyaz_c@2x.png", UriKind.Relative));
         }
         private string BarkodVSMalkodVSMalad()
         {
@@ -263,6 +249,7 @@ namespace WpfApp2
                 lbMalad.Items.Clear();
             }
         }
+       
         private void UrunResminiGetir(string value)//private ImageSource UrunResminiGetir(string value)
         {
             byte[] imgBytes = { };
@@ -425,13 +412,16 @@ namespace WpfApp2
                     stokkontrol = new SqlCommand("select STOKKONTROLDURUM from " + tabloadi + value, s).ExecuteScalar().ToString();
                     if(Convert.ToInt16(stokkontrol) == 0 && depo_dataGrid.Items.Count != 0) //stokkontroldurum 0 ise bakiyenin eksiye düşmesine izin yok, 1 ise var. (tabii depo varsa)
                     {
-                        DataRowView rowView = depo_dataGrid.Items[0] as DataRowView;
-                        if(Convert.ToDecimal(rowView[9]) < 0)
+                        for (int j = 0; j < depo_dataGrid.Items.Count; j++)
                         {
-                            rowView.BeginEdit();
-                            rowView[9] = "0"; //Convert.ToDecimal(0);
-                            rowView.EndEdit();
-                            depo_dataGrid.Items.Refresh();
+                            DataRowView rowView = depo_dataGrid.Items[j] as DataRowView;
+                            if (Convert.ToDecimal(rowView[9]) < 0)
+                            {
+                                rowView.BeginEdit();
+                                rowView[9] = "0";// Convert.ToDecimal(0);
+                                rowView.EndEdit();
+                                depo_dataGrid.Items.Refresh();
+                            }
                         }
                     }
                     switch (cb.Content)
@@ -485,7 +475,7 @@ namespace WpfApp2
             txt6.Text = evraktaki + new String('0', (16 - evrnokisa.Length)) + evrakserino;
         }
         List<string> satısharmalkodlari = new List<string>();
-        int kdvdh;
+        //int kdvdh;
         private void SatisHareketleriGetir(string value)
         {
             if (txtmiktar.Text == "0") return;
@@ -503,14 +493,23 @@ namespace WpfApp2
                 string s3 = new SqlCommand("select BIRIM FROM " + tabloadi + value, s).ExecuteScalar().ToString();
                 decimal s4 = (decimal)new SqlCommand("select " + columnname + " FROM " + tabloadi + value, s).ExecuteScalar();
                 Single s5 = (Single)new SqlCommand("select KDVORAN FROM " + tabloadi + value, s).ExecuteScalar();
-                string s6 = new SqlCommand("select DOVIZCINS FROM " + tabloadi + value, s).ExecuteScalar().ToString();
+                string s6 = new SqlCommand("select " + columnname + "DOVIZCINS FROM " + tabloadi + value, s).ExecuteScalar().ToString();
                 string s7 = new SqlCommand("select MARKAAD FROM " + tabloadi + value, s).ExecuteScalar().ToString();
                 Single s8 = (Single)new SqlCommand("select ISKONTOORAN FROM " + tabloadi + value, s).ExecuteScalar();
-                kdvdh = Convert.ToInt16(new SqlCommand("select " + columnname+"KDVDH FROM " + tabloadi + value, s).ExecuteScalar());
+                Single kdvkesinti = (Single)new SqlCommand("select KDVKESINTIORAN FROM " + tabloadi + value, s).ExecuteScalar();
+                //Single otvkesinti = (Single)new SqlCommand("select OTVKESINTIORAN FROM " + tabloadi + value, s).ExecuteScalar();
+                //int kdvdh = Convert.ToInt16(new SqlCommand("select " + columnname + "KDVDH FROM " + tabloadi + value, s).ExecuteScalar());
+                int otvtip = Convert.ToInt16(new SqlCommand("select OTVTIP FROM " + tabloadi + value, s).ExecuteScalar());
+                decimal otvdeger = Convert.ToDecimal(new SqlCommand("select OTVDEGER FROM " + tabloadi + value, s).ExecuteScalar());
                 c1 = new SqlCommand();
-                c1.CommandText = @"INSERT INTO SATISHAR(SECIM, MIKTAR, ISKONTOORAN, ISKONTOTUTAR, TOPLAMTUTAR, [MALKOD],[MALAD],[BIRIM],[SATISFIYAT1],[KDVORAN], MARKAAD, [DOVIZCINS]) values(@SECIM, @MIKTAR, @ISKONTOORAN, @ISKONTOTUTAR, @TOPLAMTUTAR, @MALKOD, @MALAD, @BIRIM,@SATISFIYAT1,@KDVORAN, @MARKAAD, @DOVIZCINS)";
+                c1.CommandText = @"INSERT INTO SATISHAR(SECIM, MIKTAR, ISKONTOORAN, ISKONTOTUTAR, TOPLAMTUTAR, [MALKOD],[MALAD],[BIRIM],[SATISFIYAT1],[KDVORAN], MARKAAD, [DOVIZCINS], OTVTIP, OTVDEGER, KDVKESINTIORAN, TOPLAMISKONTO) values(@SECIM, @MIKTAR, @ISKONTOORAN, @ISKONTOTUTAR, @TOPLAMTUTAR, @MALKOD, @MALAD, @BIRIM,@SATISFIYAT1,@KDVORAN, @MARKAAD, @DOVIZCINS, @OTVTIP, @OTVDEGER, @KDVKESINTIORAN, @TOPLAMISKONTO)";
                 c1.Connection = sl;
                 c1.Parameters.AddWithValue("@SECIM", 1);
+                c1.Parameters.AddWithValue("@OTVTIP", otvtip);
+                c1.Parameters.AddWithValue("@OTVDEGER", otvdeger);
+                c1.Parameters.AddWithValue("@KDVKESINTIORAN", kdvkesinti);
+                //c1.Parameters.AddWithValue("@OTVKESINTIORAN", otvkesinti);
+                //c1.Parameters.AddWithValue("@kdvdh", kdvdh);
                 int mikt;
                 mikt = String.IsNullOrWhiteSpace(txtmiktar.Text) ? 1 : Convert.ToInt32(txtmiktar.Text);
                 c1.Parameters.AddWithValue("@MIKTAR", mikt);
@@ -519,7 +518,8 @@ namespace WpfApp2
                 decimal isktutar = Convert.ToDecimal(s8) * s4 / 100;
                 c1.Parameters.AddWithValue("@ISKONTOTUTAR", /* Convert.ToDecimal(mikt) * */ isktutar + markaiskontoeklentisi);
                 if(s4 != 0) c1.Parameters.AddWithValue("@ISKONTOORAN", Convert.ToSingle(100*(isktutar + markaiskontoeklentisi)/s4));//markaiskontoeklentisi dahil yeni iskonto oranı
-                else c1.Parameters.AddWithValue("@ISKONTOORAN", Convert.ToSingle(s4));//markaiskontoeklentisi dahil yeni iskonto oranı
+                else c1.Parameters.AddWithValue("@ISKONTOORAN", Convert.ToSingle(s8));//markaiskontoeklentisi dahil yeni iskonto oranı   s4 demişim daha önce
+                c1.Parameters.AddWithValue("@TOPLAMISKONTO", isktutar + markaiskontoeklentisi);
                 c1.Parameters.AddWithValue("@TOPLAMTUTAR", (double)mikt * (double)(s4 - isktutar));
                 c1.Parameters.Add(new SqlParameter("@MALKOD", s1));
                 c1.Parameters.Add(new SqlParameter("@MALAD", s2));
@@ -551,13 +551,13 @@ namespace WpfApp2
             //table.Columns.Add(new DataColumn("Miktar", typeof(string)));
             //table.Columns.Add(new DataColumn("İskonto Tutar", typeof(string)));
             //table.Columns.Add(new DataColumn("Toplam Tutar", typeof(string)));
-            SqlDataAdapter a = new SqlDataAdapter("select SECIM as 'Seçim' , MIKTAR as 'Miktar', MALKOD as 'Malzeme Kodu', MALAD as 'Malzeme Tanımı', SATISFIYAT1 as 'Birim Fiyatı', ISKONTOORAN as 'İskonto Oranı', ISKONTOTUTAR as 'İskonto Tutar', TOPLAMTUTAR as 'Toplam Tutar' , BIRIM as Birim, KDVORAN as KDV, MARKAAD as 'Marka Adı', DOVIZCINS as 'Döviz Cins' FROM SATISHAR", sl);
+            SqlDataAdapter a = new SqlDataAdapter("select SECIM as 'Seçim' , MIKTAR as 'Miktar', MALKOD as 'Malzeme Kodu', MALAD as 'Malzeme Tanımı', SATISFIYAT1 as 'Birim Fiyatı', ISKONTOORAN as 'İskonto Oranı', ISKONTOTUTAR as 'İskonto Tutar', TOPLAMTUTAR as 'Toplam Tutar' , BIRIM as Birim, KDVORAN as KDV, MARKAAD as 'Marka Adı', DOVIZCINS as 'Döviz Cins', KALEMISKONTOORAN2 as 'İskonto Oran 2', KALEMISKONTOORAN3 as 'İskonto Oran 3', KALEMISKONTOORAN4 as 'İskonto Oran 4', KALEMISKONTOORAN5 as 'İskonto Oran 5', TOPLAMISKONTO as 'Toplam İskonto' FROM SATISHAR", sl);
             a.Fill(table);
             this.stok_dataGrid.ItemsSource = table.DefaultView;
             int x = 0;
             foreach (DataGridColumn column in stok_dataGrid.Columns)
             {
-                if (x == 0 || x == 1 || x == 4 || x == 5 || x == 6 ) { column.IsReadOnly = false; }
+                if (x == 0 || x == 1 || x == 4 || x == 5 || x == 6 || x == 12 || x == 13 || x == 14 || x == 15) { column.IsReadOnly = false; }
                 else column.IsReadOnly = true;
                 if (x == 0) { column.Visibility = Visibility.Hidden; }
                 x++;
@@ -584,7 +584,7 @@ namespace WpfApp2
             txt_genelnettutar.Text = "";
             txt_geneliskontotutar.Text = "";
             txt_geneltoplam.Text = "";
-            txt_kdv.Text = "";
+            txt_vergi.Text = "";
             txt_nettutar.Text = "";
             markaiskonto.Text = "";
             txtmiktar.Text = "";
@@ -597,86 +597,239 @@ namespace WpfApp2
                     tbox.Clear();
                 }
             }
+            Odeme.parcaliodeme.source = null;
         }
         private void Hesap()
         {
-            decimal ara, aratoplam = 0, nettutar = 0, kdv = 0, geneltoplam = 0, toplamkalemiskontotutar = 0, genelnettutar = 0, toplamtoplamtutar = 0;
+            Single kdvkesoran; decimal kdvkesinti = 0;//kdvkesinti satanın ödeyeceği tutar
+            int otvtip; decimal otvdeger; decimal _otvtutar = 0, toplamotvtutar = 0; Single otvoran = 0; decimal eskinettutar;
+            int kdvdh; string constr;  
+            tabloadi = Carried.IsCPMconnected == true ? "STKKRT" : "SMRTAPPSKRT";
+            constr = Carried.IsCPMconnected == true ? Carried.girisBaglantiCPM : Carried.girisBaglantiLocal;
+            s = new SqlConnection(constr);
+            s.Open();
+            decimal _geneltop=0, _nettutar=0 , _kdv = 0, _ara = 0,  _iskonto=0;
+            decimal aratoplam = 0, nettutar = 0, vergi = 0, geneltoplam = 0, toplamkalemiskontotutar = 0, toplamtoplamtutar = 0;
             for (int i = 0; i < stok_dataGrid.Items.Count; i++)
             {
                 DataRowView rowView = stok_dataGrid.Items[i] as DataRowView;
-                if (rowView[0].ToString() == "True")
+                otvdeger = (decimal)new SqlCommand("select OTVDEGER from SATISHAR where malkod='" + rowView[2] + "'", sl).ExecuteScalar();
+                otvtip = Convert.ToInt16(new SqlCommand("select OTVTIP from SATISHAR where malkod='" + rowView[2] + "'", sl).ExecuteScalar());
+                kdvkesoran = Convert.ToSingle(new SqlCommand("select KDVKESINTIORAN from SATISHAR where malkod='" + rowView[2] + "'", sl).ExecuteScalar());
+                kdvdh = Convert.ToInt16(new SqlCommand("select " + columnname + "KDVDH FROM " + tabloadi + " where MALKOD='" + rowView[2] + "'", s).ExecuteScalar());
+                if (otvdeger == 0) //if (rowView[0].ToString() == "True" )
                 {
-                    //if (!String.IsNullOrWhiteSpace(rowView[10].ToString()) && rowView[10].ToString() != "TRY") // doviz cinsi TL değilse
-                    //{
-                    if(kdvdh==0)
+                    otvoran = 0; _otvtutar = 0;
+                    if (kdvdh==0 && _switch.IsChecked == false)
                     { 
-                        aratoplam += Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) * getCurrency(rowView[11].ToString().ToUpper());//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan ve çarpı doviz oranı
-                        toplamkalemiskontotutar += Convert.ToDecimal(rowView[6]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
-                        kdv += (Convert.ToDecimal(rowView[9]) / Convert.ToDecimal(100)) * Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])) * getCurrency(rowView[11].ToString().ToUpper()); //her bir satırın kdv'si toplamı yani (kdv)*miktar*(satıs fiyatı-iskonto)*doviz
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) * getCurrency(rowView[11].ToString().ToUpper());//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan ve çarpı doviz oranı
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
+                        toplamkalemiskontotutar += _iskonto;
+                        _kdv = (Convert.ToDecimal(rowView[9]) / Convert.ToDecimal(100)) * Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[16])) * getCurrency(rowView[11].ToString().ToUpper()); //her bir satırın kdv'si toplamı yani (kdv)*miktar*(satıs fiyatı-iskonto)*doviz
+                        vergi += _kdv;
                         rowView.BeginEdit();
-                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
-                        // YANİ İSKONTO DA DOLAR ÜZERİNDEN ALINIYOR. EN SONKİ TUTARI TL'YE ÇEVİRİYOR.
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());// YANİ İSKONTO DA DOLAR ÜZERİNDEN ALINIYOR. EN SONKİ TUTARI TL'YE ÇEVİRİYOR.
                         rowView.EndEdit();
                         stok_dataGrid.Items.Refresh();
-                        toplamtoplamtutar += Convert.ToDecimal(rowView[7]);
+                        //toplamtoplamtutar += Convert.ToDecimal(rowView[7]);
+
+                        _nettutar = _ara - _iskonto; //Convert.ToDecimal(rowView[7]);
+                        _geneltop = _nettutar + _kdv;
                     }
-                    else
+                    else if (kdvdh == 1 && _switch.IsChecked == false)
                     {
-                        ara = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) / Convert.ToDecimal("1," + rowView[9].ToString()));
-                        aratoplam += ara * getCurrency(rowView[11].ToString().ToUpper());//miktar*kdvsiz satisfiyati
-                        toplamkalemiskontotutar += Convert.ToDecimal(rowView[6]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
-                        //kdv += Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6]) - (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])) / Convert.ToDecimal("1,"+rowView[9].ToString())) * getCurrency(rowView[11].ToString().ToUpper()); //her bir satırın kdv'si toplamı yani miktar*(satısfiyatı-(satısfiyatı/1.kdvoranı))*doviz  --->bu formüldeki satısfiyatı iskonto çıkmış hali
-                        kdv += (Convert.ToDecimal(rowView[4]) * Convert.ToDecimal(rowView[1]) - ara) * getCurrency(rowView[11].ToString().ToUpper());
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) / Convert.ToDecimal("1," + rowView[9].ToString()) * getCurrency(rowView[11].ToString().ToUpper());//miktar*kdvsiz satisfiyati
+                        aratoplam += _ara;
+                        
+                        //_iskonto = Convert.ToDecimal(rowView[6]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
+                        if (Convert.ToDecimal(rowView[16]) != 0) _iskonto = Convert.ToDecimal(rowView[16]) / Convert.ToDecimal("1," + rowView[9].ToString()) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// (iskonto tutarı/1.kdv) * miktar * doviz
+                        else _iskonto = 0;
+                        toplamkalemiskontotutar += _iskonto;
+                       
+                        _nettutar = _ara - _iskonto;
+
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());  
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                       
+                        //kdv += Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[16]) - (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[16])) / Convert.ToDecimal("1,"+rowView[9].ToString())) * getCurrency(rowView[11].ToString().ToUpper()); //her bir satırın kdv'si toplamı yani miktar*(satısfiyatı-(satısfiyatı/1.kdvoranı))*doviz  --->bu formüldeki satısfiyatı iskonto çıkmış hali
+                        //_kdv = (Convert.ToDecimal(rowView[4]) * Convert.ToDecimal(rowView[1]) - _ara) * getCurrency(rowView[11].ToString().ToUpper());
+                        _kdv = _nettutar * Convert.ToDecimal("0," + rowView[9].ToString());
+                        vergi += _kdv;
+                        
+                        _geneltop = _nettutar + _kdv;
+                        //toplamtoplamtutar += Convert.ToDecimal(rowView[7]);
+                    }
+                    else if (kdvdh == 0 && _switch.IsChecked == true)
+                    {
+                        _kdv = 0;
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) * getCurrency(rowView[11].ToString().ToUpper());//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan ve çarpı doviz oranı
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
+                        toplamkalemiskontotutar += _iskonto;
                         rowView.BeginEdit();
                         rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
                         rowView.EndEdit();
                         stok_dataGrid.Items.Refresh();
-                        toplamtoplamtutar += Convert.ToDecimal(rowView[7]);
+                        _nettutar = _ara - _iskonto; //Convert.ToDecimal(rowView[7]);
+                        _geneltop = _nettutar;
                     }
-                    //else  if (String.IsNullOrWhiteSpace(rowView[10].ToString()) || rowView[10].ToString() == "TRY") // doviz cinsi TL ise
-                    //{
-                    //    aratoplam += Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]);//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan
-                    //    toplamkalemiskontotutar += Convert.ToDecimal(rowView[5]) * Convert.ToDecimal(rowView[1]);// iskonto tutarı * miktar 
-                    //    kdv += (Convert.ToDecimal(rowView[8]) / Convert.ToDecimal(100)) * (Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[5]))); //her bir satırın kdv'si toplamı yani (kdv)*miktar*(satıs fiyatı-iskonto)
-                    //    rowView.BeginEdit();
-                    //    rowView[6] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[5])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
-                    //    rowView.EndEdit();
-                    //    stok_dataGrid.Items.Refresh();
-                    //    toplamtoplamtutar += Convert.ToDecimal(rowView[6]);
-                    //}
+                    else if (kdvdh == 1 && _switch.IsChecked == true)
+                    {
+                        _kdv = 0;
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) / Convert.ToDecimal("1," + rowView[9].ToString()) * getCurrency(rowView[11].ToString().ToUpper());//miktar*kdvsiz satisfiyati
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * getCurrency(rowView[11].ToString().ToUpper());
+                        toplamkalemiskontotutar += _iskonto;
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                        _nettutar = _ara - _iskonto;
+                        _geneltop = _nettutar;
+                    }
+                    nettutar += _nettutar;
+                    geneltoplam += _geneltop;
+                    if(kdvkesoran > 0)
+                    {
+                        kdvkesinti = ((decimal)kdvkesoran / 100) * _kdv;
+                        _kdv = _kdv - kdvkesinti;
+                        vergi = vergi - kdvkesinti;
+                        geneltoplam = geneltoplam - kdvkesinti;
+                    }
+                    c1 = new SqlCommand("update SATISHAR set TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + " , genel = " + _geneltop.ToString().Replace(",", ".") + ", kalemiskonto= " + _iskonto.ToString().Replace(",", ".") + ", ara = " + _ara.ToString().Replace(",", ".") + ", net = " + _nettutar.ToString().Replace(",", ".") + " WHERE MALKOD='" + rowView[2] + "'", sl);
+                    c1.ExecuteNonQuery();
+                    c1 = new SqlCommand("update SATISHAR set kdvtutar = " + _kdv.ToString().Replace(",", ".") + ", kdvdh = " + kdvdh + ", otvoran ="  + otvoran.ToString().Replace(",", ".") + ", otvtutar =" + _otvtutar.ToString().Replace(",", ".") + ", KDVKESINTI = " + kdvkesinti.ToString().Replace(",", ".") + " WHERE MALKOD='" + rowView[2] + "'", sl);
+                    c1.ExecuteNonQuery();
+                }
+                else
+                {
+                    if (kdvdh == 0 && _switch.IsChecked == false)
+                    {
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) * getCurrency(rowView[11].ToString().ToUpper());//hepsinin satış fiyatının miktarla çarpımı toplamı, herhangi bir iskonto, kdv vb. olmadan ve çarpı doviz oranı
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
+                        toplamkalemiskontotutar += _iskonto;
+                        _nettutar = _ara - _iskonto;
+                        if (otvtip == 0)// otvdeger oransa
+                        {
+                            otvoran = Convert.ToSingle(otvdeger);
+                            _otvtutar = _nettutar * Convert.ToDecimal("0," + otvoran.ToString());
+                            _nettutar = _nettutar + _otvtutar;
+                            _kdv = _nettutar * Convert.ToDecimal("0," + rowView[9].ToString());
+                            vergi += _kdv + _otvtutar;
+                            _geneltop = _nettutar + _kdv;
+                        }
+                        else//otvdeger tutarsa
+                        {
+                            eskinettutar = _nettutar;
+                            _otvtutar = otvdeger * Convert.ToDecimal(rowView[1]);
+                            _nettutar = _nettutar + _otvtutar;
+                            otvoran = Convert.ToSingle((_nettutar / eskinettutar).ToString().Split(',').Last().Substring(0, 2));
+                            _kdv = _nettutar * Convert.ToDecimal("0," + rowView[9].ToString());
+                            vergi += _kdv + _otvtutar;
+                            _geneltop = _nettutar + _kdv;
+                        }
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                    }
+                    else if (kdvdh == 1 && _switch.IsChecked == false)
+                    {
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) / Convert.ToDecimal("1," + rowView[9].ToString()) * getCurrency(rowView[11].ToString().ToUpper());//miktar*kdvsiz satisfiyati
+                        aratoplam += _ara;
+
+                        if (Convert.ToDecimal(rowView[16]) != 0) _iskonto = Convert.ToDecimal(rowView[16]) / Convert.ToDecimal("1," + rowView[9].ToString()) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// (iskonto tutarı/1.kdv) * miktar * doviz
+                        else _iskonto = 0;
+                        toplamkalemiskontotutar += _iskonto;
+
+                        _nettutar = _ara - _iskonto;
+
+                        if (otvtip == 0)// otvdeger oransa
+                        {
+                            otvoran = Convert.ToSingle(otvdeger);
+                            _otvtutar = _nettutar * Convert.ToDecimal("0," + otvoran.ToString());
+                            _nettutar = _nettutar + _otvtutar;
+                            _kdv = _nettutar * Convert.ToDecimal("0," + rowView[9].ToString());
+                            vergi += _kdv + _otvtutar;
+                            _geneltop = _nettutar + _kdv;
+                        }
+                        else//otvdeger tutarsa
+                        {
+                            eskinettutar = _nettutar;
+                            _otvtutar = otvdeger * Convert.ToDecimal(rowView[1]);
+                            _nettutar = _nettutar + _otvtutar;
+                            otvoran = Convert.ToSingle((_nettutar / eskinettutar).ToString().Split(',').Last().Substring(0, 2));
+                            _kdv = _nettutar * Convert.ToDecimal("0," + rowView[9].ToString());
+                            vergi += _kdv + _otvtutar;
+                            _geneltop = _nettutar + _kdv;
+                        }
+                        
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                    }
+                    else if (kdvdh == 0 && _switch.IsChecked == true)
+                    {
+                        _kdv = 0; _otvtutar = 0; otvoran = 0;
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) * getCurrency(rowView[11].ToString().ToUpper());//hepsinin satış fiyatının miktarla çarpımı ve çarpı doviz oranı
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * Convert.ToDecimal(rowView[1]) * getCurrency(rowView[11].ToString().ToUpper());// iskonto tutarı * miktar * doviz
+                        toplamkalemiskontotutar += _iskonto;
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                        _nettutar = _ara - _iskonto; //Convert.ToDecimal(rowView[7]);
+                        _geneltop = _nettutar;
+                    }
+                    else if (kdvdh == 1 && _switch.IsChecked == true)
+                    {
+                        _kdv = 0; _otvtutar = 0; otvoran = 0;
+                        _ara = Convert.ToDecimal(rowView[1]) * Convert.ToDecimal(rowView[4]) / Convert.ToDecimal("1," + rowView[9].ToString()) * getCurrency(rowView[11].ToString().ToUpper());//miktar*kdvsiz satisfiyati
+                        aratoplam += _ara;
+                        _iskonto = Convert.ToDecimal(rowView[16]) * getCurrency(rowView[11].ToString().ToUpper());
+                        toplamkalemiskontotutar += _iskonto;
+                        rowView.BeginEdit();
+                        rowView[7] = Convert.ToDecimal(rowView[7]) * getCurrency(rowView[11].ToString().ToUpper());
+                        rowView.EndEdit();
+                        stok_dataGrid.Items.Refresh();
+                        _nettutar = _ara - _iskonto;
+                        _geneltop = _nettutar;
+                    }
+                    nettutar += _nettutar;
+                    geneltoplam += _geneltop;
+                    if (kdvkesoran > 0)
+                    {
+                        kdvkesinti = ((decimal)kdvkesoran / 100) * _kdv;
+                        _kdv = _kdv - kdvkesinti;
+                        vergi = vergi - kdvkesinti;
+                        geneltoplam = geneltoplam - kdvkesinti;
+                    }
+                    c1 = new SqlCommand("update SATISHAR set genel = " + _geneltop.ToString().Replace(",", ".") + ", kalemiskonto = " + _iskonto.ToString().Replace(",", ".") + ", ara = " + _ara.ToString().Replace(",", ".") + ", net = " + _nettutar.ToString().Replace(",", ".") + " WHERE MALKOD='" + rowView[2] + "'", sl);
+                    c1.ExecuteNonQuery();
+                    c1 = new SqlCommand("update SATISHAR set kdvtutar = " + _kdv.ToString().Replace(",", ".") + ", kdvdh = " + kdvdh + ", otvoran =" + otvoran.ToString().Replace(",", ".") + ", otvtutar =" + _otvtutar.ToString().Replace(",", ".") + ", KDVKESINTI = " + kdvkesinti.ToString().Replace(",", ".") + " WHERE MALKOD='" + rowView[2] + "'", sl);
+                    c1.ExecuteNonQuery();
                 }
             }
-            if (kdvdh == 0)
-            {
-                txt_aratoplam.Text = Math.Round(aratoplam, 2).ToString();
-                txt_kalemiskonto.Text = Math.Round(toplamkalemiskontotutar, 2).ToString();
-                nettutar = aratoplam - toplamkalemiskontotutar;
-                txt_nettutar.Text = Math.Round(nettutar, 2).ToString();  //MessageBox.Show(toplamtoplamtutar.ToString());
-                txt_kdv.Text = Math.Round(kdv, 2).ToString();
-                geneltoplam = nettutar + kdv;
-                txt_geneltoplam.Text = Math.Round(geneltoplam, 2).ToString();
-                if (String.IsNullOrWhiteSpace(txt_geneliskontotutar.Text) || txt_geneliskontotutar.Text == "0") txt_genelnettutar.Text = Math.Round(geneltoplam, 2).ToString();
-                else txt_genelnettutar.Text = Math.Round(geneltoplam - Convert.ToDecimal(txt_geneliskontotutar.Text), 2).ToString();
-            }
-            else
-            {
-                txt_aratoplam.Text = Math.Round(aratoplam, 2).ToString();
-                txt_kalemiskonto.Text = Math.Round(toplamkalemiskontotutar, 2).ToString();
-                nettutar = toplamtoplamtutar;
-                txt_nettutar.Text = Math.Round(nettutar, 2).ToString();  
-                txt_kdv.Text = Math.Round(kdv, 2).ToString();
-                geneltoplam = nettutar;
-                txt_geneltoplam.Text = Math.Round(geneltoplam, 2).ToString();
-                if (String.IsNullOrWhiteSpace(txt_geneliskontotutar.Text) || txt_geneliskontotutar.Text == "0") txt_genelnettutar.Text = Math.Round(geneltoplam, 2).ToString();
-                else txt_genelnettutar.Text = Math.Round(geneltoplam - Convert.ToDecimal(txt_geneliskontotutar.Text), 2).ToString();
-            }
+            txt_aratoplam.Text = Math.Round(aratoplam, 2).ToString();
+            txt_kalemiskonto.Text = Math.Round(toplamkalemiskontotutar, 2).ToString();
+            txt_vergi.Text = Math.Round(vergi, 2).ToString();
+            txt_nettutar.Text = Math.Round(nettutar, 2).ToString();  //MessageBox.Show(toplamtoplamtutar.ToString());
+            txt_geneltoplam.Text = Math.Round(geneltoplam, 2).ToString();
+            if (String.IsNullOrWhiteSpace(txt_geneliskontotutar.Text) || txt_geneliskontotutar.Text == "0") txt_genelnettutar.Text = Math.Round(geneltoplam, 2).ToString();
+            else txt_genelnettutar.Text = Math.Round(geneltoplam - Convert.ToDecimal(txt_geneliskontotutar.Text), 2).ToString();
         }
-
+        
 
 
         private void stkYeni_Click(object sender, RoutedEventArgs e)
         {
-            StokKartAc w = new StokKartAc();
+            StokKartAc w = new StokKartAc("SATIS");
             w.Show();
             this.Close();
             w.Width = this.ActualWidth;
@@ -726,13 +879,16 @@ namespace WpfApp2
                                 stokkontroldurum = tbox.Text;
                                 if (Convert.ToInt16(stokkontroldurum) == 0) //stokkontroldurum 0 ise bakiyenin eksiye düşmesine izin ypk, 1 ise var.
                                 {
-                                    DataRowView rowView = depo_dataGrid.Items[0] as DataRowView;
-                                    if (Convert.ToDecimal(rowView[9]) < 0)
+                                    for(int j=0; j<depo_dataGrid.Items.Count; j++)
                                     {
-                                        rowView.BeginEdit();
-                                        rowView[9] = "0";// Convert.ToDecimal(0);
-                                        rowView.EndEdit();
-                                        depo_dataGrid.Items.Refresh();
+                                        DataRowView rowView = depo_dataGrid.Items[j] as DataRowView;
+                                        if (Convert.ToDecimal(rowView[9]) < 0)
+                                        {
+                                            rowView.BeginEdit();
+                                            rowView[9] = "0";// Convert.ToDecimal(0);
+                                            rowView.EndEdit();
+                                            depo_dataGrid.Items.Refresh();
+                                        }
                                     }
                                 }
                                 break;
@@ -881,6 +1037,7 @@ namespace WpfApp2
             lbUnvan.Items.Clear();
             try
             {
+                tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                 c1 = new SqlCommand("select HESAPKOD from " + tabloadi + " where UNVAN ='" + txt1.Text + "'", s);
                 object o = c1.ExecuteScalar();
                 c1 = new SqlCommand("select VERGIHESAPNO from " + tabloadi + " where UNVAN ='" + txt1.Text + "'", s);
@@ -895,6 +1052,7 @@ namespace WpfApp2
                     if (string.IsNullOrEmpty(txt9.Text)) txt9.Text = "TL";
                     if (!string.IsNullOrWhiteSpace(txt3.Text))
                     {
+                        tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                         c1 = new SqlCommand("select EFATURADURUM from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                         if (Convert.ToInt32(c1.ExecuteScalar().ToString()) == 0)
                         {
@@ -933,6 +1091,7 @@ namespace WpfApp2
                 lbUnvan.Items.Clear();
                 try
                 {
+                    tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                     c1 = new SqlCommand("select HESAPKOD from " + tabloadi + " where UNVAN ='" + txt1.Text + "'", s);
                     object o = c1.ExecuteScalar();
                     c1 = new SqlCommand("select VERGIHESAPNO from " + tabloadi + " where UNVAN ='" + txt1.Text + "'", s);
@@ -947,6 +1106,7 @@ namespace WpfApp2
                         if (string.IsNullOrEmpty(txt9.Text)) txt9.Text = "TL";
                         if (!string.IsNullOrWhiteSpace(txt3.Text))
                         {
+                            tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                             c1 = new SqlCommand("select EFATURADURUM from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                             if (Convert.ToInt32(c1.ExecuteScalar().ToString()) == 0)
                             {
@@ -1001,6 +1161,7 @@ namespace WpfApp2
                         if (string.IsNullOrEmpty(txt9.Text)) txt9.Text = "TL";
                         if (!string.IsNullOrWhiteSpace(txt3.Text))
                         {
+                            tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                             c1 = new SqlCommand("select EFATURADURUM from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                             if (Convert.ToInt32(c1.ExecuteScalar().ToString()) == 0)
                             {
@@ -1060,7 +1221,7 @@ namespace WpfApp2
                         object o = c1.ExecuteScalar();
                         c1 = new SqlCommand("select UNVAN from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                         object o1 = c1.ExecuteScalar();
-                        c1 = new SqlCommand("select DOVIZCINS from " + tabloadi + " where VERGIHESAPNO ='" + txt2.Text + "'", s);
+                        c1 = new SqlCommand("select DOVIZCINS from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                         object o2 = c1.ExecuteScalar();
                         if (o != null)
                         {
@@ -1070,6 +1231,7 @@ namespace WpfApp2
                             if (string.IsNullOrEmpty(txt9.Text)) txt9.Text = "TL";
                             if (!string.IsNullOrWhiteSpace(txt3.Text))
                             {
+                                tabloadi = Carried.IsCPMconnected == true ? "CARKRT" : "SMRTAPPCKRT";
                                 c1 = new SqlCommand("select EFATURADURUM from " + tabloadi + " where VERGIHESAPNO ='" + txt3.Text + "'", s);
                                 if (Convert.ToInt32(c1.ExecuteScalar().ToString()) == 0)
                                 {
@@ -1088,22 +1250,43 @@ namespace WpfApp2
                         }
                         else
                         {
-                            CustomMaterialMessageBox msg = new CustomMaterialMessageBox
-                            {
-                                TxtMessage = { Text = "Vergi no bulunamamıştır. Yeni cari kart açmak ister misiniz?",
-                                TextAlignment=System.Windows.TextAlignment.Center,
-                                VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
-                                Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
-                                TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
-                                MainContentControl = { Background = Brushes.Turquoise },
-                                TitleBackgroundPanel = { Background = Brushes.Blue },
-                                BorderBrush = Brushes.Blue,
-                                BtnCancel = { Content = "HAYIR", Background = Brushes.Red, IsCancel = true },
-                                BtnOk = { Content = "EVET", Background = Brushes.Green }
-                            };
-                            msg.Show();
-                            MessageBoxResult results = msg.Result;
-                            if (results == MessageBoxResult.OK)
+                            //CustomMaterialMessageBox msg = new CustomMaterialMessageBox
+                            //{
+                            //    TxtMessage = { Text = "Vergi no bulunamamıştır. Yeni cari kart açmak ister misiniz?",
+                            //    TextAlignment=System.Windows.TextAlignment.Center,
+                            //    VerticalAlignment=VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, TextWrapping = TextWrapping.Wrap ,
+                            //    Foreground = Brushes.Black , FontFamily = new FontFamily("Arial"), FontSize = 25},
+                            //    TxtTitle = { Text = "UYARI", Foreground = Brushes.White },
+                            //    MainContentControl = { Background = Brushes.Turquoise },
+                            //    TitleBackgroundPanel = { Background = Brushes.Blue },
+                            //    BorderBrush = Brushes.Blue,
+                            //    BtnCancel = { Content = "HAYIR", Background = Brushes.Red, IsCancel = true },
+                            //    BtnOk = { Content = "EVET", Background = Brushes.Green }
+                            //};
+                            //msg.Show();
+                            //MessageBoxResult results = msg.Result;
+                            Gat.Controls.MessageBoxView messageBox = new Gat.Controls.MessageBoxView();
+                            Gat.Controls.MessageBoxViewModel vm = (Gat.Controls.MessageBoxViewModel)messageBox.FindResource("ViewModel");
+
+                            vm.Message = "";
+                            vm.Ok = "TAMAM";
+                            vm.Cancel = "HAYIR";
+                            vm.OkVisibility = true;
+                            vm.CancelVisibility = true;
+                            vm.YesVisibility = false;
+                            vm.NoVisibility = false;
+                            vm.Image = new BitmapImage(new System.Uri(@"/icons/sc-modal-img-info.png", UriKind.Relative));
+                            vm.Caption = "Test Message";
+
+                            // Center functionality
+                            vm.Position = MessageBoxPosition.CenterOwner;
+                            vm.Owner = this;
+
+                            //vm.Show();
+
+                            Gat.Controls.MessageBoxResult result = vm.Show();
+
+                            if (result == Gat.Controls.MessageBoxResult.Ok)
                             {
                                 Carried.DosyaDecrypt();
                                 string hesapno = IniDosyaIslemleri.IniDosyaIslemleri.GetValueFromIniFile("Hesap No Ayari", "Baglanti.ini");
@@ -1121,7 +1304,7 @@ namespace WpfApp2
                                 }
                                 else Carried.showMessage("Parametreler kısmından hesap no tanımlanmadığı için bu işlem yapılamaz.");
                             }
-                            else if (results == MessageBoxResult.Cancel) msg.Close();
+                            //else if (result == Gat.Controls.MessageBoxResult.Cancel) vm.Close();
                         }
                     }
                     catch (Exception ex)
@@ -1217,6 +1400,19 @@ namespace WpfApp2
         private void selected_date_changed(object sender, SelectionChangedEventArgs e)
         {
             txt8.Text = dp.SelectedDate.ToString();
+        }
+        private void txt7_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (dp1.IsFocused == false && dp1.IsDropDownOpen == false) { cbdate1.IsDropDownOpen = false; }
+        }
+        private void txt7_GotFocus(object sender, RoutedEventArgs e)
+        {
+            cbdate1.IsDropDownOpen = true;
+            cbdate1.SelectedItem = null;
+        }
+        private void selected_date_changed1(object sender, SelectionChangedEventArgs e)
+        {
+            txt7.Text = dp1.SelectedDate.ToString();
         }
         private void Earsiv()
         {
@@ -1607,8 +1803,6 @@ namespace WpfApp2
                     stok_dataGrid.Items.Refresh();
                     cmmd = "update SATISHAR set " + columnname + " = " + rowView[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView[5]) + ", ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1] + " WHERE MALKOD = '" + rowView[2] + "'";
                     c1 = new SqlCommand(cmmd, s);
-                    //cmmd = "update SATISHAR set ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1].ToString() + " WHERE MALKOD = '" + rowView[2] + "'";
-                    //c1 = new SqlCommand(cmmd, s);
                     c1.ExecuteNonQuery();
                 }
             }
@@ -1630,14 +1824,16 @@ namespace WpfApp2
                     s = new SqlConnection(Carried.girisBaglantiLocal);
                     s.Open();
                     string cmmd;
-                    int colindex1 = 0; 
-                    if (stok_dataGrid.SelectedCells.Count == 1) colindex1 = stok_dataGrid.CurrentCell.Column.DisplayIndex; 
+                    int colindex1 = 0;
+                    if (stok_dataGrid.SelectedItems.Count == 1 && stok_dataGrid.CurrentCell.Column == null) colindex1 = colindex;
+                    else if (stok_dataGrid.SelectedItems.Count == 1 && stok_dataGrid.CurrentCell.Column != null) colindex1 = stok_dataGrid.CurrentCell.Column.DisplayIndex;
                     for (int i = 0; i < stok_dataGrid.Items.Count; i++)
                     {
                         DataRowView rowView = stok_dataGrid.Items[i] as DataRowView;
                         if (rowView[0].ToString() == "True")
                         {
                             if (Convert.ToInt32(rowView[1]) == 0) satısharmalkodlari.Remove(rowView[2].ToString());
+
                             rowView.BeginEdit();
                             if (colindex1 == 6) 
                             {
@@ -1649,10 +1845,23 @@ namespace WpfApp2
                                 rowView[6] = Convert.ToDecimal(rowView[4]) * Convert.ToDecimal(rowView[5]) / 100;
                                 if (Convert.ToDecimal(rowView[4]) != 0) rowView[5] = 100 * Convert.ToDecimal(rowView[6]) / Convert.ToDecimal(rowView[4]);
                             }
-                            rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                            //rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                            decimal kalansatfiyat = Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6]); //satısfiyatı-iskonto1
+                            decimal yeniiskonto, kalemiskontotoplami = Convert.ToDecimal(rowView[6]);
+                            for (int j = 12; j<=15; j++)
+                            {
+                                yeniiskonto = kalansatfiyat * Convert.ToDecimal(rowView[j]) / 100;
+                                kalansatfiyat -= yeniiskonto;
+                                kalemiskontotoplami += yeniiskonto;
+                                cmmd = "update SATISHAR set KALEMISKONTOORAN"+ (j - 10).ToString()+ "=" + rowView[j] + ", KALEMISKONTO"+ (j-10).ToString() + "=" + yeniiskonto.ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView[2] + "'";
+                                c1 = new SqlCommand(cmmd, s);
+                                c1.ExecuteNonQuery();
+                            }
+                            rowView[16] = kalemiskontotoplami;
+                            rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[16])); //toplam tutar column hesaplama. miktar*(satısfiyatı-toplamiskonto)
                             rowView.EndEdit();
                             int a = rowView[0].ToString() == "True" ? 1 : 0;
-                            cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView[5]) + ", ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1] + " WHERE MALKOD = '" + rowView[2] + "'";
+                            cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView[5]) + ", ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1] + ", TOPLAMISKONTO =" + rowView[16].ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView[2] + "'";
                             c1 = new SqlCommand(cmmd, s);
                             c1.ExecuteNonQuery();
                         }
@@ -1679,7 +1888,8 @@ namespace WpfApp2
                     s = new SqlConnection(Carried.girisBaglantiLocal);
                     s.Open();
                     string cmmd;
-                    int colindex1 = stok_dataGrid.CurrentCell.Column.DisplayIndex;
+                    int colindex1 = 0;
+                    if (stok_dataGrid.SelectedItems.Count == 1) colindex1 = stok_dataGrid.CurrentCell.Column.DisplayIndex;
                     for (int i = 0; i < stok_dataGrid.Items.Count; i++)
                     {
                         DataRowView rowView = stok_dataGrid.Items[i] as DataRowView;
@@ -1697,10 +1907,23 @@ namespace WpfApp2
                                 rowView[6] = Convert.ToDecimal(rowView[4]) * Convert.ToDecimal(rowView[5]) / 100;
                                 if (Convert.ToDecimal(rowView[4]) != 0) rowView[5] = 100 * Convert.ToDecimal(rowView[6]) / Convert.ToDecimal(rowView[4]);
                             }
-                            rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                            //rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                            decimal kalansatfiyat = Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[6]); //satısfiyatı-iskonto1
+                            decimal yeniiskonto, kalemiskontotoplami = Convert.ToDecimal(rowView[6]);
+                            for (int j = 12; j <= 15; j++)
+                            {
+                                yeniiskonto = kalansatfiyat * Convert.ToDecimal(rowView[j]) / 100;
+                                kalansatfiyat -= yeniiskonto;
+                                kalemiskontotoplami += yeniiskonto;
+                                cmmd = "update SATISHAR set KALEMISKONTOORAN" + (j - 10).ToString() + "=" + rowView[j] + ", KALEMISKONTO" + (j - 10).ToString() + "=" + yeniiskonto.ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView[2] + "'";
+                                c1 = new SqlCommand(cmmd, s);
+                                c1.ExecuteNonQuery();
+                            }
+                            rowView[16] = kalemiskontotoplami;
+                            rowView[7] = Convert.ToDecimal(rowView[1]) * (Convert.ToDecimal(rowView[4]) - Convert.ToDecimal(rowView[16])); //toplam tutar column hesaplama. miktar*(satısfiyatı-toplamiskonto)
                             rowView.EndEdit();
                             int a = rowView[0].ToString() == "True" ? 1 : 0;
-                            cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView[5]) + ", ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1] + " WHERE MALKOD = '" + rowView[2] + "'";
+                            cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView[5]) + ", ISKONTOTUTAR = " + rowView[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView[1] + ", TOPLAMISKONTO =" + rowView[16].ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView[2] + "'";
                             c1 = new SqlCommand(cmmd, s);
                             c1.ExecuteNonQuery();
                         }
@@ -1733,10 +1956,16 @@ namespace WpfApp2
 
 
         #region ORTADAKİ BUTONLAR
+        string depokodparam;
         private void Kaydet_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                object o;
+                depokodparam = (o = new SqlCommand("select DEPOKOD from SMRTAPPKUL where KULLANICIADI ='" + Carried.girenKullanici + "'", s).ExecuteScalar()) != null ? o.ToString() : "";
+                if (depokodparam == "") { Carried.showMessage("Önce parametreler ekranından depo kodlarının tanımlanması gerekmektedir."); return; }
+
+
                 if (!String.IsNullOrWhiteSpace(txt1.Text) && !String.IsNullOrWhiteSpace(txt7.Text) && !String.IsNullOrWhiteSpace(txt8.Text) && !String.IsNullOrWhiteSpace(txt6.Text) && !String.IsNullOrWhiteSpace(txt_aratoplam.Text))
                 {
                     //FATEVR KAYIT (fatura için)
@@ -1793,7 +2022,7 @@ namespace WpfApp2
                     c1.Parameters.Add(new SqlParameter("ARATOPLAM", Convert.ToDecimal(txt_aratoplam.Text)));
                     c1.Parameters.Add(new SqlParameter("KALEMISKONTOTUTAR", Convert.ToDecimal(txt_kalemiskonto.Text)));
                     c1.Parameters.Add(new SqlParameter("NETTUTAR", Convert.ToDecimal(txt_nettutar.Text)));
-                    c1.Parameters.Add(new SqlParameter("KDV", Convert.ToDecimal(txt_kdv.Text)));
+                    c1.Parameters.Add(new SqlParameter("KDV", Convert.ToDecimal(txt_vergi.Text)));
                     c1.Parameters.Add(new SqlParameter("GENELTOPLAM", Convert.ToDecimal(txt_geneltoplam.Text)));
                     if (!String.IsNullOrWhiteSpace(txt_geneliskontotutar.Text)) c1.Parameters.Add(new SqlParameter("GENELISKONTOTUTAR", Convert.ToDecimal(txt_geneliskontotutar.Text)));
                     else c1.Parameters.AddWithValue("@GENELISKONTOTUTAR", 0);
@@ -1825,8 +2054,7 @@ namespace WpfApp2
         {
             s = new SqlConnection(Carried.girisBaglantiLocal);
             s.Open();
-            //SMRTAPPDEPO 
-            for (int i = 0; i < stok_dataGrid.Items.Count; i++)
+            for (int i = 0; i < stok_dataGrid.Items.Count; i++)//SMRTAPPDEPO
             {
                 DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
                 c1 = new SqlCommand("update SMRTAPPDEPO set STOKCIKIS = " + rowView[1] + " , BAKIYE = STOKGIRIS-STOKCIKIS WHERE MALKOD = " + rowView[2], s); 
@@ -1834,224 +2062,323 @@ namespace WpfApp2
             }
 
             bool netcon = Carried.CheckForInternetConnection();
-            //internet yoksa veya local seçili ise
-            if (Carried.IsCPMconnected == false || netcon == false)
+            if(Carried.IsCPMconnected == true && netcon == false)
             {
-                //SMRTAPPSHAR
+                Carried.IsCPMconnected = false;
+                Carried.showMessage("İnternet bulunamadığı için local bağlantıya geçildi");
+            }
+
+            bool isover30k = Convert.ToDecimal(txt_genelnettutar.Text) > 30000;
+            bool efatablokayitgerekmi;
+
+            if (Carried.IsCPMconnected == false || netcon == false)//internet yoksa veya local seçili ise
+            {
+                int srktefa = Convert.ToInt16(new SqlCommand("select EFATURADURUM from SRKKRT", s).ExecuteScalar());
+                efatablokayitgerekmi = isover30k || srktefa == 1;
+
+                
+                decimal kdvtutar, ara, genel, iskonto, net, otvdeger, otvtutar, kdvkesinti; Single otvoran, kdvkesintioran; int otvtip, kdvdh;
+                decimal kalemiskonto1, kalemiskonto2, kalemiskonto3, kalemiskonto4, kalemiskonto5, toplamiskonto; Single kalemiskontooran1, kalemiskontooran2, kalemiskontooran3, kalemiskontooran4, kalemiskontooran5, toplamiskontooran;
                 for (int i = 0; i < stok_dataGrid.Items.Count; i++)
                 {
-                    DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
-                    c1 = new SqlCommand();
-                    c1.Connection = s;
-                    c1.CommandText = "insert into SMRTAPPSHAR(KALEMSN,EVRAKSN,SIRKETNO,EVRAKTIP,EVRAKNO,HESAPKOD,SIRANO,KAYITTUR,KAYITDURUM,KARTTIP,MALTIP,MALKOD," +
-                        "EVRAKTARIH,EVRAKHAZIRLAYAN,ISLEMTIP,GIRISCIKIS,EVRAKMIKTAR,EVRAKBIRIM,BIRIMAGIRLIK,MIKTAR,FIYAT,FIYATDOVIZCINS,FIYATDOVIZKUR,FIYATDOVIZDURUM," +
-                        "BIRIMFIYAT,TUTAR,ISKONTO,KDV,KDVORAN,KDVDH,KDVKESINTI,KDVKESINTIORAN,BIRIMBRUTAGIRLIK,BRUTAGIRLIK,BIRIMNETAGIRLIK," +
-                        "NETAGIRLIK,BIRIMBRUTHACIM,BRUTHACIM,BIRIMNETHACIM,NETHACIM,BIRIMKAPADET,KAPADET,KALEMISKONTOORAN1,KALEMISKONTO1" +
-                        "KALEMISKONTOTUTAR,EVRAKISKONTOTUTAR,BKOD1,BKOD2,BKOD3,BKOD4,BKOD5,BKOD6,BKOD7,BKOD8,BKOD9,BKOD10,NKOD1,NKOD2,NKOD3,NKOD4,NKOD5," +
-                        "NKOD6,NKOD7,NKOD8,NKOD9,NKOD10,PROJEKOD,DEPOKOD,ACIKLAMA1,IRSALIYETTARIH,SIPARISTARIH,TEKLIFTARIH,ALIMTIP,ALIMMIKTAR," +
-                        "ALIMFIYAT,SEVKTARIH,SEVKHESAPKOD,KARSIHESAPKOD,TAHMINTESLIMTARIH,SONTESLIMTARIH,VADETARIH,KDVVADETARIH,DOVIZCINS,DOVIZDURUM,BANKA,DOVIZTIP," +
-                        "DOVIZTARIH,KDVDOVIZTARIH,DOVIZKUR,KDVDOVIZKUR,DOVIZTUTAR,DOVIZISKONTO,DOVIZOTV,DOVIZKDV,DOVIZKDVKESINTI,DOVIZKALEMISKONTOTUTAR," +
-                        "DOVIZEVRAKISKONTOTUTAR,CARIDOVIZCINS,CARIDOVIZKUR,CARIDOVIZTUTAR,CARIDOVIZISKONTO,CARIDOVIZOTV,CARIDOVIZKDV,CARIDOVIZKDVKESINTI," +
-                        "FIYATTUTAR,FIYATISKONTO,FIYATKDV,FIYATKDVKESINTI,FIYATOTV,FIYATSABLONNO,FIYATSEKLI,FIYATTARIH,FIYATGRUPLA,FIYATYONTEM,EVRAKBIRIMFIYAT," +
-                        "EVRAKDOVIZCINS,EVRAKDOVIZKUR,EVRAKTUTAR,EVRAKISKONTO,EVRAKKDV,EVRAKKDVKESINTI,EVRAKKDVFARK,EVRAKOTV,EVRAKOTVFARK,ISKONTOSABLONNO,ISKONTOSEKLI," +
-                        "ISKONTOTARIH,ISKONTOGRUPLA,ISKONTOYONTEM,PROMOSYONSABLONNO,PROMOSYONSEKLI,PROMOSYONTARIH,PROMOSYONGRUPLA,PROMOSYONTIP,PROMOSYONSIRANO," +
-                        "EVRAKSEKLI,ODEMESEKLI,OPSIYON,EVRAKDURUM,KULLANILANMIKTAR,FAZLASEVK,FAZLASEVKKAYNAK,SEVKMIKTAR,SEVKTIP,TARIH2,MIKTAR2,TUTAR2,EVRAKNO2,TARIH3," +
-                        "MIKTAR3,TUTAR3,TARIH4,TARIH5,SIRANO2,MALIYETSIRANO,MHSENTTABLONO,MHSDURUM,MHSFISTARIH,MHSFISTIP,MHSFISNO,SONKAYNAKEVRAKTIP,SONKAYNAKEVRAKNO," +
-                        "SONKAYNAKHESAPKOD,SONKAYNAKSIRANO,SONKAYNAKEVRAKTARIH,GIRENKULLANICI,GIRENTARIH,GIRENSAAT,GIRENKAYNAK,GIRENSURUM,DEGISTIRENKULLANICI,DEGISTIRENTARIH,DEGISTIRENSAAT,DEGISTIRENKAYNAK," +
-                        "DEGISTIRENSURUM) VALUES()";
-                    //c1.Parameters.Add(new SqlParameter("KALEMSN", ));
-                    //c1.Parameters.Add(new SqlParameter("EVRAKSN", ));
+                    DataRowView rowView = stok_dataGrid.Items[i] as DataRowView;
+
+                    #region EVRBAS
+                    //EVRBAS
+                    c1 = new SqlCommand("INSERT_SMRTAPP_EVRBAS", s);
+                    c1.CommandType = CommandType.StoredProcedure;
+                    c1.ExecuteNonQuery();
+                    #endregion
+
+                    #region STHVRG, STHVDH, SMRTAPPSHAR, EFAKLM
+                    //STHVRG, STHVDF, SMRTAPPSHAR
+                    kdvdh = Convert.ToInt16(new SqlCommand("select kdvdh from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kdvtutar = Convert.ToDecimal(new SqlCommand("select kdvtutar from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    ara = Convert.ToDecimal(new SqlCommand("select ara from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    genel = Convert.ToDecimal(new SqlCommand("select genel from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    iskonto = Convert.ToDecimal(new SqlCommand("select kalemiskonto from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    net = Convert.ToDecimal(new SqlCommand("select net from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    otvdeger = Convert.ToDecimal(new SqlCommand("select OTVDEGER from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    otvtutar = Convert.ToDecimal(new SqlCommand("select otvtutar from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kdvkesinti = Convert.ToDecimal(new SqlCommand("select KDVKESINTI from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    otvoran = Convert.ToSingle(new SqlCommand("select otvoran from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kdvkesintioran = Convert.ToSingle(new SqlCommand("select KDVKESINTIORAN from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    otvtip = Convert.ToInt16(new SqlCommand("select OTVTIP from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskontooran1 = Convert.ToSingle(new SqlCommand("select ISKONTOORAN from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskontooran2 = Convert.ToSingle(new SqlCommand("select KALEMISKONTOORAN2 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskontooran3 = Convert.ToSingle(new SqlCommand("select KALEMISKONTOORAN3 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskontooran4 = Convert.ToSingle(new SqlCommand("select KALEMISKONTOORAN4 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskontooran5 = Convert.ToSingle(new SqlCommand("select KALEMISKONTOORAN5 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskonto1 = Convert.ToDecimal(new SqlCommand("select ISKONTOTUTAR from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskonto2 = Convert.ToDecimal(new SqlCommand("select KALEMISKONTO2 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskonto3 = Convert.ToDecimal(new SqlCommand("select KALEMISKONTO3 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskonto4 = Convert.ToDecimal(new SqlCommand("select KALEMISKONTO4 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    kalemiskonto5 = Convert.ToDecimal(new SqlCommand("select KALEMISKONTO5 from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    toplamiskonto = Convert.ToDecimal(new SqlCommand("select TOPLAMISKONTO from SATISHAR where malkod ='" + rowView[2] + "'", s).ExecuteScalar());
+                    toplamiskontooran = Convert.ToSingle(((kalemiskonto1+kalemiskonto2+kalemiskonto3+kalemiskonto4+kalemiskonto5)*100)/Convert.ToDecimal(rowView[4]));
+
+                    c1 = new SqlCommand("INSERT_STHVRG_STHVDF_SMRTAPPSHAR", s);
+                    c1.CommandType = CommandType.StoredProcedure;
+                    c1.Parameters.Add(new SqlParameter("@VERGIHESAPNO", txt3.Text));//efaklm
+                    c1.Parameters.Add(new SqlParameter("@BIRIM", rowView[8].ToString()));//efaklm
+                    c1.Parameters.Add(new SqlParameter("@MALAD", rowView[3].ToString()));//efaklm
+                    c1.Parameters.AddWithValue("@ISKONTOORAN", toplamiskontooran);//efaklm
+                    c1.Parameters.Add(new SqlParameter("@GIRENKULLANICI", Carried.girenKullanici.Substring(0, Math.Min(Carried.girenKullanici.Length, 30))));
+                    c1.Parameters.Add("@GIRENTARIH", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c1.Parameters.Add("@GIRENSAAT", SqlDbType.SmallDateTime).Value = DateTime.Now;
+                    c1.Parameters.Add(new SqlParameter("@GIRENKAYNAK", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Substring(0, Math.Min(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Length, 30))));
+                    c1.Parameters.Add(new SqlParameter("@GIRENSURUM", "CPMSMARTAPP"));
+                    c1.Parameters.Add(new SqlParameter("@DEGISTIRENKULLANICI", Carried.girenKullanici.Substring(0, Math.Min(Carried.girenKullanici.Length, 30))));
+                    c1.Parameters.Add("@DEGISTIRENTARIH", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
+                    c1.Parameters.Add("@DEGISTIRENSAAT", SqlDbType.SmallDateTime).Value = DateTime.Now;
+                    c1.Parameters.Add(new SqlParameter("@DEGISTIRENKAYNAK", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Substring(0, Math.Min(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Length, 30))));
+                    c1.Parameters.Add(new SqlParameter("@DEGISTIRENSURUM", "CPMSMARTAPP"));
+                    c1.Parameters.AddWithValue("@SIRKETNO", new String('0', (3 - Carried.sirketNo.ToString().Length)) + Carried.sirketNo.ToString());
+                    c1.Parameters.AddWithValue("@EVRAKNO", txt6.Text);
+                    c1.Parameters.AddWithValue("@EVRAKTIP", Convert.ToInt16(txt5.Text));
+                    c1.Parameters.AddWithValue("@MALKOD", rowView[2].ToString());
+                    c1.Parameters.AddWithValue("@HESAPKOD", txt2.Text);
+                    c1.Parameters.AddWithValue("@SIRANO", i);
+                    c1.Parameters.AddWithValue("@KAYITTUR", 1);
+                    c1.Parameters.AddWithValue("@KAYITDURUM", 1);
+                    c1.Parameters.Add(new SqlParameter("EVRAKTARIH", SqlDbType.SmallDateTime).Value = Convert.ToDateTime(txt7.Text));
+                    c1.Parameters.Add(new SqlParameter("EVRAKHAZIRLAYAN", txt12.Text));
+                    c1.Parameters.AddWithValue("@GIRISCIKIS", 1);
+                    c1.Parameters.AddWithValue("@ISLEMTIP", 2);
+                    c1.Parameters.AddWithValue("@EVRAKMIKTAR", Convert.ToInt32(rowView[1]));
+                    c1.Parameters.AddWithValue("@MIKTAR", Convert.ToInt32(rowView[1]));//TEKRAR
+                    c1.Parameters.AddWithValue("@EVRAKBIRIM", rowView[8].ToString());
+                    c1.Parameters.AddWithValue("@FIYAT", Convert.ToDecimal(rowView[4]));
+                    c1.Parameters.AddWithValue("@BIRIMFIYAT", Convert.ToDecimal(rowView[4]) * getCurrency_ConvertToLira(rowView[11].ToString()));
+                    c1.Parameters.AddWithValue("@TUTAR", ara);
+                    c1.Parameters.AddWithValue("@EVRAKTUTAR", ara);//TEKRAR
+                    c1.Parameters.AddWithValue("@ISKONTO", iskonto);//???
+                    c1.Parameters.AddWithValue("@OTVTIP", otvtip);
+                    c1.Parameters.AddWithValue("@OTVDEGER", otvdeger);
+                    c1.Parameters.AddWithValue("@OTVTUTAR", otvtutar);
+                    c1.Parameters.AddWithValue("@KDV", kdvtutar);
+                    c1.Parameters.AddWithValue("@KDVORAN", Convert.ToSingle(rowView[9]));
+                    c1.Parameters.AddWithValue("@KDVDH", kdvdh);
+                    c1.Parameters.AddWithValue("@KDVKESINTI", kdvkesinti);
+                    c1.Parameters.AddWithValue("@KDVKESINTIORAN", kdvkesintioran);
+                    c1.Parameters.AddWithValue("@VADETARIH", SqlDbType.SmallDateTime).Value = Convert.ToDateTime(txt8.Text);
+                    c1.Parameters.AddWithValue("@DOVIZCINS", rowView[11].ToString());
+                    c1.Parameters.AddWithValue("@FIYATDOVIZCINS", rowView[11].ToString());//TEKRAR
+                    c1.Parameters.AddWithValue("@FIYATDOVIZKUR", getCurrency_ConvertToLira(rowView[11].ToString()));//???
+                    c1.Parameters.AddWithValue("@FIYATDOVIZDURUM", 0);//???
+                    c1.Parameters.AddWithValue("@EVRAKDOVIZCINS", rowView[11].ToString());//TEKRAR
+                    c1.Parameters.AddWithValue("@EVRAKDOVIZKUR", getCurrency_ConvertToLira(rowView[11].ToString()));//???TEKRAR
+                    c1.Parameters.AddWithValue("@EVRAKBIRIMFIYAT", Convert.ToDecimal(rowView[4]));
+                    c1.Parameters.AddWithValue("@EVRAKISKONTO", iskonto);//???
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOORAN1", kalemiskontooran1));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOORAN2", kalemiskontooran2));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOORAN3", kalemiskontooran3));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOORAN4", kalemiskontooran4));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOORAN5", kalemiskontooran5));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTO1", kalemiskonto1));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTO2", kalemiskonto2));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTO3", kalemiskonto3));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTO4", kalemiskonto4));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTO5", kalemiskonto5));
+                    c1.Parameters.Add(new SqlParameter("@KALEMISKONTOTUTAR", iskonto));//???TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@EVRAKISKONTOTUTAR", iskonto * getCurrency_ConvertToLira(rowView[11].ToString())));//???
+                    c1.Parameters.Add(new SqlParameter("@FIYATTUTAR", ara));//TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@FIYATISKONTO", iskonto));//???TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@FIYATKDV", kdvtutar));//TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@FIYATKDVKESINTI", kdvkesinti));//TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@FIYATOTV", otvtutar));//TEKRAR
+                    c1.Parameters.Add(new SqlParameter("@EVRAKKDV", kdvtutar * getCurrency_ConvertToLira(rowView[11].ToString())));
+                    c1.Parameters.Add(new SqlParameter("@EVRAKKDVKESINTI", kdvkesinti * getCurrency_ConvertToLira(rowView[11].ToString())));
+                    c1.Parameters.Add(new SqlParameter("@EVRAKKDVFARK", (kdvtutar - kdvkesinti) * getCurrency_ConvertToLira(rowView[11].ToString())));
+                    c1.Parameters.Add(new SqlParameter("@EVRAKOTV", otvtutar * getCurrency_ConvertToLira(rowView[11].ToString())));
+                    c1.Parameters.Add(new SqlParameter("@SKOD1", ""));
+                    c1.Parameters.Add(new SqlParameter("@SKOD2", ""));
+                    c1.Parameters.Add(new SqlParameter("@SKOD3", ""));
+                    c1.Parameters.Add(new SqlParameter("@SKOD4", ""));
+                    c1.Parameters.Add(new SqlParameter("@SKOD5", ""));
+                    c1.Parameters.Add(new SqlParameter("@BKOD1", 0));
+                    c1.Parameters.Add(new SqlParameter("@BKOD2", 0));
+                    c1.Parameters.Add(new SqlParameter("@BKOD3", 0));
+                    c1.Parameters.Add(new SqlParameter("@BKOD4", 0));
+                    c1.Parameters.Add(new SqlParameter("@BKOD5", 0));
+                    if (_switch.IsChecked == true) 
+                    {
+                        if (Carried.transferCode != null && Carried.transferCode.Contains("BKOD")) c1.Parameters.Add(new SqlParameter("@" + Carried.transferCode, 1));
+                        if (Carried.transferCode != null && Carried.transferCode.Contains("SKOD")) c1.Parameters.Add(new SqlParameter("@" + Carried.transferCode, "1")); //???
+                    }
+                    //SOR--->BİRİMNETHACİM VE NETHACİM
+                    #region sil
+                    //c1.CommandText = "insert into SMRTAPPSHAR(SIRKETNO,EVRAKTIP,EVRAKNO,HESAPKOD,SIRANO,KAYITTUR,KAYITDURUM,KARTTIP,MALTIP,MALKOD," +
+                    //    "EVRAKTARIH,EVRAKHAZIRLAYAN,ISLEMTIP,GIRISCIKIS,EVRAKMIKTAR,EVRAKBIRIM,BIRIMAGIRLIK,MIKTAR,FIYAT,FIYATDOVIZCINS,FIYATDOVIZKUR,FIYATDOVIZDURUM," +
+                    //    "BIRIMFIYAT,TUTAR,ISKONTO,KDV,KDVORAN,KDVDH,KDVKESINTI,KDVKESINTIORAN,BIRIMBRUTAGIRLIK,BRUTAGIRLIK,BIRIMNETAGIRLIK," +
+                    //    "NETAGIRLIK,BIRIMBRUTHACIM,BRUTHACIM,BIRIMNETHACIM,NETHACIM,BIRIMKAPADET,KAPADET,KALEMISKONTOORAN1,KALEMISKONTO1," +
+                    //    "KALEMISKONTOTUTAR,EVRAKISKONTOTUTAR,BKOD1,BKOD2,BKOD3,BKOD4,BKOD5,BKOD6,BKOD7,BKOD8,BKOD9,BKOD10,NKOD1,NKOD2,NKOD3,NKOD4,NKOD5," +
+                    //    "NKOD6,NKOD7,NKOD8,NKOD9,NKOD10,PROJEKOD,DEPOKOD,ACIKLAMA1,IRSALIYETTARIH,SIPARISTARIH,TEKLIFTARIH,ALIMTIP,ALIMMIKTAR," +
+                    //    "ALIMFIYAT,SEVKTARIH,SEVKHESAPKOD,KARSIHESAPKOD,TAHMINTESLIMTARIH,SONTESLIMTARIH,VADETARIH,KDVVADETARIH,DOVIZCINS,DOVIZDURUM,BANKA,DOVIZTIP," +
+                    //    "DOVIZTARIH,KDVDOVIZTARIH,DOVIZKUR,KDVDOVIZKUR,DOVIZTUTAR,DOVIZISKONTO,DOVIZOTV,DOVIZKDV,DOVIZKDVKESINTI,DOVIZKALEMISKONTOTUTAR," +
+                    //    "DOVIZEVRAKISKONTOTUTAR,CARIDOVIZCINS,CARIDOVIZKUR,CARIDOVIZTUTAR,CARIDOVIZISKONTO,CARIDOVIZOTV,CARIDOVIZKDV,CARIDOVIZKDVKESINTI," +
+                    //    "FIYATTUTAR,FIYATISKONTO,FIYATKDV,FIYATKDVKESINTI,FIYATOTV,FIYATSABLONNO,FIYATSEKLI,FIYATTARIH,FIYATGRUPLA,FIYATYONTEM,EVRAKBIRIMFIYAT," +
+                    //    "EVRAKDOVIZCINS,EVRAKDOVIZKUR,EVRAKTUTAR,EVRAKISKONTO,EVRAKKDV,EVRAKKDVKESINTI,EVRAKKDVFARK,EVRAKOTV,EVRAKOTVFARK,ISKONTOSABLONNO,ISKONTOSEKLI," +
+                    //    "ISKONTOTARIH,ISKONTOGRUPLA,ISKONTOYONTEM,PROMOSYONSABLONNO,PROMOSYONSEKLI,PROMOSYONTARIH,PROMOSYONGRUPLA,PROMOSYONTIP,PROMOSYONSIRANO," +
+                    //    "EVRAKSEKLI,ODEMESEKLI,OPSIYON,EVRAKDURUM,KULLANILANMIKTAR,FAZLASEVK,FAZLASEVKKAYNAK,SEVKMIKTAR,SEVKTIP,TARIH2,MIKTAR2,TUTAR2,EVRAKNO2,TARIH3," +
+                    //    "MIKTAR3,TUTAR3,TARIH4,TARIH5,SIRANO2,MALIYETSIRANO,MHSENTTABLONO,MHSDURUM,MHSFISTARIH,MHSFISTIP,MHSFISNO,SONKAYNAKEVRAKTIP,SONKAYNAKEVRAKNO," +
+                    //    "SONKAYNAKHESAPKOD,SONKAYNAKSIRANO,SONKAYNAKEVRAKTARIH,GIRENKULLANICI,GIRENTARIH,GIRENSAAT,GIRENKAYNAK,GIRENSURUM,DEGISTIRENKULLANICI,DEGISTIRENTARIH,DEGISTIRENSAAT,DEGISTIRENKAYNAK," +
+                    //    "DEGISTIRENSURUM) VALUES()";
+
                     c1.Parameters.Add(new SqlParameter("SIRKETNO", new String('0', (3 - Carried.sirketNo.ToString().Length)) + Carried.sirketNo.ToString()));
                     c1.Parameters.Add(new SqlParameter("EVRAKNO", txt6.Text));
                     c1.Parameters.Add(new SqlParameter("EVRAKTIP", txt5.Text));
                     c1.Parameters.Add(new SqlParameter("HESAPKOD", txt2.Text));
                     c1.Parameters.AddWithValue("SIRANO", i);
                     c1.Parameters.AddWithValue("KAYITTUR",  1);
-                    //        c1.Parameters.AddWithValue("KAYITDURUM",  1);
-                    //        c1.Parameters.Add(new SqlParameter("KARTTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MALTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MALKOD",  rowView[2].ToString()));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKTARIH", txt7.Text));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKHAZIRLAYAN",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISLEMTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("GIRISCIKIS",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKMIKTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKBIRIM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMAGIRLIK",  ));
-                    //        c1.Parameters.AddWithValue("MIKTAR", Convert.ToInt32(rowView[2]));
-                    //        c1.Parameters.Add(new SqlParameter("FIYAT",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATDOVIZCINS",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATDOVIZKUR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATDOVIZDURUM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMFIYAT", Convert.ToDecimal(rowView[4])));//????
-                    //        c1.Parameters.Add(new SqlParameter("TUTAR", Convert.ToDecimal(rowView[6])));//????
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTO", Convert.ToDecimal(rowView[5])));//???
-                    //        c1.Parameters.Add(new SqlParameter("OTV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("OTVTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("OTVDEGER",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDVORAN", Convert.ToDecimal(rowView[8])));
-                    //        c1.Parameters.Add(new SqlParameter("KDVDH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDVKESINTI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDVKESINTIORAN",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMBRUTAGIRLIK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BRUTAGIRLIK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMNETAGIRLIK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NETAGIRLIK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMBRUTHACIM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BRUTHACIM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMNETHACIM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NETHACIM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BIRIMKAPADET",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KAPADET",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KALEMISKONTOORAN1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KALEMISKONTO1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KALEMISKONTOTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKISKONTOTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SKOD1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SKOD2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SKOD3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SKOD4",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SKOD5",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD4",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD5",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD6",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD7",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD8",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD9",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BKOD10",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD4",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD5",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD6",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD7",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD8",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD9",  ));
-                    //        c1.Parameters.Add(new SqlParameter("NKOD10",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TICARETDOSYATIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROJEKOD",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DEPOKOD",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SURUMNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ACIKLAMA1",  ));
-                    //        c1.Parameters.Add(new SqlParameter("IRSALIYETTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SIPARISTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TEKLIFTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ALIMTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ALIMMIKTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ALIMFIYAT",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SEVKTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SEVKHESAPKOD",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KARSIHESAPKOD",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TAHMINTESLIMTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONTESLIMTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("VADETARIH",  txt8.Text));
-                    //        c1.Parameters.Add(new SqlParameter("KDVVADETARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZCINS",  rowView[10]));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZDURUM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("BANKA",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDVDOVIZTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZKUR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KDVDOVIZKUR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZISKONTO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZOTV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZKDV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZKDVKESINTI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZKALEMISKONTOTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("DOVIZEVRAKISKONTOTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZCINS",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZKUR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZISKONTO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZOTV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZKDV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("CARIDOVIZKDVKESINTI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATISKONTO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATKDV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATKDVKESINTI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATOTV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATSABLONNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATSEKLI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATGRUPLA",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FIYATYONTEM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKBIRIMFIYAT",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKDOVIZCINS",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKDOVIZKUR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKTUTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKISKONTO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKKDV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKKDVKESINTI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKKDVFARK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKOTV",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKOTVFARK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTOSABLONNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTOSEKLI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTOTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTOGRUPLA",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ISKONTOYONTEM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONSABLONNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONSEKLI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONGRUPLA",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("PROMOSYONSIRANO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKSEKLI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("ODEMESEKLI",  ));
-                    //        c1.Parameters.Add(new SqlParameter("OPSIYON",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKDURUM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("KULLANILANMIKTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FAZLASEVK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("FAZLASEVKKAYNAK",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SEVKMIKTAR",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SEVKTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TARIH2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MIKTAR2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TUTAR2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("EVRAKNO2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TARIH3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MIKTAR3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TUTAR3",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TARIH4",  ));
-                    //        c1.Parameters.Add(new SqlParameter("TARIH5",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SIRANO2",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MALIYETSIRANO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MHSENTTABLONO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MHSDURUM",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MHSFISTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MHSFISTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("MHSFISNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKTIP",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKNO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONKAYNAKHESAPKOD",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONKAYNAKSIRANO",  ));
-                    //        c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKTARIH",  ));
-                    //        c1.Parameters.Add(new SqlParameter("GIRENKULLANICI", Carried.girenKullanici.Substring(0, Math.Min(Carried.girenKullanici.Length, 30))));
-                    //        c1.Parameters.Add("@GIRENTARIH", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
-                    //        c1.Parameters.Add("@GIRENSAAT", SqlDbType.SmallDateTime).Value = DateTime.Now;
-                    //        c1.Parameters.Add(new SqlParameter("GIRENKAYNAK", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Substring(0, Math.Min(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Length, 30))));
-                    //        c1.Parameters.Add(new SqlParameter("GIRENSURUM", ""));
-                    //        c1.Parameters.Add(new SqlParameter("DEGISTIRENKULLANICI", Carried.girenKullanici.Substring(0, Math.Min(Carried.girenKullanici.Length, 30))));
-                    //        c1.Parameters.Add("@DEGISTIRENTARIH", SqlDbType.SmallDateTime).Value = DateTime.Now.Date;
-                    //        c1.Parameters.Add("@DEGISTIRENSAAT", SqlDbType.SmallDateTime).Value = DateTime.Now;
-                    //        c1.Parameters.Add(new SqlParameter("DEGISTIRENKAYNAK", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Substring(0, Math.Min(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Length, 30))));
-                    //        c1.Parameters.Add(new SqlParameter("DEGISTIRENSURUM", ""));
-                    //        c1.ExecuteNonQuery();
+                    c1.Parameters.AddWithValue("KAYITDURUM", 1);
+                    c1.Parameters.Add(new SqlParameter("MALKOD", rowView[2].ToString()));
+                    c1.Parameters.Add(new SqlParameter("EVRAKTARIH", txt7.Text));
+                    c1.Parameters.Add(new SqlParameter("EVRAKHAZIRLAYAN", txt12.Text));
+                    c1.Parameters.Add(new SqlParameter("ISLEMTIP",  2));
+                    c1.Parameters.Add(new SqlParameter("GIRISCIKIS",  1));
+                    c1.Parameters.Add(new SqlParameter("EVRAKMIKTAR", Convert.ToInt32(rowView[1])));
+                    c1.Parameters.Add(new SqlParameter("EVRAKBIRIM", rowView[8].ToString()));
+                    //c1.Parameters.Add(new SqlParameter("BIRIMAGIRLIK",  ));//???
+                    c1.Parameters.AddWithValue("MIKTAR", Convert.ToInt32(rowView[1]));
+                    c1.Parameters.Add(new SqlParameter("FIYAT", Convert.ToDecimal(rowView[4])));
+                    c1.Parameters.Add(new SqlParameter("FIYATDOVIZDURUM",  0));
+                    c1.Parameters.Add(new SqlParameter("BIRIMFIYAT", Convert.ToDecimal(rowView[4])));
+                    c1.Parameters.Add(new SqlParameter("TUTAR", ara));
+                    c1.Parameters.Add(new SqlParameter("ISKONTO", iskonto));
+                    c1.Parameters.Add(new SqlParameter("OTVTIP",  otvtip));
+                    c1.Parameters.Add(new SqlParameter("OTVDEGER",  otvdeger));
+                    c1.Parameters.Add(new SqlParameter("KDV",  kdvtutar));
+                    c1.Parameters.Add(new SqlParameter("KDVORAN", Convert.ToSingle(rowView[9])));
+                    c1.Parameters.Add(new SqlParameter("KDVDH",  kdvdh));
+                    c1.Parameters.Add(new SqlParameter("KDVKESINTI", kdvkesinti));
+                    c1.Parameters.Add(new SqlParameter("KDVKESINTIORAN", kdvkesintioran));
+                    c1.Parameters.Add(new SqlParameter("EVRAKTUTAR", ara));
+                    c1.Parameters.Add(new SqlParameter("VADETARIH", Convert.ToDateTime(txt8.Text)));
+                    c1.Parameters.Add(new SqlParameter("OTV", otvtutar));
+                    c1.Parameters.Add(new SqlParameter("FIYATDOVIZCINS", rowView[11].ToString()));
+                    c1.Parameters.Add(new SqlParameter("FIYATDOVIZKUR", 1));
+                    c1.Parameters.Add(new SqlParameter("DOVIZCINS", rowView[11].ToString()));
+                    c1.Parameters.Add(new SqlParameter("EVRAKDOVIZKUR", 1));
+                    c1.Parameters.Add(new SqlParameter("EVRAKDOVIZCINS", rowView[11].ToString()));
+                    c1.Parameters.Add(new SqlParameter("EVRAKBIRIMFIYAT", rowView[4]));
+                    c1.Parameters.Add(new SqlParameter("EVRAKISKONTO", rowView[6]));
+                    #endregion
+                    //c1.Parameters.Add(new SqlParameter("KALEMSN", ));***
+                    //c1.Parameters.Add(new SqlParameter("EVRAKSN", ));***
+
+                    //c1.Parameters.Add(new SqlParameter("EVRAKOTVFARK", ""));
+                    //c1.Parameters.Add(new SqlParameter("BIRIMAGIRLIK", ));
+                    //c1.Parameters.Add(new SqlParameter("FIYATSABLONNO",  ""));
+                    //c1.Parameters.Add(new SqlParameter("FIYATSEKLI",  ""));
+                    //c1.Parameters.Add(new SqlParameter("FIYATGRUPLA",  ""));
+                    //c1.Parameters.Add(new SqlParameter("FIYATYONTEM",  ""));
+
+                    //c1.Parameters.Add(new SqlParameter("TICARETDOSYATIP",  ));
+                    c1.Parameters.Add(new SqlParameter("@DEPOKOD", depokodparam));
+                    //c1.Parameters.Add(new SqlParameter("SURUMNO",  ));
+                    //c1.Parameters.Add(new SqlParameter("IRSALIYETTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("SIPARISTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("TEKLIFTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("SEVKTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("@SEVKHESAPKOD", ""));//TEKRAR   txt2.Text
+                    //c1.Parameters.Add(new SqlParameter("@KARSIHESAPKOD",  ""));//??????????????????????????????????
+                    //c1.Parameters.Add(new SqlParameter("TAHMINTESLIMTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("@SONTESLIMTARIH",  ""));
+                    //c1.Parameters.Add(new SqlParameter("@KDVVADETARIH", ""));
+                    //c1.Parameters.Add(new SqlParameter("DOVIZDURUM",  ));
+                    //c1.Parameters.Add(new SqlParameter("BANKA",  ));
+                    //c1.Parameters.Add(new SqlParameter("DOVIZTIP",  ));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZTARIH", ""));//evrak tarihi
+                    //c1.Parameters.Add(new SqlParameter("@KDVDOVIZTARIH",  ""));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZKUR", ""));
+                    //c1.Parameters.Add(new SqlParameter("KDVDOVIZKUR",  ));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZTUTAR", ""));//evraktutar*doviztur
+                    c1.Parameters.Add(new SqlParameter("@DOVIZISKONTO",  ""));//toplam iskontonun döviz hali
+                    //c1.Parameters.Add(new SqlParameter("DOVIZOTV",  ));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZKDV",  "")); //toplam kdv'nin  döviz hali
+                    //c1.Parameters.Add(new SqlParameter("DOVIZKDVKESINTI",  ));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZKALEMISKONTOTUTAR",  ""));
+                    c1.Parameters.Add(new SqlParameter("@DOVIZEVRAKISKONTOTUTAR",  ""));
+                    //c1.Parameters.Add(new SqlParameter("CARIDOVIZCINS",  ));
+                    c1.Parameters.Add(new SqlParameter("@CARIDOVIZKUR",  ""));
+                    c1.Parameters.Add(new SqlParameter("@CARIDOVIZTUTAR",  ""));
+                    c1.Parameters.Add(new SqlParameter("@CARIDOVIZISKONTO",  ""));
+                    //c1.Parameters.Add(new SqlParameter("CARIDOVIZOTV",  ));
+                    c1.Parameters.Add(new SqlParameter("@CARIDOVIZKDV", "" ));
+                    c1.Parameters.Add(new SqlParameter("@FIYATTARIH", ""));
+                    //c1.Parameters.Add(new SqlParameter("CARIDOVIZKDVKESINTI",  ));
+                    //c1.Parameters.Add(new SqlParameter("ISKONTOSABLONNO",  ));
+                    //c1.Parameters.Add(new SqlParameter("ISKONTOSEKLI",  ));
+                    c1.Parameters.Add(new SqlParameter("@ISKONTOTARIH", "" ));
+                    //c1.Parameters.Add(new SqlParameter("ISKONTOGRUPLA",  ));
+                    //c1.Parameters.Add(new SqlParameter("ISKONTOYONTEM",  ));
+                    //c1.Parameters.Add(new SqlParameter("PROMOSYONSABLONNO",  ));
+                    //c1.Parameters.Add(new SqlParameter("PROMOSYONSEKLI",  ));
+                    c1.Parameters.Add(new SqlParameter("@PROMOSYONTARIH", ""));//????????????
+                    //c1.Parameters.Add(new SqlParameter("PROMOSYONGRUPLA",  ));
+                    //c1.Parameters.Add(new SqlParameter("PROMOSYONTIP",  ));
+                    //c1.Parameters.Add(new SqlParameter("PROMOSYONSIRANO",  ));
+                    c1.Parameters.Add(new SqlParameter("@EVRAKSEKLI",  ""));//????????????
+                    c1.Parameters.Add(new SqlParameter("@LKOD3",  ""));
+                    c1.Parameters.Add(new SqlParameter("@LKOD4",  ""));
+                    //c1.Parameters.Add(new SqlParameter("ODEMESEKLI",  ));
+                    //c1.Parameters.Add(new SqlParameter("OPSIYON",  ));
+                    //c1.Parameters.Add(new SqlParameter("EVRAKDURUM",  ));
+                    //c1.Parameters.Add(new SqlParameter("KULLANILANMIKTAR",  ));
+                    //c1.Parameters.Add(new SqlParameter("FAZLASEVK",  ));
+                    //c1.Parameters.Add(new SqlParameter("FAZLASEVKKAYNAK",  ));
+                    //c1.Parameters.Add(new SqlParameter("SEVKMIKTAR",  ));
+                    //c1.Parameters.Add(new SqlParameter("SEVKTIP",  ));
+                    //c1.Parameters.Add(new SqlParameter("TARIH2",  ));
+                    //c1.Parameters.Add(new SqlParameter("MIKTAR2",  ));
+                    //c1.Parameters.Add(new SqlParameter("TUTAR2",  ));
+                    //c1.Parameters.Add(new SqlParameter("EVRAKNO2",  ));
+                    //c1.Parameters.Add(new SqlParameter("TARIH3",  ));
+                    //c1.Parameters.Add(new SqlParameter("MIKTAR3",  ));
+                    //c1.Parameters.Add(new SqlParameter("TUTAR3",  ));
+                    //c1.Parameters.Add(new SqlParameter("TARIH4",  ));
+                    //c1.Parameters.Add(new SqlParameter("TARIH5",  ));
+                    //c1.Parameters.Add(new SqlParameter("SIRANO2",  ));
+                    //c1.Parameters.Add(new SqlParameter("MALIYETSIRANO",  ));
+                    //c1.Parameters.Add(new SqlParameter("MHSENTTABLONO",  ));
+                    //c1.Parameters.Add(new SqlParameter("MHSDURUM",  ));
+                    //c1.Parameters.Add(new SqlParameter("MHSFISTARIH",  ));
+                    //c1.Parameters.Add(new SqlParameter("MHSFISTIP",  ));
+                    //c1.Parameters.Add(new SqlParameter("MHSFISNO",  ));
+                    //c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKTIP",  ));
+                    //c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKNO",  ));
+                    //c1.Parameters.Add(new SqlParameter("SONKAYNAKHESAPKOD",  ));
+                    //c1.Parameters.Add(new SqlParameter("SONKAYNAKSIRANO",  ));
+                    //c1.Parameters.Add(new SqlParameter("SONKAYNAKEVRAKTARIH",  ));
+                    c1.ExecuteNonQuery();
+                    #endregion
+
+                    #region EFABAS
+                    //EFABAS
+                    int et = efat.Visibility == Visibility.Visible ? 1 : 0;
+                    if (efatablokayitgerekmi == true)
+                    {
+                        c1 = new SqlCommand("INSERT_SMRTAPP_EFABAS", s);
+                        c1.CommandType = CommandType.StoredProcedure;
+                        c1.Parameters.AddWithValue("@ETICARET", et);
+                        c1.Parameters.AddWithValue("@EARSIV", ears.Visibility == Visibility.Visible ? 1 : 0);
+                        //if(et == 1) c1.Parameters.AddWithValue("@PKETIKET", );
+                        //else c1.Parameters.AddWithValue("@PKETIKET", "");
+                        c1.ExecuteNonQuery();
+                    }
+                    #endregion
+
+
                 }
             }
 
-            //internet varsa ve cpm şeçili ise
-            else if (netcon == true && Carried.IsCPMconnected == true)
+            else if (netcon == true && Carried.IsCPMconnected == true)//internet varsa ve cpm şeçili ise
             {
+                int srktefa = Convert.ToInt16(new SqlCommand("select EFATURADURUM from SRKKRT", s).ExecuteScalar());
+                efatablokayitgerekmi = isover30k || srktefa == 1;
                 //STKHAR
+                decimal kdvtutar, ara, genel, iskonto, net, otvdeger, otvtutar, kdvkesinti; Single otvoran, kdvkesintioran; int otvtip; bool kdvdh;
                 s = new SqlConnection(Carried.girisBaglantiCPM);
                 s.Open();
                 for (int i = 0; i < stok_dataGrid.Items.Count; i++)
@@ -2059,27 +2386,7 @@ namespace WpfApp2
                     DataRowView rowView = (stok_dataGrid.Items[i] as DataRowView);
                     c1 = new SqlCommand();
                     c1.Connection = s;
-                    c1.CommandText = "insert into STKHAR(KALEMSN,EVRAKSN,SIRKETNO,EVRAKTIP,EVRAKNO,HESAPKOD,SIRANO,KAYITTUR,KAYITDURUM,KARTTIP,MALTIP,MALKOD," +
-                    "EVRAKTARIH,EVRAKHAZIRLAYAN,ISLEMTIP,GIRISCIKIS,EVRAKMIKTAR,EVRAKBIRIM,BIRIMAGIRLIK,MIKTAR,FIYAT,FIYATDOVIZCINS,FIYATDOVIZKUR,FIYATDOVIZDURUM," +
-                    "BIRIMFIYAT,TUTAR,ISKONTO,OTV,OTVTIP,OTVDEGER,KDV,KDVORAN,KDVDH,KDVKESINTI,KDVKESINTIORAN,BIRIMBRUTAGIRLIK,BRUTAGIRLIK,BIRIMNETAGIRLIK," +
-                    "NETAGIRLIK,BIRIMBRUTHACIM,BRUTHACIM,BIRIMNETHACIM,NETHACIM,BIRIMKAPADET,KAPADET,KALEMISKONTOORAN1,KALEMISKONTO1,KALEMISKONTOORAN2," +
-                    "KALEMISKONTO2,KALEMISKONTOORAN3,KALEMISKONTO3,KALEMISKONTOORAN4,KALEMISKONTO4,KALEMISKONTOORAN5,KALEMISKONTO5,EVRAKISKONTOORAN1," +
-                    "EVRAKISKONTO1,EVRAKISKONTOORAN2,EVRAKISKONTO2,EVRAKISKONTOORAN3,EVRAKISKONTO3,EVRAKISKONTOORAN4,EVRAKISKONTO4,KALEMISKONTOTUTAR," +
-                    "EVRAKISKONTOTUTAR,SKOD1,SKOD2,SKOD3,SKOD4,SKOD5,BKOD1,BKOD2,BKOD3,BKOD4,BKOD5,BKOD6,BKOD7,BKOD8,BKOD9,BKOD10,NKOD1,NKOD2,NKOD3,NKOD4,NKOD5," +
-                    "NKOD6,NKOD7,NKOD8,NKOD9,NKOD10,TICARETDOSYATIP,PROJEKOD,DEPOKOD,SURUMNO,ACIKLAMA1,IRSALIYETTARIH,SIPARISTARIH,TEKLIFTARIH,ALIMTIP,ALIMMIKTAR," +
-                    "ALIMFIYAT,SEVKTARIH,SEVKHESAPKOD,KARSIHESAPKOD,TAHMINTESLIMTARIH,SONTESLIMTARIH,VADETARIH,KDVVADETARIH,DOVIZCINS,DOVIZDURUM,BANKA,DOVIZTIP," +
-                    "DOVIZTARIH,KDVDOVIZTARIH,DOVIZKUR,KDVDOVIZKUR,DOVIZTUTAR,DOVIZISKONTO,DOVIZOTV,DOVIZKDV,DOVIZKDVKESINTI,DOVIZKALEMISKONTOTUTAR," +
-                    "DOVIZEVRAKISKONTOTUTAR,CARIDOVIZCINS,CARIDOVIZKUR,CARIDOVIZTUTAR,CARIDOVIZISKONTO,CARIDOVIZOTV,CARIDOVIZKDV,CARIDOVIZKDVKESINTI," +
-                    "FIYATTUTAR,FIYATISKONTO,FIYATKDV,FIYATKDVKESINTI,FIYATOTV,FIYATSABLONNO,FIYATSEKLI,FIYATTARIH,FIYATGRUPLA,FIYATYONTEM,EVRAKBIRIMFIYAT," +
-                    "EVRAKDOVIZCINS,EVRAKDOVIZKUR,EVRAKTUTAR,EVRAKISKONTO,EVRAKKDV,EVRAKKDVKESINTI,EVRAKKDVFARK,EVRAKOTV,EVRAKOTVFARK,ISKONTOSABLONNO,ISKONTOSEKLI," +
-                    "ISKONTOTARIH,ISKONTOGRUPLA,ISKONTOYONTEM,PROMOSYONSABLONNO,PROMOSYONSEKLI,PROMOSYONTARIH,PROMOSYONGRUPLA,PROMOSYONTIP,PROMOSYONSIRANO," +
-                    "EVRAKSEKLI,ODEMESEKLI,OPSIYON,EVRAKDURUM,KULLANILANMIKTAR,FAZLASEVK,FAZLASEVKKAYNAK,SEVKMIKTAR,SEVKTIP,TARIH2,MIKTAR2,TUTAR2,EVRAKNO2,TARIH3," +
-                    "MIKTAR3,TUTAR3,TARIH4,TARIH5,SIRANO2,MALIYETSIRANO,MHSENTTABLONO,MHSDURUM,MHSFISTARIH,MHSFISTIP,MHSFISNO,SONKAYNAKEVRAKTIP,SONKAYNAKEVRAKNO," +
-                    "SONKAYNAKHESAPKOD,SONKAYNAKSIRANO,SONKAYNAKEVRAKTARIH,GVSTOPAJORAN,GVSTOPAJ,MERAFONUORAN,MERAFONU,SGKKESINTIORAN,SGKKESINTI,BORSATESCILORAN," +
-                    "BORSATESCIL,GIRENKULLANICI,GIRENTARIH,GIRENSAAT,GIRENKAYNAK,GIRENSURUM,DEGISTIRENKULLANICI,DEGISTIRENTARIH,DEGISTIRENSAAT,DEGISTIRENKAYNAK," +
-                    "DEGISTIRENSURUM) VALUES(@KALEMSN,@EVRAKSN,@SIRKETNO,@EVRAKTIP,@EVRAKNO,@HESAPKOD,@SIRANO,@KAYITTUR,@KAYITDURUM,@KARTTIP,@MALTIP,@MALKOD,@EVRAKTARIH,@EVRAKHAZIRLAYAN,@ISLEMTIP,@GIRISCIKIS,@EVRAKMIKTAR,@EVRAKBIRIM,@BIRIMAGIRLIK,@MIKTAR,@FIYAT,@FIYATDOVIZCINS,@FIYATDOVIZKUR,@FIYATDOVIZDURUM,@BIRIMFIYAT,@TUTAR,@ISKONTO,@OTV,@OTVTIP,@OTVDEGER,@KDV,@KDVORAN,@KDVDH,@KDVKESINTI,@KDVKESINTIORAN,@BIRIMBRUTAGIRLIK,@BRUTAGIRLIK,@BIRIMNETAGIRLIK,@NETAGIRLIK,@BIRIMBRUTHACIM,@BRUTHACIM,@BIRIMNETHACIM,@NETHACIM,@BIRIMKAPADET,@KAPADET,@KALEMISKONTOORAN1,@KALEMISKONTO1,@KALEMISKONTOORAN2,@KALEMISKONTO2,@KALEMISKONTOORAN3,@KALEMISKONTO3,@KALEMISKONTOORAN4,@KALEMISKONTO4,@KALEMISKONTOORAN5,@KALEMISKONTO5,@EVRAKISKONTOORAN1,@EVRAKISKONTO1,@EVRAKISKONTOORAN2,@EVRAKISKONTO2,@EVRAKISKONTOORAN3,@EVRAKISKONTO3,@EVRAKISKONTOORAN4,@EVRAKISKONTO4,@KALEMISKONTOTUTAR,@EVRAKISKONTOTUTAR,@SKOD1,@SKOD2,@SKOD3,@SKOD4,@SKOD5,@BKOD1,@BKOD2,@BKOD3,@BKOD4,@BKOD5,@BKOD6,@BKOD7,@BKOD8,@BKOD9,@BKOD10,@NKOD1,@NKOD2,@NKOD3,@NKOD4,@NKOD5,@NKOD6,@NKOD7,@NKOD8,@NKOD9,@NKOD10,@TICARETDOSYATIP,@PROJEKOD,@DEPOKOD,@SURUMNO,@ACIKLAMA1,@IRSALIYETTARIH,@SIPARISTARIH,@TEKLIFTARIH,@ALIMTIP,@ALIMMIKTAR,@ALIMFIYAT,@SEVKTARIH,@SEVKHESAPKOD,@KARSIHESAPKOD,@TAHMINTESLIMTARIH,@SONTESLIMTARIH,@VADETARIH,@KDVVADETARIH,@DOVIZCINS,@DOVIZDURUM,@BANKA,@DOVIZTIP,@DOVIZTARIH,@KDVDOVIZTARIH,@DOVIZKUR,@KDVDOVIZKUR,@DOVIZTUTAR,@DOVIZISKONTO,@DOVIZOTV,@DOVIZKDV,@DOVIZKDVKESINTI,@DOVIZKALEMISKONTOTUTAR,@DOVIZEVRAKISKONTOTUTAR,@CARIDOVIZCINS,@CARIDOVIZKUR,@CARIDOVIZTUTAR,@CARIDOVIZISKONTO,@CARIDOVIZOTV,@CARIDOVIZKDV,@CARIDOVIZKDVKESINTI,@FIYATTUTAR,@FIYATISKONTO,@FIYATKDV,@FIYATKDVKESINTI,@FIYATOTV,@FIYATSABLONNO,@FIYATSEKLI,@FIYATTARIH,@FIYATGRUPLA,@FIYATYONTEM,@EVRAKBIRIMFIYAT,@EVRAKDOVIZCINS,@EVRAKDOVIZKUR,@EVRAKTUTAR,@EVRAKISKONTO,@EVRAKKDV,@EVRAKKDVKESINTI,@EVRAKKDVFARK,@EVRAKOTV,@EVRAKOTVFARK,@ISKONTOSABLONNO,@ISKONTOSEKLI,@ISKONTOTARIH,@ISKONTOGRUPLA,@ISKONTOYONTEM,@PROMOSYONSABLONNO,@PROMOSYONSEKLI,@PROMOSYONTARIH,@PROMOSYONGRUPLA,@PROMOSYONTIP,@PROMOSYONSIRANO,@EVRAKSEKLI,@ODEMESEKLI,@OPSIYON,@EVRAKDURUM,@KULLANILANMIKTAR,@FAZLASEVK,@FAZLASEVKKAYNAK,@SEVKMIKTAR,@SEVKTIP,@TARIH2,@MIKTAR2,@TUTAR2,@EVRAKNO2,@TARIH3,@MIKTAR3,@TUTAR3,@TARIH4,@TARIH5,@SIRANO2,@MALIYETSIRANO,@MHSENTTABLONO,@MHSDURUM,@MHSFISTARIH,@MHSFISTIP,@MHSFISNO,@SONKAYNAKEVRAKTIP,@SONKAYNAKEVRAKNO,@SONKAYNAKHESAPKOD,@SONKAYNAKSIRANO,@SONKAYNAKEVRAKTARIH,@GVSTOPAJORAN,@GVSTOPAJ,@MERAFONUORAN,@MERAFONU,@SGKKESINTIORAN,@SGKKESINTI,@BORSATESCILORAN,@BORSATESCIL,@GIRENKULLANICI,@GIRENTARIH,@GIRENSAAT,@GIRENKAYNAK,@GIRENSURUM,@DEGISTIRENKULLANICI,@DEGISTIRENTARIH,@DEGISTIRENSAAT,@DEGISTIRENKAYNAK,@DEGISTIRENSURUM)";
-                    //c1.Parameters.Add(new SqlParameter("", DEGER));
-                    c1.ExecuteNonQuery();
+                   
                 }
             }
 
@@ -2125,7 +2432,7 @@ namespace WpfApp2
             txt_geneliskontotutar.Text = "";
             txt_geneltoplam.Text = "";
             txt_genelnettutar.Text = "";
-            txt_kdv.Text = "";
+            txt_vergi.Text = "";
             txt_nettutar.Text = "";
             markaiskonto.Text = "";
             txtmiktar.Text = "";
@@ -2153,6 +2460,7 @@ namespace WpfApp2
             txt12.Text = "";
             txtmiktar.Text = "";
             txtBrkd.Text = "";
+            Odeme.parcaliodeme.source = null;
         }
         private void Sil_Click(object sender, RoutedEventArgs e)
         {
@@ -2291,10 +2599,23 @@ namespace WpfApp2
                         rowView1[6] = Convert.ToDecimal(rowView1[4]) * Convert.ToDecimal(rowView1[5]) / 100;
                         if (Convert.ToDecimal(rowView1[4]) != 0) rowView1[5] = 100 * Convert.ToDecimal(rowView1[6]) / Convert.ToDecimal(rowView1[4]);
                     }
-                    rowView1[7] = Convert.ToDecimal(rowView1[1]) * (Convert.ToDecimal(rowView1[4]) - Convert.ToDecimal(rowView1[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                    //rowView1[7] = Convert.ToDecimal(rowView1[1]) * (Convert.ToDecimal(rowView1[4]) - Convert.ToDecimal(rowView1[6])); //toplam tutar column hesaplama. miktar*(satısfiyatı-iskonto)
+                    decimal kalansatfiyat = Convert.ToDecimal(rowView1[4]) - Convert.ToDecimal(rowView1[6]); //satısfiyatı-iskonto1
+                    decimal yeniiskonto, kalemiskontotoplami = Convert.ToDecimal(rowView1[6]);
+                    for (int j = 12; j <= 15; j++)
+                    {
+                        yeniiskonto = kalansatfiyat * Convert.ToDecimal(rowView1[j]) / 100;
+                        kalansatfiyat -= yeniiskonto;
+                        kalemiskontotoplami += yeniiskonto;
+                        cmmd = "update SATISHAR set KALEMISKONTOORAN" + (j - 10).ToString() + "=" + rowView[j] + ", KALEMISKONTO" + (j - 10).ToString() + "=" + yeniiskonto.ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView[2] + "'";
+                        c1 = new SqlCommand(cmmd, s);
+                        c1.ExecuteNonQuery();
+                    }
+                    rowView1[16] = kalemiskontotoplami;
+                    rowView1[7] = Convert.ToDecimal(rowView1[1]) * (Convert.ToDecimal(rowView1[4]) - Convert.ToDecimal(rowView1[16])); //toplam tutar column hesaplama. miktar*(satısfiyatı-toplamiskonto)
                     rowView1.EndEdit();
                     int a = rowView1[0].ToString() == "True" ? 1 : 0;
-                    cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView1[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView1[5]) + ", ISKONTOTUTAR = " + rowView1[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView1[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView1[1] + " WHERE MALKOD = '" + rowView1[2] + "'";
+                    cmmd = "update SATISHAR set SECIM = " + a + ", " + columnname + " = " + rowView1[4].ToString().Replace(",", ".") + ", ISKONTOORAN = " + Convert.ToSingle(rowView1[5]) + ", ISKONTOTUTAR = " + rowView1[6].ToString().Replace(",", ".") + ", TOPLAMTUTAR = " + rowView1[7].ToString().Replace(",", ".") + ", MIKTAR = " + rowView1[1] + ", TOPLAMISKONTO =" + rowView1[16].ToString().Replace(",", ".") + " WHERE MALKOD = '" + rowView1[2] + "'";
                     c1 = new SqlCommand(cmmd, s);
                     c1.ExecuteNonQuery();
                 }
@@ -2314,12 +2635,18 @@ namespace WpfApp2
             {
                 try
                 {
-                    FromTryToEur = Carried.CurrencyConversion(1, "try", "eur");
-                    FromTryToUsd = Carried.CurrencyConversion(1, "try", "usd");
-                    FromUsdToTry = Carried.CurrencyConversion(1, "usd", "try");
-                    FromEurToTry = Carried.CurrencyConversion(1, "eur", "try");
-                    FromEurToUsd = Carried.CurrencyConversion(1, "eur", "usd");
-                    FromUsdToEur = Carried.CurrencyConversion(1, "usd", "eur");
+                    //FromTryToEur = Carried.CurrencyConversion(1, "try", "eur");
+                    //FromTryToUsd = Carried.CurrencyConversion(1, "try", "usd");
+                    //FromUsdToTry = Carried.CurrencyConversion(1, "usd", "try");
+                    //FromEurToTry = Carried.CurrencyConversion(1, "eur", "try");
+                    //FromEurToUsd = Carried.CurrencyConversion(1, "eur", "usd");
+                    //FromUsdToEur = Carried.CurrencyConversion(1, "usd", "eur");
+                    FromEurToTry = Carried.MerkezBankasi_CurrencyConversion("EUR");
+                    FromUsdToTry = Carried.MerkezBankasi_CurrencyConversion("USD"); //MessageBox.Show(FromEurToTry.ToString() + "  " + FromUsdToTry.ToString());
+                    FromTryToEur = 1/ FromEurToTry;
+                    FromTryToUsd = 1 / FromUsdToTry;
+                    FromEurToUsd = FromUsdToTry / FromEurToTry;
+                    FromUsdToEur = FromEurToTry / FromUsdToTry;
                 }
                 catch (Exception ex)
                 {
@@ -2346,14 +2673,14 @@ namespace WpfApp2
                 }
             }
         }
-        private decimal getCurrency(string stkdvz)
+        private decimal getCurrency(string stkdvz)//stok para birimini cari para birimine çevirmek için
         {
             if (!String.IsNullOrWhiteSpace(txt9.Text))
             {
                 string cardvz = txt9.Text;
                 if ((stkdvz == "" || stkdvz == "TRY") && cardvz == "TL") return 1;
-                else if (stkdvz == "TRY" && cardvz == "USD") return FromTryToUsd;
-                else if (stkdvz == "TRY" && cardvz == "EUR") return FromTryToEur;
+                else if ((stkdvz == "TRY" || stkdvz == "") && cardvz == "USD") return FromTryToUsd;
+                else if ((stkdvz == "TRY" || stkdvz == "") && cardvz == "EUR") return FromTryToEur;
                 else if (stkdvz == "EUR" && cardvz == "EUR") return 1;
                 else if (stkdvz == "EUR" && cardvz == "USD") return FromEurToUsd;
                 else if (stkdvz == "EUR" && cardvz == "TL") return FromEurToTry;
@@ -2362,6 +2689,13 @@ namespace WpfApp2
                 else if (stkdvz == "USD" && cardvz == "EUR") return FromUsdToEur;
                 else return 1;
             }
+            else return 1;
+        }
+        private decimal getCurrency_ConvertToLira(string stkdvz)
+        {
+            if (stkdvz == "EUR") return FromEurToTry;
+            else if (stkdvz == "USD") return FromUsdToTry;
+            else if (stkdvz == "TRY" || stkdvz == "TL" || string.IsNullOrWhiteSpace(stkdvz)) return 1;
             else return 1;
         }
         private void txt9_TextChanged(object sender, TextChangedEventArgs e)
@@ -2427,11 +2761,13 @@ namespace WpfApp2
                     DataRowView row = (DataRowView)stok_dataGrid.SelectedItems[i];
                     c1 = new SqlCommand("select " + columnname + " from " + tabloadi + " WHERE MALKOD='" + row[2] + "'", s);
                     object o = c1.ExecuteScalar();
+                    c1 = new SqlCommand("select " + columnname + "DOVIZCINS from " + tabloadi + " WHERE MALKOD='" + row[2] + "'", s);
+                    object dc = c1.ExecuteScalar();
                     if (o != null)
                     {
-                        c1 = new SqlCommand("update SATISHAR set SATISFIYAT1 = " + o.ToString().Replace(",", ".") + " WHERE MALKOD='" + row[2] + "'", sl);
+                        c1 = new SqlCommand("update SATISHAR set DOVIZCINS = '" + dc.ToString() + "', SATISFIYAT1 = " + o.ToString().Replace(",", ".") + " WHERE MALKOD='" + row[2] + "'", sl);
                         c1.ExecuteNonQuery();
-                        c1 = new SqlCommand("update SATISHAR set TOPLAMTUTAR=(SATISFIYAT1-ISKONTOTUTAR)*MIKTAR WHERE MALKOD='" + row[2] + "'", sl);
+                        c1 = new SqlCommand("update SATISHAR set TOPLAMTUTAR=(SATISFIYAT1-TOPLAMISKONTO)*MIKTAR WHERE MALKOD='" + row[2] + "'", sl);
                         c1.ExecuteNonQuery();
                     }
                 }

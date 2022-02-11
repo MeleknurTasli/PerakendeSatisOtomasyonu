@@ -1,12 +1,716 @@
-﻿<Window x:Class="WpfApp2.StokKartAc"
+﻿<dx:ThemedWindow 
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+    xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"   
+    x:Class="WpfApp2.StokKartAc"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp2"
+        xmlns:local="clr-namespace:WpfApp2;assembly=WpfApp2" 
         mc:Ignorable="d"
-        Title="StokKartAc" Height="450" Width="800">
+        Title="Stok Kart" Height="800" Width="1425" ActiveGlowColor="White">
     <Grid>
-        
+        <Grid.Background>
+            <LinearGradientBrush >
+                <GradientStop Color="#ff25777C" Offset="-0.2"  />
+                <GradientStop Color="#FF1A4C82" Offset="1.1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.RowSpan="6" Grid.ColumnSpan="3">
+            <Grid.Background>
+                <ImageBrush ImageSource="\icons\pngegg (37).png" Stretch="Uniform" Opacity="0.3"/>
+            </Grid.Background>
+        </Grid>
+
+        <Button x:Name="Geri"  Margin="10,2,0,0" Background="Transparent" BorderThickness="0" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Dictionary3}" Click="Geri_Click">
+            <Image Source="icons\back-arrow@2x.png" ></Image>
+        </Button>
+
+        <Border Margin="10,10,10,10" Padding="5,5,3,5" BorderBrush="White" CornerRadius="15" BorderThickness="1" Grid.Row="1" Grid.RowSpan="4" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Stretch" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Margin="5" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Stretch" Background="#BB207DA0" HorizontalContentAlignment="Center" VerticalAlignment="Top" Grid.ColumnSpan="3">Stok Kart</Label>
+
+                <ToggleButton x:Name="duzenle1" Visibility="Hidden" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Height="35" BorderBrush="Transparent" Margin="3,0,0,0" Checked="duzenle1_Checked" Unchecked="duzenle1_Unchecked" >
+                    <ToggleButton.Background>
+                        <ImageBrush x:Name="duzenle1resim" ImageSource="\icons\duzenle.png" Stretch="Uniform"></ImageBrush>
+                    </ToggleButton.Background>
+                    <ToggleButton.Resources>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Name="border" 
+                        BorderThickness="0.5"
+                        BorderBrush="Transparent"  
+                        Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#FF16C2D3" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ToggleButton.Resources>
+                    <ToggleButton.Triggers>
+                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Hide">
+                                    <DoubleAnimation    
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}" To="0"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                            <BeginStoryboard>
+                                <Storyboard x:Name="Show">
+                                    <DoubleAnimation
+                                                Storyboard.TargetName="grid_vd"
+                                                Storyboard.TargetProperty="Width"
+                                                BeginTime="0:0:0"
+                                                From="0" To="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}},Path=ActualWidth}"
+                                                Duration="0:0:0.3">
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ToggleButton.Triggers>
+                </ToggleButton>
+
+                <Grid x:Name="grid_vd" Grid.Row="1" Grid.ColumnSpan="3" Margin="10" Width="0" HorizontalAlignment="Left" Background="Transparent">
+
+                </Grid>
+
+                
+
+                <Grid Grid.Row="1" Margin="5,5,5,5" x:Name="gr1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Başlık Bilgileri</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" x:Name="sv1">
+                        <dxlc:LayoutGroup x:Name="layoutgroup1" Orientation="Vertical"  Background="Transparent" View="GroupBox"  >
+                            <dxlc:LayoutItem Label="Otomasyon Durum:" Foreground="White" FontSize="15">
+                                <!--<StackPanel Width="250" HorizontalAlignment="Right">-->
+                                    <!--<TextBox Width="250" HorizontalAlignment="Right" x:Name="txt1" Text="0" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />-->
+                                <ComboBox x:Name="cb1" BorderThickness="0" Foreground="White" VerticalAlignment="Stretch"  Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" VerticalContentAlignment="Center" HorizontalContentAlignment="Left">
+                                    <ComboBoxItem  Foreground="White" FontSize="20">Otomasyon Aktif</ComboBoxItem>
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">Otomasyon Aktif Değil</ComboBoxItem>
+                                </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Kayıt Durumu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="1" IsEnabled="False" Width="250" HorizontalAlignment="Right" x:Name="txt2" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Grup Kodu:" Foreground="White" FontSize="15" >
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt3" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Ürün Tipi:" Foreground="White" FontSize="15">
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt4" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                                <ComboBox x:Name="cbMalTipi" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">STOK</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">DEMİRBAŞ</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">HİZMET</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">YEDEK PARÇA</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Kart Tipi:" Foreground="White" FontSize="15">
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt8" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                                <ComboBox x:Name="cbKartTipi" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">TİCARİ</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">DAHİLİ</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">SERVİS</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">ÜRETİM</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Ürün Kodu:" Foreground="White" FontSize="15">
+                                <TextBox IsEnabled="False"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txt5" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Ürün Adı:" Foreground="White" FontSize="15">
+                                <TextBox  Text=""  Width="250" HorizontalAlignment="Right" x:Name="txt6" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Birim:" Foreground="White" FontSize="15">
+                                <TextBox  MaxLength="5" Text="" Width="250" HorizontalAlignment="Right" x:Name="txt7" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <!--<StackPanel Width="250" HorizontalAlignment="Right">-->
+                                    <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt8" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />-->
+                                <ComboBox x:Name="cb4" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">TRY</ComboBoxItem> 
+                                </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <!--<dxlc:LayoutItem Label="Ana Ürün Ad:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt9" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>-->
+                            <dxlc:LayoutItem Label="Stok Kontrolü:" Foreground="White" FontSize="15">
+                                <!--<StackPanel Width="250" HorizontalAlignment="Right">-->
+                                    <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt10" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />-->
+                                    <ComboBox x:Name="cbStokKontrol" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White"  HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">BAKİYE EKSİYE DÜŞMESİN</ComboBoxItem><!--0-->
+                                    <ComboBoxItem Foreground="White" FontSize="20">BAKİYE EKSİYE DÜŞEBİLİR</ComboBoxItem><!--1-->
+                                    </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Marka Adı:" Foreground="White" FontSize="15">
+                                <TextBox  Text="" Width="250" HorizontalAlignment="Right" x:Name="txt4" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Model Adı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt8" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Üretici Kodu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt9" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Üretici Mal Kodu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt10" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+
+                <Grid Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" x:Name="gr2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Stok Bilgileri</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" >
+                    <dxlc:LayoutGroup x:Name="layoutgroup2" Orientation="Vertical" View="GroupBox" Background="Transparent" >
+                    <dxlc:LayoutItem Label="Barkod 1:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt11"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Üst Ürün Grup Ad:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt12"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Ana Ürün Kod:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt13"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Ana Ürün Adı:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt14" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Alt Ürün Grup Kod:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt15" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Alt Ürün Ad:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt16" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Alt Seviye Kodu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt17" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="G. Süresi Dönem Politikası:" Foreground="White" FontSize="15">
+                          <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt18" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Ana Mal Kodu:" Foreground="White" FontSize="15">
+                        <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt21" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Giren Kaynak:" Foreground="White" FontSize="15">
+                            <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt22" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                    </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="5,5,5,5" Grid.Column="2" x:Name="gr3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Satış Fiyat Bilgileri</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" >
+                         <dxlc:LayoutGroup x:Name="layoutgroup3" Orientation="Vertical"  View="GroupBox" Background="Transparent" >
+                            <dxlc:LayoutItem Label="Satış Evrak Şekli:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatevrsekli"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                             <dxlc:LayoutItem Label="Satış Fiyat Şekli:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatfytsekli"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Birim:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatbirim"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 1:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsf1" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" PreviewTextInput=" txt1_PreviewTextInput"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 1 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbsf1doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt29" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 1 KDV D/H:" Foreground="White" FontSize="15">
+                                <!--<StackPanel  Width="250" HorizontalAlignment="Right" >-->
+                                    <!--<TextBox   Text="HARİÇ" Width="250" HorizontalAlignment="Right" x:Name="txt30"  FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />-->
+                                    <ComboBox x:Name="cb_SF1DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                    </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 2:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsf2" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  PreviewTextInput=" txt1_PreviewTextInput"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 2 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbsf2doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" IsSelected="True" FontSize="20">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt32" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 2 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_SF2DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 3:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsf3" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 3 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbsf3doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" IsSelected="True" FontSize="20">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt35" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 3 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_SF3DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 4:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsf4" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 4 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbsf4doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt38" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 4 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_SF4DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 5:" Foreground="White" FontSize="15">
+                                <TextBox   PreviewTextInput=" txt1_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsf5" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 5 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbsf5doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txt41" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış Fiyatı 5 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_SF5DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="5,15,5,5" Grid.Column="2" x:Name="gr4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Alış Fiyat Bilgileri</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" >
+                        <dxlc:LayoutGroup x:Name="layoutgroup4" Orientation="Vertical"  View="GroupBox" Background="Transparent" >
+                            <dxlc:LayoutItem Label="Alım Evrak Şekli:" Foreground="White" FontSize="15">
+                                <TextBox    Text="" Width="250" HorizontalAlignment="Right" x:Name="txtalevrsekli" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alım Fiyat Şekli:" Foreground="White" FontSize="15">
+                                <TextBox    Text="" Width="250" HorizontalAlignment="Right" x:Name="txtalfytsekli" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alım Birim:" Foreground="White" FontSize="15">
+                                <TextBox    Text="" Width="250" HorizontalAlignment="Right" x:Name="txtalbirim" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 1:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf1" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 1 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbaf1doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf1dc" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 1 KDV D/H:" Foreground="White" FontSize="15">
+                                <!--<StackPanel  Width="250" HorizontalAlignment="Right" >-->
+                                    <!--<TextBox   Text="HARİÇ" Width="250" HorizontalAlignment="Right" x:Name="txtaf1dh" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />-->
+                                    <ComboBox x:Name="cb_AF1DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 2:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf2" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 2 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbaf2doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf2dc" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 2 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_AF2DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 3:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf3" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 3 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbaf3doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf3dc" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 3 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_AF3DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 4:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf4" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 4 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbaf4doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf4dc" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 4 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_AF4DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 5:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt1_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf5" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 5 Döviz Cinsi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbaf5doviz" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem Foreground="White" FontSize="20">USD</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">EUR</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">TRY</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtaf5dc" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alış Fiyatı 5 KDV D/H:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cb_AF5DH" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White" FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem  Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                </ComboBox>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="5,15,5,5" Grid.Column="1" x:Name="gr5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Muhasebe Kodları</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" >
+                        <dxlc:LayoutGroup x:Name="layoutgroup5" Orientation="Vertical"  View="GroupBox" Background="Transparent" >
+                            <dxlc:LayoutItem Label="Alımlar Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtalimlarhesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Alımdan İade Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtalimdaniadehesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satışlar Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatislarhesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satıştan İade Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatistaniadehesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Satış İskonto Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsatisiskontohesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Yurtdışı Satışlar Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtyurtdisisatislarhesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="SMM Hesabı:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtsmmhesabi" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="KDV Dahil Hariç:" Foreground="White" FontSize="15">
+                                <!--<StackPanel  Width="250" HorizontalAlignment="Right" >
+                                    <TextBox   Text="HARİÇ" Width="250" HorizontalAlignment="Right" x:Name="txtkdvdh" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />-->
+                                    <ComboBox x:Name="cb_kdvdh" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                    <ComboBoxItem Foreground="White"  FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White"  FontSize="20" >DAHİL</ComboBoxItem>
+                                    </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="KDV Oranı:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt11_PreviewTextInput"  Text="" Width="250" HorizontalAlignment="Right" x:Name="txtkdvorani" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="5,15,5,5" Grid.Column="0" x:Name="gr6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <dxlc:TileGroupHeader Background="Transparent" Foreground="White"  FontSize="19">Kodlar ve Vergiler</dxlc:TileGroupHeader>
+                    <ScrollViewer Grid.Row="1" >
+                        <dxlc:LayoutGroup x:Name="layoutgroup6" Orientation="Vertical"  View="GroupBox" Background="Transparent" >
+                            <dxlc:LayoutItem Label="Güvenlik Kodu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtguvenlikkodu" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Özel Kodu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txtozelkodu" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Tip Kodu:" Foreground="White" FontSize="15">
+                                <TextBox   Text="" Width="250" HorizontalAlignment="Right" x:Name="txttipkodu" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="KDV Oranı:" Foreground="White" FontSize="15">
+                                <TextBox   PreviewTextInput=" txt11_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtkdvorani_" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="KDV Dahil/Hariç:" Foreground="White" FontSize="15">
+                                <!--<StackPanel  Width="250" HorizontalAlignment="Right" >
+                                    <TextBox   Text="HARİÇ" Width="250" HorizontalAlignment="Right" x:Name="txtkdvdahilharic_" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />-->
+                                    <ComboBox x:Name="cb_kdvdahilharic_"  BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch"  Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}" Foreground="White"  >
+                                        <ComboBoxItem Foreground="White" FontSize="20">DAHİL</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White"  FontSize="20" IsSelected="True">HARİÇ</ComboBoxItem>
+                                    </ComboBox>
+                                <!--</StackPanel>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="KDV Kesinti Oranı:" Foreground="White" FontSize="15">
+                                <TextBox   PreviewTextInput=" txt11_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtkdvkesintioran" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="ÖTV Tipi:" Foreground="White" FontSize="15">
+                                <ComboBox x:Name="cbOtvtip" BorderThickness="0" StaysOpenOnEdit="True" VerticalAlignment="Stretch" Width="250" HorizontalAlignment="Right" Style="{StaticResource Dictionary2}"  Foreground="White"  HorizontalContentAlignment="Left" >
+                                    <ComboBoxItem IsSelected="True" Foreground="White" FontSize="20">ORAN</ComboBoxItem>
+                                    <ComboBoxItem Foreground="White" FontSize="20">TUTAR</ComboBoxItem>
+                                </ComboBox>
+                                <!--<TextBox   PreviewTextInput=" txt1_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtotvtip" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>-->
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="ÖTV Değeri:" Foreground="White" FontSize="15">
+                                <TextBox   PreviewTextInput=" txt1_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtotvdegeri" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="ÖTV Kesinti Oran:" Foreground="White" FontSize="15">
+                                <TextBox  PreviewTextInput=" txt11_PreviewTextInput" Text="" Width="250" HorizontalAlignment="Right" x:Name="txtotvkesintioran" FontWeight="Bold" BorderThickness="0.5" BorderBrush="White" FontSize="18"  Background="Transparent" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </ScrollViewer>
+                </Grid>
+                
+            </Grid>
+        </Border>
+
+        <StackPanel Orientation="Horizontal"  Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right">
+            <Button x:Name="Duzenle" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource Dictionary5}" Click="Duzenle_Click"  >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="55" Height="55" Margin="5,0,10,0" Source="icons/kaydet.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="22" FontWeight="SemiBold" Margin="0,0,5,0" Text="Düzenle   "></TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Kaydet" Margin="5,5,20,5" Height="80" Width="170"  Background="#ff296CA5" Grid.Column="2"  Grid.Row="6"  VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource Dictionary5}" Click="Kaydet_Click" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="55" Height="55" Margin="5,0,10,0" Source="icons/kaydet.png" ></Image>
+                    <TextBlock Foreground="White" VerticalAlignment="Center" FontFamily="CENTURY GOTHIC" FontSize="24" FontWeight="SemiBold" Margin="0,0,5,0" Text="Kaydet   "></TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Grid x:Name="gridcarikartara" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Foreground="White" VerticalAlignment="Top" Margin="10,5,0,10" FontFamily="Malgun Gothic" FontSize="20" Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontWeight="Heavy" Background="#BB207DA0">Stok Kart Ara</Label>
+            <TextBlock Foreground="White" VerticalAlignment="Center" Margin="10,8,0,0" FontFamily="Book Antiqua" FontSize="24">Stok Ara:</TextBlock>
+            <TextBox x:Name="txtstokara" Grid.Column="1" Margin="10,10,10,0" CaretBrush="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="60" BorderThickness="0.5" BorderBrush="Transparent"  FontSize="30"  Background="#66427B8C" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" KeyDown="txtstokara_KeyDown" TextChanged="txtstokara_TextChanged"  >
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            <Button x:Name="ara" Grid.Column="2" Width="50" VerticalAlignment="Center" Background="Transparent" Style="{StaticResource Dictionary3}" Margin="3" Click="ara_Click" >
+                <Image Source="/icons/ara.png"  Width="50" Height="45"></Image>
+            </Button>
+        </Grid>
+
+
+        <Popup x:Name="Popup" Placement="Center" AllowsTransparency="True"  PopupAnimation="Slide" StaysOpen="False" >
+            <!--HorizontalOffset="-100" VerticalOffset="-100"-->
+            <Border BorderThickness="5" CornerRadius="20" >
+                <Border.BorderBrush>
+                    <LinearGradientBrush >
+                        <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                        <GradientStop Color="#ff156F90" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Grid Width="550" Height="400" >
+                    <Grid.Background>
+                        <LinearGradientBrush >
+                            <GradientStop Color="#FF000D12" Offset="-0.2"  />
+                            <GradientStop Color="#ff156F90" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <!--<Button x:Name="geri" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Height="40" Click="geri_Click" Content="TAMAM" FontSize="16" FontFamily="Century" Foreground="#FF04365F" BorderBrush="#FF07C7C3" Background="#FF07C7C3"/>-->
+                    <ListBox Padding="20" x:Name="lbMalad" BorderThickness="0"  TextSearch.TextPath="MALAD" IsTextSearchEnabled="True" Background="Transparent" FontFamily="Arial" FontSize="14" IsSynchronizedWithCurrentItem="False" MouseDoubleClick="lbMalad_MouseDoubleClick" KeyDown="lbMalad_KeyDown" >
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontFamily" Value="Century Gothic" />
+                                <Setter Property="Background" Value="#ff156F90" />
+                                <Setter Property="Margin" Value="9" />
+                                <Setter Property="Height" Value="35" />
+                                <Setter Property="BorderBrush" Value="#FF13B9D9" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True" >
+                                        <Setter Property="FontWeight" Value="ExtraBold" />
+                                        <Setter Property="Background" Value="#FF062f54" />
+                                        <Setter Property="Foreground" Value="#FF75D5E8" />
+                                        <Setter Property="FontSize" Value="18" />
+                                        <Setter Property="BorderBrush" Value="#FF0A7D73" />
+                                        <Setter Property="Height" Value="45" />
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                                    <!-- Background of selected item when focussed -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF007A7A"/>
+                                    <!-- Background of selected item when not focussed -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FF11B3D3" />
+                                </Style.Resources>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <!--<Button Background="#FF064554" ></Button>-->
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
-</Window>
+</dx:ThemedWindow>
+
+
+
+<!--<TreeView.Resources>
+                        <ControlTemplate TargetType="{x:Type TreeViewItem}" x:Key="selectedTemplate">
+                            <StackPanel Height="25">
+                                <TextBlock Text="SelectedItem" Background="{TemplateBinding Background}" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </TreeView.Resources>-->
+<!--<TreeView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                      Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                      Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                      Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                      Color="Black" />
+                    </TreeView.Resources>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                      Color="Transparent" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                      Color="Black" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                      Color="Transparent" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                      Color="Black" />
+                            </Style.Resources>
+                             <Setter Property="OverridesDefaultStyle" Value="True"/>
+                            <Setter Property="Background" Value="Transparent"></Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                </Trigger>
+                                <Trigger Property="IsExpanded" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Trigger>
+                                <Trigger Property="IsMouseCaptureWithin" Value="True">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.ItemContainerStyle>-->
